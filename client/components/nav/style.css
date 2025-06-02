@@ -1,0 +1,99 @@
+.navbar {
+    background-color: #2B303A;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 15rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border-bottom: 2px #b45020 solid;
+}
+
+.nav-header {
+    display: flex;
+    align-items: center;
+}
+
+.nav-logo-image {
+    height: 56px;
+    transition: transform 0.2s ease;
+}
+.nav-logo-image:hover {
+    transform: scale(1.05);
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: #F2ECE4;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: max-height 0.3s ease-out;
+    min-width: 450px;
+}
+
+.nav-links a {
+    font-family: "Merriweather", serif;
+    font-size: 1rem;
+    text-decoration: none;
+    color: #F2ECE4;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-links a:hover {
+    background-color: #D56C39;
+    transform: scale(1.03);
+    color: #fff;
+}
+
+.nav-links img {
+    height: 24px;
+}
+
+/* Collapsible styles for mobile */
+@media (max-width: 800px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #2B303A;
+        flex-direction: column;
+        align-items: flex-start;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-links.open {
+        max-height: 300px;
+        padding-bottom: 1rem;
+    }
+
+    .nav-links a {
+        width: 100%;
+        padding: 0.75rem 0;
+        font-size: 0.95rem;
+    }
+
+    .navbar {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}

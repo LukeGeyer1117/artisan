@@ -1,0 +1,15 @@
+# Python
+__pychache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Django
+*.pot
+*.pyc
+env/
+venv/
+venv*/
