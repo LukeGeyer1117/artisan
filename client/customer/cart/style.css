@@ -1,0 +1,49 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+
+body {
+    margin: 0;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  font-family: 'Merriweather', serif;
+  color: #2f3e46;
+}
+
+.cart-empty h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #1f2d3d;
+}
+
+.cart-empty p {
+  font-size: 1.1rem;
+  color: #5c677d;
+  margin-bottom: 2rem;
+}
+
+.cart-return-link {
+  display: inline-block;
+  background-color: #2f3e46;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.cart-return-link:hover {
+  background-color: #1d2a33;
+}

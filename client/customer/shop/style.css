@@ -1,0 +1,159 @@
+body {
+    margin: 0;
+}
+
+.shop-section {
+  padding: 4rem 15%;
+  background-color: #F2ECE4;
+  color: #2B303A;
+  text-align: center;
+}
+
+.section-title {
+    font-family: "Merriweather", serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #2B303A;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+.section-description {
+    font-family: "Merriweather", serif;
+    font-size: 1.125rem;
+    font-weight: 300;
+    color: #5A5A5A;
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+    padding: 0 1rem;
+    font-style: italic;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.shop-item {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.shop-item:hover {
+  transform: translateY(-5px);
+}
+
+.shop-item img {
+  width: 100%;
+  height: 15rem;
+  display: block;
+  object-fit: cover;
+}
+
+.item-info {
+  padding: 1rem;
+}
+
+.item-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.price {
+  font-weight: bold;
+  color: #D56C39;
+  margin: 0.5rem 0;
+}
+
+.short-desc {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Modal Styling */
+/* Modal Overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 30vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Close Button */
+.modal-content .close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+.modal-content img {
+  width: auto;
+  height: 15rem;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content .price {
+  color: #D56C39;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.add-to-cart {
+  margin-top: 1rem;
+  background-color: #2B303A;
+  color: #F2ECE4;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-to-cart:hover {
+  background-color: #D56C39;
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}

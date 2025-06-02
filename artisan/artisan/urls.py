@@ -23,5 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/artisans/', views.create_artisan),
     path('api/inventories/', views.create_inventory),
+    path('api/inventory/', views.get_inventory),
     path('api/products/', views.create_product),
+    path('api/login/', views.login_artisan),
 ]
