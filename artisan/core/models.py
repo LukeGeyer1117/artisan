@@ -36,6 +36,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     quantity = models.DecimalField(max_digits=7, decimal_places=0, default=0, blank=True)
     description = models.CharField(max_length=500, default='', blank=True)
+    imageurl = models.CharField(max_length=200, default='', blank=True)
 
     def __str__(self):
         return self.name

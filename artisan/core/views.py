@@ -7,7 +7,7 @@ from .models import Artisan, Inventory, Product, Order, OrderItems
 
 # Create your views here.
 def home(request):
-    return HttpResponse("Welcome to Artisan");
+    return HttpResponse("Welcome to Artisan")
 
 @csrf_exempt
 def create_artisan(request):
@@ -57,16 +57,14 @@ def login_artisan(request):
             e = data.get('email')
             password = data.get('password')
 
-            print(e, password)
-
             try:
                 artisan = Artisan.objects.get(email=e)
-                print(artisan)
             except Artisan.DoesNotExist:
                 return JsonResponse({'error': 'No Artisan Found'}, status=404)
             
             if check_password(password, artisan.password):
                 request.session['artisan_id'] = artisan.id  # Django session
+                print("session id: ", request.session.get('artisan_id'))
                 return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
             else:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
@@ -107,6 +105,7 @@ def create_product(request):
 def get_inventory(request):
     if request.method == 'GET':
         artisan_id = request.session.get('artisan_id')
+        print("artisan id:", artisan_id)
         if not artisan_id:
             return JsonResponse({'error': 'Not authenticated'}, status=401)
         
