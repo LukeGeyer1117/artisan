@@ -21,6 +21,13 @@ from core import views
 urlpatterns = [
     path('', views.home),
     path('admin/', admin.site.urls),
+    path('home/', views.home, name="home"),
+    path('gallery/', views.gallery, name="gallery"),
+    path('shop/', views.shop, name="shop"),
+    path('cart/', views.cart, name="cart"),
+    path('custom/', views.custom, name="custom"),
+    path('login/', views.login_view, name='login'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
     path('api/artisans/', views.create_artisan),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),

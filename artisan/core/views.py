@@ -7,7 +7,25 @@ from .models import Artisan, Inventory, Product, Order, OrderItems
 
 # Create your views here.
 def home(request):
-    return HttpResponse("Welcome to Artisan")
+    return render(request, 'client/customer/home/index.html')
+
+def gallery(request):
+    return render(request, 'client/customer/gallery/index.html')
+
+def shop(request):
+    return render(request, 'client/customer/shop/index.html')
+
+def cart(request):
+    return render(request, 'client/customer/cart/index.html')
+
+def custom(request):
+    return render(request, 'client/customer/custom-order-portal/index.html')
+
+def login_view(request):
+    return render(request, 'client/merchant/login/login.html')
+
+def dashboard_view(request):
+    return render(request, 'client/merchant/dashboard/index.html')
 
 @csrf_exempt
 def create_artisan(request):
@@ -114,7 +132,6 @@ def get_inventory(request):
             return JsonResponse({'error': 'Inventory not found'}, status=404)
         
         products = Product.objects.filter(inventory_id=inventory.id).values()
-        print(products)
         return JsonResponse(list(products), safe=False)
     
     else:

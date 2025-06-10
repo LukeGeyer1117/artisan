@@ -1,0 +1,136 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Artisan - Home</title>
+    <link rel="stylesheet" href="{% static 'customer/shop/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% block nav %}
+        {% include 'client/components/nav/nav.html' %} {# This is where the magic happens #}
+    {% endblock nav %}
+
+    <main>
+        <section class="shop-section">
+        <h2 class="section-title">Shop</h2>
+        <p class="section-description">Browse our selection of handcrafted instruments — each piece tells its own story.</p>
+
+        <div class="shop-grid">
+            <!-- Sample Item -->
+            <div class="shop-item" onclick="openModal('item1')">
+            <img src="{% static 'images/fancy.webp' %}" alt="Handcrafted Guitar 1">
+            <div class="item-info">
+                <h3>Rosewood Parlor</h3>
+                <p class="price">$2,100</p>
+                <p class="short-desc">Compact and warm-toned, ideal for fingerstyle players.</p>
+            </div>
+            </div>
+
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+            
+            <div class="shop-item" onclick="openModal('item2')">
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Handcrafted Guitar 2">
+            <div class="item-info">
+                <h3>Spruce Grand Auditorium</h3>
+                <p class="price">$2,500</p>
+                <p class="short-desc">Balanced projection with elegant tonewoods and inlay.</p>
+            </div>
+            </div>
+
+            <!-- Add more shop-item blocks as needed -->
+        </div>
+        </section>
+
+        <!-- Modal Structure -->
+        <div id="item1" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('item1')">&times;</span>
+            <h2>Rosewood Parlor</h2>
+            <img src="{% static 'images/fancy2.jpg' %}" alt="Rosewood Parlor Guitar">
+            <p>This compact parlor-style guitar features Indian rosewood back and sides with a cedar top, offering rich midrange tone ideal for intimate performances. Hand-carved bracing enhances responsiveness.</p>
+            <p class="price">$2,100</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        </div>
+
+        <div id="item2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('item2')">&times;</span>
+            <h2>Spruce Grand Auditorium</h2>
+            <img src="{% static 'images/fancy.webp' %}" alt="Spruce Grand Auditorium Guitar">
+            <p>This versatile instrument boasts a Sitka spruce top paired with East Indian rosewood, perfect for strumming and fingerstyle alike. Its balanced voice and long sustain make it a shop favorite.</p>
+            <p class="price">$2,500</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        </div>
+
+    </main>
+
+    {% block footer %}
+        {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
+    {% endblock footer %}
+
+
+<script src="{% static 'customer/shop/shop.js' %}"></script>
+</body>
+</html>

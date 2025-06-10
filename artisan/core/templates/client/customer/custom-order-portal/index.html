@@ -1,0 +1,79 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Artisan - Home</title>
+    <link rel="stylesheet" href="{% static 'customer/custom/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% block nav %}
+        {% include 'client/components/nav/nav.html' %} {# This is where the magic happens #}
+    {% endblock nav %}
+
+    <main>
+        <section class="custom-order-section">
+        <h2 class="section-title">Custom Order Request</h2>
+        <p class="section-description">Have something unique in mind? Tell us what you're envisioning and we'll make it happen.</p>
+        
+        <form class="custom-order-form" enctype="multipart/form-data">
+            <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+            <label for="details">Project Description</label>
+            <textarea id="details" name="details" rows="6" placeholder="Tell us about the instrument you’d like to have made..." required></textarea>
+            </div>
+
+            <div class="form-group">
+            <label for="reference-files">Reference Images (optional)</label>
+            <input type="file" id="reference-files" name="reference-files" accept="image/*" multiple>
+            </div>
+
+            <div class="form-group budget-range">
+            <div>
+                <label for="budget-low">Budget (Min)</label>
+                <input type="number" id="budget-low" name="budget-low" min="0" step="1" placeholder="$">
+            </div>
+            <div>
+                <label for="budget-high">Budget (Max)</label>
+                <input type="number" id="budget-high" name="budget-high" min="0" step="1" placeholder="$">
+            </div>
+            </div>
+
+            <div class="form-group">
+            <label class="checkbox-container">
+                <input type="checkbox" id="acknowledgement" required>
+                <span class="checkmark"></span>
+                As the customer, you acknowledge that the merchant has a right to accept or decline any custom order.
+            </label>
+            </div>
+
+            <button type="submit" class="submit-button">Submit Request</button>
+        </form>
+        </section>
+
+    </main>
+
+    {% block footer %}
+        {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
+    {% endblock footer %}
+
+
+<script src="{% static 'customer/custom/form.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% load static %}
+
+<!-- merchant-auth.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merchant Dashboard - Login / Sign Up</title>
+  <link rel="stylesheet" href="{% static 'merchant/login/style.css' %}">
+  <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
+  <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-header">
+      <a href="../home/index.html">
+        <img class="nav-logo-image" src="{% static 'images/logo_white_text_on_blue.png' %}" alt="nav logo">
+      </a>
+    </div>
+  </nav>
+
+  <main class="auth-container">
+    <div class="auth-card">
+      <h2>Welcome, Artisan</h2>
+      <p class="auth-subtitle">Log in or create your dashboard account to begin managing your custom orders.</p>
+
+      <form class="auth-form" id="login-form">
+        <input type="email" placeholder="Email" required id="email1">
+        <input type="password" placeholder="Password" required id="password1">
+        <button type="submit">Log In</button>
+        <p class="auth-toggle">Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></p>
+      </form>
+
+      <form class="auth-form hidden" id="signup-form">
+        <input type="text" placeholder="Full Name" required id="name">
+        <input type="text" placeholder="Username" required id="username">
+        <input type="email" placeholder="Email" required id="email2">
+        <input type="password" placeholder="Password" required id="password2">
+        <input type="text" placeholder="Shop Name" required id="shop-name">
+        <button type="submit">Sign Up</button>
+        <p class="auth-toggle">Already have an account? <a href="#" onclick="toggleForm('login')">Log In</a></p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <!-- existing footer here -->
+  </footer>
+
+  <script>
+    function toggleForm(form) {
+      document.getElementById('login-form').classList.toggle('hidden', form === 'signup');
+      document.getElementById('signup-form').classList.toggle('hidden', form === 'login');
+    }
+  </script>
+
+  <script src="{% static 'merchant/login/login.js' %}"></script>
+</body>
+</html>

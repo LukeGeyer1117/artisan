@@ -1,0 +1,103 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Artisan - Home</title>
+    <link rel="stylesheet" href="{% static 'customer/home/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% block nav %}
+        {% include 'client/components/nav/nav.html' %} {# This is where the magic happens #}
+    {% endblock nav %}
+
+    <main>
+
+        <section id="home-hero-section">
+            <div id="home-cta-div">
+                <h2 id="hero-main-draw">Handcrafted Elegance. Timeless Sound.</h2>
+                <p id="hero-sentence-draw">Each guitar is a dialogue between wood, touch, and tone. Custom-built for those who seek purity in every note.</p>
+                <h3 id="hero-header-draw">Bespoke classical guitars made hand by hand, one at a time.</h3>
+                <a id="hero-cta-button" href="/shop">Shop our Guitars</a>
+            </div>
+        </section>
+
+        <div class="subsection-header">Products Available</div>
+        <div id="products-and-custom-button-holder">
+            <section id="products-available" class="homepage-scroll-section">
+                <div class="product">
+                    <img src="{% static 'images/classical.webp' %}" alt="classical guitar">
+                    <h2 class="product-name">Cutaway</h2>
+                    <h4 class="price">$1299.99</h4>
+                    <p class="product-description-in-brief">An All-Rounder with a perfect sound for any guitarist.</p>            
+                </div>
+                <div class="product">
+                    <img src="{% static 'images/classical.webp' %}" alt="classical guitar">
+                    <h2 class="product-name">Cutaway</h2>
+                    <h4 class="price">$1299.99</h4>
+                    <p class="product-description-in-brief">An All-Rounder with a perfect sound for any guitarist.</p>            
+                </div>
+                <div class="product">
+                    <img src="{% static 'images/classical.webp' %}" alt="classical guitar">
+                    <h2 class="product-name">Cutaway</h2>
+                    <h4 class="price">$1299.99</h4>
+                    <p class="product-description-in-brief">An All-Rounder with a perfect sound for any guitarist.</p>            
+                </div>
+                <div class="product">
+                    <img src="{% static 'images/classical.webp' %}" alt="classical guitar">
+                    <h2 class="product-name">Cutaway</h2>
+                    <h4 class="price">$1299.99</h4>
+                    <p class="product-description-in-brief">An All-Rounder with a perfect sound for any guitarist.</p>            
+                </div>
+                <div class="product">
+                    <img src="{% static 'images/classical.webp' %}" alt="classical guitar">
+                    <h2 class="product-name">Cutaway</h2>
+                    <h4 class="price">$1299.99</h4>
+                    <p class="product-description-in-brief">An All-Rounder with a perfect sound for any guitarist.</p>            
+                </div>
+                <section class="scroll-see-more">
+                    <a href="/shop/">See All Products</a>
+                </section>
+            </section>
+            <a id="custom-order-portal-button" href="/custom/">Custom Orders</a>
+        </div>
+
+
+        <div class="subsection-header">Behind the Craft</div>
+        <section id="behind-the-craft">
+            <div class="craft-content">
+                <div class="craft-text">
+                <p>Every guitar begins with a careful selection of tonewoods, chosen not just for beauty, but for their resonance and character. From the shaping of the body to the hand-sanding of each fret, every detail is given full attention. This is not mass production—this is devotion to the art of sound.</p>
+                </div>
+                <div class="craft-video">
+                <!-- Embed YouTube video -->
+                <iframe width="1236" height="695" src="https://www.youtube.com/embed/FyT9yiO7DRs" title="How It&#39;s Made: Guitars" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                
+                <!-- Or self-hosted alternative -->
+                <!--
+                <video controls>
+                    <source src="../../videos/your-process-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                -->
+                </div>
+            </div>
+        </section>
+
+        
+    </main>
+
+    {% block footer %}
+        {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
+    {% endblock footer %}
+
+<script src="{% static 'customer/home/main.js' %}"></script>
+</body>
+</html>
