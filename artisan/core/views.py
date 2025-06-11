@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
+from django.views.decorators.http import require_POST
 import json
 from .models import Artisan, Inventory, Product, Order, OrderItems
 
@@ -82,7 +83,10 @@ def login_artisan(request):
             
             if check_password(password, artisan.password):
                 request.session['artisan_id'] = artisan.id  # Django session
-                print("session id: ", request.session.get('artisan_id'))
+                inventory = Inventory.objects.get(artisan=artisan)
+                inventory_id = inventory.id
+                request.session['inventory_id'] = inventory_id
+                print("artisan id: ", request.session.get('artisan_id'), "inventory id: ", request.session['inventory_id'])
                 return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
             else:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
@@ -93,11 +97,12 @@ def login_artisan(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
+@require_POST
 def create_product(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            inventory_id = data.get('inventory_id')
+            inventory_id = request.session.get('inventory_id')
+            print(inventory_id)
 
             # Fetch the Inventory record
             inventory = Inventory.objects.get(id=inventory_id)
@@ -105,9 +110,11 @@ def create_product(request):
             # Create the product linked to that inventory
             product = Product.objects.create(
                 inventory = inventory,
-                name = data['name'],
-                price = data['price'],
-                order_type = data['order_type']
+                name = request.POST.get('name'),
+                price = request.POST.get('price'),
+                quantity = request.POST.get('quantity'),
+                description = request.POST.get('description'),
+                image = request.FILES.get('image')
             )
 
             return JsonResponse({'message': 'Product created', 'id': product.id}, status=201)

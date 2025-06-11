@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from core import views
 
 urlpatterns = [
@@ -33,4 +35,4 @@ urlpatterns = [
     path('api/inventory/', views.get_inventory),
     path('api/products/', views.create_product),
     path('api/login/', views.login_artisan),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -14,7 +14,7 @@
 <body>
     <!-- NAV -->
     {% block nav %}
-        {% include 'client/components/nav/nav.html' %} {# This is where the magic happens #}
+        {% include 'client/components/merch-nav/nav.html' %} {# This is where the magic happens #}
     {% endblock nav %}
 
   <!-- Main Content -->
@@ -40,45 +40,25 @@
         <div id="inventory-items-flex">
           
         </div>
-        <button class="primary-btn">Manage Inventory</button>
+        <button class="primary-btn">Add Item</button>
       </section>
     </div>
   </main>
 
   <!-- Inventory Modal -->
-  <div id="inventory-modal" class="modal hidden">
+  <div class="modal-overlay" id="modal">
     <div class="modal-content">
-      <span class="close-btn">&times;</span>
-      <h2>Manage Inventory</h2>
-
-      <section>
-        <h3>Current Inventory</h3>
-        <div id="current-inventory">
-          <!-- Populate dynamically or loop through items -->
-          <p>No current inventory yet.</p>
-        </div>
-      </section>
-
-      <section>
-        <h3>Shelved Inventory</h3>
-        <div id="shelved-inventory">
-          <!-- Populate dynamically or loop through items -->
-          <p>No shelved items yet.</p>
-        </div>
-      </section>
-
-      <section>
-        <h3>Add New Item</h3>
-        <form id="new-item-form">
-          <input type="text" name="name" placeholder="Item Name" required />
-          <input type="number" name="price" placeholder="Price" required />
-          <textarea name="description" placeholder="Item Description" required></textarea>
-          <button type="submit" class="primary-btn">Add Item</button>
-        </form>
-      </section>
+      <h3>Add New Item</h3>
+      <form id="add-item-form">
+        <input id="name" type="text" name="title" placeholder="Title" required />
+        <input id="price" type="number" name="price" placeholder="Price" step="0.01" required />
+        <textarea id="description" name="description" placeholder="Description" rows="4" required></textarea>
+        <input id="quantity" type="number" name="quantity" placeholder="Quantity" required />
+        <input id="image-file" type="file" name="image" accept="image/*" />
+        <button type="submit">Add Item</button>
+      </form>
     </div>
   </div>
-
 
     {% block footer %}
         {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
@@ -86,7 +66,7 @@
 
   <script>
     // Define js variables to hold static urls
-    const CLASSICAL_IMG_URL = "{% static 'images/classical.webp' %}";
+    const IMAGE_URL = "{{ product.image.url }}";
   </script>
   <script src="{% static 'merchant/dashboard/main.js' %}"></script>
 </body>

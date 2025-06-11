@@ -25,11 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(result => {
         let inventoryItems = document.getElementById('inventory-items-flex');
         result.forEach(element => {
+            console.log(element);
             // Create an inventory item for each retrieved
             let inventoryItem = document.createElement('div');
             inventoryItem.className = 'inventory-item';
             let inventoryItemImg = document.createElement('img');
-            inventoryItemImg.src = CLASSICAL_IMG_URL;
+            inventoryItemImg.src = '/media/' + element.image;
             inventoryItemImg.alt = "inventory item";
             inventoryItem.appendChild(inventoryItemImg);
 
@@ -70,29 +71,50 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     // Create an event listener for "manage inventory" that shows a modal screen that allows you to create, delete, shelf, and edit products
-    const modal = document.getElementById("inventory-modal");
-    const manageBtn = document.querySelector("#inventory-section .primary-btn");
-    const closeBtn = document.querySelector(".modal .close-btn");
+    const modal = document.getElementById('modal');
+    const openModalBtn = document.querySelector('.primary-btn');
 
-    manageBtn.addEventListener("click", () => {
-        modal.classList.remove("hidden");
+    openModalBtn.addEventListener('click', () => {
+      modal.style.display = 'flex';
     });
 
-    closeBtn.addEventListener("click", () => {
-        modal.classList.add("hidden");
+    // Optional: close modal on click outside form
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
     });
 
-    window.addEventListener("click", (e) => {
-        if (e.target === modal) {
-        modal.classList.add("hidden");
-        }
-    });
-
-    // Optional: Handle form submission
-    document.getElementById("new-item-form").addEventListener("submit", (e) => {
+    document.getElementById('add-item-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        // You can replace this with an actual POST request
-        alert("Item added (placeholder behavior)");
-        e.target.reset();
+
+        const form = e.target;
+        const formData = new FormData();
+
+        formData.append('name', form.querySelector('#name').value);
+        formData.append('price', form.querySelector('#price').value);
+        formData.append('description', form.querySelector('#description').value);
+        formData.append('quantity', form.querySelector('#quantity').value);
+        formData.append('image', form.querySelector('#image-file').files[0]);
+
+        fetch('http://localhost:8000/api/products/', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include' // to send session cookie
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create product");
+            return response.json();
+        })
+        .then(result => {
+            window.location.href = '/dashboard/';
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Product creation failed');
+        });
+
+        modal.style.display = 'none';
     });
+
 })

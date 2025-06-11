@@ -140,10 +140,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     # This path points to the 'client' folder at your project's root.
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'client'),
+    # os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'client'),
 ]
 
 STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
