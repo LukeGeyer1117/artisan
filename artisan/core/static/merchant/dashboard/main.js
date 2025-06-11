@@ -14,6 +14,20 @@ and current orders to display for the merchant
 let products = []
 
 document.addEventListener('DOMContentLoaded', function () {
+    const signOutBtn = document.getElementById('sign-out-button');
+    signOutBtn.addEventListener('click', (event) => {
+        fetch('http://localhost:8000/api/session', {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to clear session data.');
+            return response.json();
+        })
+        .then(result => {
+            window.location.href = "/login/"
+        })
+    })
+
     fetch('http://localhost:8000/api/inventory/', {
         method: 'GET',
         credentials: 'include'
@@ -49,20 +63,29 @@ document.addEventListener('DOMContentLoaded', function () {
             inventoryItemDetails.appendChild(inventorydetailsh3);
             inventoryItemDetails.appendChild(inventorydetailsp);
 
-            let actions = document.createElement('div');
-            actions.className = 'inventory-actions';
-
-            let editBtn = document.createElement('button');
-            let delBtn = document.createElement('button');
-            editBtn.innerHTML = 'Edit';
-            delBtn.innerHTML = 'Delete';
-            actions.appendChild(editBtn);
-            actions.appendChild(delBtn);
-            inventoryItemDetails.appendChild(actions);
-
-
             inventoryItem.appendChild(inventoryItemDetails)
             inventoryItems.appendChild(inventoryItem);
+
+            // Add an event listener to open the modal screen when you click an inventory item
+            inventoryItem.addEventListener('click', function () {
+                let inventoryItemModal = document.getElementById('inventory-item-modal');
+
+                let modalItemName = document.getElementById('modal-item-name');
+                let modalItemDescription = document.getElementById('modal-item-description');
+                let modalItemPrice = document.getElementById('modal-price');
+                let modalItemQuantity = document.getElementById('modal-quantity');
+                modalItemName.innerHTML = element.name;
+                modalItemDescription.innerHTML = element.description;
+                modalItemPrice.innerHTML = 'Unit Price: $' + element.price;
+                modalItemQuantity.innerHTML = 'Quantity In Stock: ' + element.quantity;
+
+
+                let inventoryItemModalImg = document.querySelector('#inventory-item-modal .modal-content img');
+                inventoryItemImg = inventoryItem.querySelector('img');
+                inventoryItemModalImg.src = inventoryItemImg.src;
+                inventoryItemModal.style.display = 'flex';
+                console.log(inventoryItem);
+            })
         });
     })
     .catch(error => {
@@ -71,17 +94,17 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     // Create an event listener for "manage inventory" that shows a modal screen that allows you to create, delete, shelf, and edit products
-    const modal = document.getElementById('modal');
+    const newItemModal = document.getElementById('new-item-modal');
     const openModalBtn = document.querySelector('.primary-btn');
 
     openModalBtn.addEventListener('click', () => {
-      modal.style.display = 'flex';
+      newItemModal.style.display = 'flex';
     });
 
     // Optional: close modal on click outside form
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
+    newItemModal.addEventListener('click', (e) => {
+      if (e.target === newItemModal) {
+        newItemModal.style.display = 'none';
       }
     });
 
@@ -114,7 +137,15 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Product creation failed');
         });
 
-        modal.style.display = 'none';
+        newItemModal.style.display = 'none';
+    });
+
+    // Create an event listener for "item-summary-modal" that
+    const itemSummaryModal = document.getElementById("inventory-item-modal");
+    itemSummaryModal.addEventListener('click', (e) => {
+        if (e.target === itemSummaryModal) {
+            itemSummaryModal.style.display = 'none';
+        }
     });
 
 })

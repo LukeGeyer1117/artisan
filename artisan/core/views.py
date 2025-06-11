@@ -26,7 +26,14 @@ def login_view(request):
     return render(request, 'client/merchant/login/login.html')
 
 def dashboard_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login/login.html')
     return render(request, 'client/merchant/dashboard/index.html')
+
+@csrf_exempt
+def clear_session(request):
+    request.session.flush()  # Clears all session data
+    return JsonResponse({'message': 'Session cleared'})
 
 @csrf_exempt
 def create_artisan(request):

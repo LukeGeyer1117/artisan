@@ -30,9 +30,10 @@ urlpatterns = [
     path('custom/', views.custom, name="custom"),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('api/artisans/', views.create_artisan),
+    path('api/artisan/', views.create_artisan),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),
     path('api/products/', views.create_product),
     path('api/login/', views.login_artisan),
+    path('api/session/', views.clear_session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

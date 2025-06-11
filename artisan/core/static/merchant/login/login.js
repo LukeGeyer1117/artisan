@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log(data);
 
-        fetch('http://localhost:8000/api/artisans/', {
+        fetch('http://localhost:8000/api/artisan/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

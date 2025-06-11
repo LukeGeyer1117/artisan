@@ -87,6 +87,12 @@ body {
   border: 1px solid #ddd;
   border-radius: 8px;
   width: 300px;
+  transition: transform 0.125s ease-in-out; /* <-- This adds the animation */
+
+}
+
+.inventory-item:hover {
+  transform: scale(1.025);
 }
 
 .inventory-item img {
@@ -186,6 +192,13 @@ body {
   width: 90%;
   max-width: 500px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content img {
+  height: 20rem;
+  width: auto;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
 .modal-content h3 {

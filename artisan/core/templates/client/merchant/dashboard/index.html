@@ -45,8 +45,25 @@
     </div>
   </main>
 
-  <!-- Inventory Modal -->
-  <div class="modal-overlay" id="modal">
+  <!-- Item Summary Modal -->
+  <div class="modal-overlay" id="inventory-item-modal">
+    <div class="modal-content">
+      <h3 id="modal-item-name">Item Name</h3>
+      <img id="modal-item-image" src="{% static 'images/classical.webp' %}" alt="guitar">
+      <p id="modal-item-description">Description of inventory item.</p>
+      <div id="modal-price-quantity">
+        <h4 id="modal-price">100.00</h4>
+        <h4 id="modal-quantity">15</h4>
+      </div>
+      <div id="modal-item-buttons">
+          <button>Edit</button>
+          <button>Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Item Modal -->
+  <div class="modal-overlay" id="new-item-modal">
     <div class="modal-content">
       <h3>Add New Item</h3>
       <form id="add-item-form">
