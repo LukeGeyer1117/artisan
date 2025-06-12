@@ -55,30 +55,81 @@
         <h4 id="modal-price">100.00</h4>
         <h4 id="modal-quantity">15</h4>
       </div>
+      <p id="modal-id">None</p>
       <div id="modal-item-buttons">
-          <button>Edit</button>
-          <button>Delete</button>
+          <button id="edit-btn">Edit</button>
+          <button id="delete-btn">Delete</button>
       </div>
     </div>
   </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal-overlay" id="edit-item-modal">
+    <div class="modal-content">
+      <form id="edit-item-form">
+        <!-- name -->
+        <div class="label-input-div">
+          <input id="edit-name" type="text" name="title" placeholder="Title" maxlength="100" required />
+          <label for="edit-name" class="character-limit">100 char. limit</label>
+        </div>
+        <!-- price -->
+        <input id="edit-price" type="number" name="price" placeholder="Price" step="0.01" max="9999999999" required />
+        <!-- description -->
+        <div class="label-input-div">
+          <textarea id="edit-description" name="description" placeholder="Description" rows="4" maxlength="500" required></textarea>
+          <label for="edit-description" class="character-limit">500 char. limit</label>
+        </div>
+        <!-- quantity -->
+        <input id="edit-quantity" type="number" name="quantity" placeholder="Quantity" maxlength="9999999" required />
+        <!-- image upload -->
+        <input id="edit-image-file" type="file" name="image" accept="image/*" />
+
+        <button type="submit">Finish</button>
+        <button class="cancel-button" id="edit-item-cancel-btn">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Item Modal -->
+   <div class="modal-overlay" id="delete-item-modal">
+    <div class="modal-content">
+      <p>Warning! Deleting a product cannot be undone.</p>
+      <div id="delete-modal-buttons">
+        <button id="confirm-delete">Yes, Delete</button>
+        <button id="cancel-delete">No, Don't Delete</button>
+      </div>
+    </div>
+   </div>
 
   <!-- New Item Modal -->
   <div class="modal-overlay" id="new-item-modal">
     <div class="modal-content">
       <h3>Add New Item</h3>
       <form id="add-item-form">
-        <input id="name" type="text" name="title" placeholder="Title" required />
-        <input id="price" type="number" name="price" placeholder="Price" step="0.01" required />
-        <textarea id="description" name="description" placeholder="Description" rows="4" required></textarea>
-        <input id="quantity" type="number" name="quantity" placeholder="Quantity" required />
+        <!-- name -->
+        <div id="name-label-input" class="label-input-div">
+          <input id="name" type="text" name="title" placeholder="Title" maxlength="100" required />
+          <label for="name" class="character-limit">100 char. limit</label>
+        </div>
+        <!-- price -->
+        <input id="price" type="number" name="price" placeholder="Price" step="0.01" max="9999999999" required />
+        <!-- description -->
+        <div id="description-labl-textarea" class="label-input-div">
+          <textarea id="description" name="description" placeholder="Description" rows="4" maxlength="500" required></textarea>
+          <label for="description" class="character-limit">500 char. limit</label>
+        </div>
+        <!-- quantity -->
+        <input id="quantity" type="number" name="quantity" placeholder="Quantity" maxlength="9999999" required />
+        <!-- image upload -->
         <input id="image-file" type="file" name="image" accept="image/*" />
+
         <button type="submit">Add Item</button>
       </form>
     </div>
   </div>
 
     {% block footer %}
-        {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
+        {% include 'client/components/merch-footer/footer.html' %} {# This is where the magic happens #}
     {% endblock footer %}
 
   <script>

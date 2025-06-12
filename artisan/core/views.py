@@ -1,26 +1,37 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 from django.contrib.auth.hashers import check_password
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
+from django.utils.text import slugify
+from django.db.models import Count
+
 import json
 from .models import Artisan, Inventory, Product, Order, OrderItems
 
 # Create your views here.
-def home(request):
-    return render(request, 'client/customer/home/index.html')
+def splash(request):
+    return render(request, 'client/customer/splash/index.html')
 
-def gallery(request):
-    return render(request, 'client/customer/gallery/index.html')
+def home(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/home/index.html', {'artisan': artisan})
 
-def shop(request):
-    return render(request, 'client/customer/shop/index.html')
+def gallery(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/gallery/index.html', {'artisan': artisan})
+
+def shop(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/shop/index.html', {'artisan': artisan})
 
 def cart(request):
     return render(request, 'client/customer/cart/index.html')
 
-def custom(request):
-    return render(request, 'client/customer/custom-order-portal/index.html')
+def custom(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/custom-order-portal/index.html', {'artisan': artisan})
 
 def login_view(request):
     return render(request, 'client/merchant/login/login.html')
@@ -44,6 +55,7 @@ def create_artisan(request):
             username = data['username'],
             password = data['password'], #Might hash this
             shop_name = data['shop_name'],
+            slug = generate_unique_slug(data['shop_name']),
             product_specialty = data.get('product_specialty', ''),
             price_range_low = data.get('price_range_low', 0),
             price_range_high = data.get('price_range_high', 0),
@@ -104,9 +116,41 @@ def login_artisan(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
-@require_POST
-def create_product(request):
+@require_http_methods(['POST', 'DELETE'])
+def product(request):
+    actual_method = request.POST.get('_method', '').upper()
     if request.method == 'POST':
+        # Check to see if the acutal method tag is a 'PATCH'
+        if actual_method == 'PATCH':
+            print("POST data:", request.POST)
+            print("FILES:", request.FILES)
+            try:
+                product_id = request.POST.get('id')
+                if not product_id:
+                    return JsonResponse({'error': 'Missing product ID'}, status=400)
+
+                product = Product.objects.get(id=product_id)
+
+                # Update fields if provided
+                if 'name' in request.POST:
+                    product.name = request.POST['name']
+                if 'price' in request.POST:
+                    product.price = request.POST['price']
+                if 'quantity' in request.POST:
+                    product.quantity = request.POST['quantity']
+                if 'description' in request.POST:
+                    product.description = request.POST['description']
+                if 'image' in request.FILES:
+                    product.image = request.FILES['image']
+
+                product.save()
+                return JsonResponse({'message': 'Product updated', 'id': product.id})
+
+            except Product.DoesNotExist:
+                return JsonResponse({'error': 'Product not found'}, status=404)
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=400)
+            
         try:
             inventory_id = request.session.get('inventory_id')
             print(inventory_id)
@@ -130,6 +174,21 @@ def create_product(request):
             return JsonResponse({'error': 'Artisan not found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
+    elif request.method == 'DELETE':
+        try:
+            product_id = request.GET.get('id')
+            if not product_id:
+                return JsonResponse({'error': 'Missing product ID'}, status=400)
+
+            product = Product.objects.get(id=product_id)
+            product.delete()
+
+            return JsonResponse({'message': 'Product deleted'}, status=200)
+        except Product.DoesNotExist:
+            return JsonResponse({'error': 'Product not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+        
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
@@ -150,3 +209,24 @@ def get_inventory(request):
     
     else:
         return JsonResponse({'error': "Method not allowed"}, status=405)
+    
+@csrf_exempt
+@require_GET
+def get_products_by_artisan_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    
+    inventory = Inventory.objects.filter(artisan=artisan).first()
+    if not inventory:
+        return JsonResponse({'error': 'Inventory not found'}, status=404)
+
+    products = Product.objects.filter(inventory=inventory).values()
+    return JsonResponse(list(products), safe=False)
+
+def generate_unique_slug(shop_name):
+    base_slug = slugify(shop_name)
+    slug = base_slug
+    i = 1
+    while Artisan.objects.filter(slug=slug).exists():
+        slug = f"{base_slug}-{i}"
+        i += 1
+    return slug

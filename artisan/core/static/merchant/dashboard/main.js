@@ -55,14 +55,13 @@ document.addEventListener('DOMContentLoaded', function () {
             inventorydetailsh3.innerText = element.name;
             let inventorydetailsp = document.createElement('p');
             if (element.quantity > 0) {
-                inventorydetailsp.innerText = element.price + '\nIn Stock, QTY:' + element.quantity; 
+                inventorydetailsp.innerText = '$' + element.price + '\nIn Stock, QTY:' + element.quantity; 
             } else {
                 inventorydetailsp.innerText = element.price + '\nOut of Stock';
             }
 
             inventoryItemDetails.appendChild(inventorydetailsh3);
             inventoryItemDetails.appendChild(inventorydetailsp);
-
             inventoryItem.appendChild(inventoryItemDetails)
             inventoryItems.appendChild(inventoryItem);
 
@@ -70,21 +69,113 @@ document.addEventListener('DOMContentLoaded', function () {
             inventoryItem.addEventListener('click', function () {
                 let inventoryItemModal = document.getElementById('inventory-item-modal');
 
+                // Fill the Modal content with product details.
                 let modalItemName = document.getElementById('modal-item-name');
                 let modalItemDescription = document.getElementById('modal-item-description');
                 let modalItemPrice = document.getElementById('modal-price');
                 let modalItemQuantity = document.getElementById('modal-quantity');
+                let modalItemProdID = document.getElementById('modal-id');
                 modalItemName.innerHTML = element.name;
                 modalItemDescription.innerHTML = element.description;
                 modalItemPrice.innerHTML = 'Unit Price: $' + element.price;
                 modalItemQuantity.innerHTML = 'Quantity In Stock: ' + element.quantity;
-
+                modalItemProdID.innerHTML = 'Product ID: ' + element.id;
 
                 let inventoryItemModalImg = document.querySelector('#inventory-item-modal .modal-content img');
                 inventoryItemImg = inventoryItem.querySelector('img');
                 inventoryItemModalImg.src = inventoryItemImg.src;
                 inventoryItemModal.style.display = 'flex';
-                console.log(inventoryItem);
+
+                let editBtn = document.getElementById('edit-btn');
+                let deleteBtn = document.getElementById('delete-btn');
+
+                // If the user clicks the edit button, we need to disappear this modal and appear the edit modal
+                editBtn.addEventListener('click', function () {
+                    inventoryItemModal.style.display = 'none';
+
+                    let editItemModal = document.getElementById('edit-item-modal');
+                    editItemModal.style.display = 'flex';
+
+                    // Check if user clicks cancel button
+                    let editCancelBtn = document.getElementById('edit-item-cancel-btn');
+                    editCancelBtn.addEventListener('click', function () {
+                        editItemModal.style.display = 'none';
+                    })
+
+                    let editItemForm = document.getElementById('edit-item-form');
+                    document.getElementById('edit-name').value = element.name;
+                    document.getElementById('edit-price').value = element.price;
+                    document.getElementById('edit-description').value = element.description;
+                    document.getElementById('edit-quantity').value = element.quantity;
+
+                    editItemForm.onsubmit = async function (e) {
+                        e.preventDefault();
+
+                        const form = e.target;
+                        const formData = new FormData();
+                        
+                        formData.append('id', element.id);
+                        formData.append('name', form.querySelector('#edit-name').value);
+                        formData.append('price', form.querySelector('#edit-price').value);
+                        formData.append('description', form.querySelector('#edit-description').value);
+                        formData.append('quantity', form.querySelector('#edit-quantity').value);
+                        formData.append('image', form.querySelector('#edit-image-file').files[0]);
+                        formData.append('_method', 'PATCH');
+
+                        await fetch('http://localhost:8000/api/product/', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Failed to Patch Product");
+                            return response.json();
+                        })
+                        .then(result => {
+                            editItemModal.style.display = 'none';
+                            alert('Product successfully updated!');
+                            window.location.href = '/dashboard/'
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            alert("Failed to Patch Product");
+                        })
+                    }
+                })
+
+                // If the user clicks the delete button, we need to disappear this modal, appear a delete modal
+                deleteBtn.addEventListener('click', function () {
+                    inventoryItemModal.style.display = 'none';
+
+                    let deleteItemModal = document.getElementById('delete-item-modal');
+                    deleteItemModal.style.display = 'flex';
+
+                    let confirmDeleteBtn = document.getElementById('confirm-delete');
+                    let cancelDeleteBtn = document.getElementById('cancel-delete');
+
+                    confirmDeleteBtn.addEventListener('click', function () {
+                        // fetch request to delete
+                        fetch('http://localhost:8000/api/product/?id='+element.id, {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Failed to delete product");
+                            return response.json();
+                        })
+                        .then(result => {
+                            alert("Product deleted!");
+                            window.location.href = '/dashboard/'
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            alert("Failed to delete product");
+                        });
+                    })
+                    cancelDeleteBtn.addEventListener('click', function () {
+                        deleteItemModal.style.display = 'none';
+                    })
+                })
             })
         });
     })
@@ -120,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('quantity', form.querySelector('#quantity').value);
         formData.append('image', form.querySelector('#image-file').files[0]);
 
-        fetch('http://localhost:8000/api/products/', {
+        fetch('http://localhost:8000/api/product/', {
             method: 'POST',
             body: formData,
             credentials: 'include' // to send session cookie
@@ -149,3 +240,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 })
+
+// Check image upload size is < 2MB
+let imageFile = document.getElementById('image-file');
+const MAX_SIZE_MB = 2;
+imageFile.addEventListener('change', function() {
+    const file = this.files[0];
+
+    if (file && file.size > MAX_SIZE_MB * 1024 * 1024) {
+        alert("File size is too large. Maximum is 2MB.")
+        this.value = ''; // Clear the input
+    }
+});

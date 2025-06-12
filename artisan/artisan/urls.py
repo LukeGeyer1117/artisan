@@ -21,19 +21,20 @@ from django.conf.urls.static import static
 from core import views
 
 urlpatterns = [
-    path('', views.home),
+    path('', views.splash),
     path('admin/', admin.site.urls),
-    path('home/', views.home, name="home"),
-    path('gallery/', views.gallery, name="gallery"),
-    path('shop/', views.shop, name="shop"),
+    path('home/<slug:slug>/', views.home, name="home"),
+    path('gallery/<slug:slug>/', views.gallery, name="gallery"),
+    path('shop/<slug:slug>/', views.shop, name="shop"),
     path('cart/', views.cart, name="cart"),
-    path('custom/', views.custom, name="custom"),
+    path('custom/<slug:slug>/', views.custom, name="custom"),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('api/artisan/', views.create_artisan),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),
-    path('api/products/', views.create_product),
+    path('api/inventory/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
+    path('api/product/', views.product),
     path('api/login/', views.login_artisan),
     path('api/session/', views.clear_session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

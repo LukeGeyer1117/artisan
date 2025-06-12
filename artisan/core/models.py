@@ -7,6 +7,7 @@ class Artisan(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=128)
     shop_name = models.CharField(max_length=100)
+    slug = models.CharField(max_length=100, default=False)
     product_specialty = models.CharField(max_length=50, blank=True)
     price_range_low = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
     price_range_high = models.DecimalField(max_digits=10, decimal_places=2, default=100, blank=True)
