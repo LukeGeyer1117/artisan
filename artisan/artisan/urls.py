@@ -23,7 +23,8 @@ from core import views
 urlpatterns = [
     path('', views.splash),
     path('admin/', admin.site.urls),
-    path('home/<slug:slug>/', views.home, name="home"),
+    path('home/', views.home, name="home"),
+    path('home/<slug:slug>/', views.home, name="slug_home"),
     path('gallery/<slug:slug>/', views.gallery, name="gallery"),
     path('shop/<slug:slug>/', views.shop, name="shop"),
     path('cart/', views.cart, name="cart"),
@@ -33,8 +34,9 @@ urlpatterns = [
     path('api/artisan/', views.create_artisan),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),
-    path('api/inventory/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
+    path('api/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
     path('api/product/', views.product),
+    path('api/products/', views.get_all_products),
     path('api/login/', views.login_artisan),
     path('api/session/', views.clear_session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

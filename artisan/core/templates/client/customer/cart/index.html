@@ -15,7 +15,7 @@
 </head>
 <body>
     {% block nav %}
-        {% include 'client/components/nav/nav.html' %} {# This is where the magic happens #}
+        {% include 'client/components/nav/nav.html' with slug=artisan.slug %}
     {% endblock nav %}
 
     <main>

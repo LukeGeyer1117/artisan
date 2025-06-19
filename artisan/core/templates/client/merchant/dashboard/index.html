@@ -14,7 +14,7 @@
 <body>
     <!-- NAV -->
     {% block nav %}
-        {% include 'client/components/merch-nav/nav.html' %} {# This is where the magic happens #}
+        {% include 'client/components/merch-nav/nav.html' with slug=artisan.slug %}
     {% endblock nav %}
 
   <!-- Main Content -->

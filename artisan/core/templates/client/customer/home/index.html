@@ -15,7 +15,7 @@
 </head>
 <body>
     {% block nav %}
-        {% include 'client/components/nav/nav.html' %} {# This is where the magic happens #}
+        {% include 'client/components/nav/nav.html' with slug=artisan.slug%}
     {% endblock nav %}
 
     <main>
@@ -32,12 +32,6 @@
         <div class="subsection-header">Products Available</div>
         <div id="products-and-custom-button-holder">
             <section id="products-available" class="homepage-scroll-section">
-                <div class="product">
-                    <img src="{% static 'images/classical.webp' %}" alt="classical guitar">
-                    <h2 class="product-name">Cutaway</h2>
-                    <h4 class="price">$1299.99</h4>
-                    <p class="product-description-in-brief">An All-Rounder with a perfect sound for any guitarist.</p>            
-                </div>
                 <section class="scroll-see-more">
                     <a href="/shop/">See All Products</a>
                 </section>
@@ -71,9 +65,10 @@
     </main>
 
     {% block footer %}
-        {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
+        {% include 'client/components/footer/footer.html' with slug=artisan.slug %} {# This is where the magic happens #}
     {% endblock footer %}
 
+<body data-slug="{{ artisan.slug }}"></body>
 <script src="{% static 'customer/home/main.js' %}"></script>
 </body>
 </html>

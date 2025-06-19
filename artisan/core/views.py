@@ -14,9 +14,16 @@ from .models import Artisan, Inventory, Product, Order, OrderItems
 def splash(request):
     return render(request, 'client/customer/splash/index.html')
 
-def home(request, slug):
-    artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/home/index.html', {'artisan': artisan})
+def home(request, slug=None):
+    if slug:
+        artisan = get_object_or_404(Artisan, slug=slug)
+        return render(request, 'client/customer/home/index.html', {'artisan': artisan})
+    else:
+        return render(request, 'client/customer/home/index.html')
+
+def slug_home(request, slug):
+    print(slug)
+    return render(request, 'client/customer/home/index.html', {'slug': slug})
 
 def gallery(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
@@ -221,6 +228,14 @@ def get_products_by_artisan_slug(request, slug):
 
     products = Product.objects.filter(inventory=inventory).values()
     return JsonResponse(list(products), safe=False)
+
+@require_GET
+def get_all_products(request):
+    try:
+        products = Product.objects.all().values()
+        return JsonResponse(list(products), safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 def generate_unique_slug(shop_name):
     base_slug = slugify(shop_name)
