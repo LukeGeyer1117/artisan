@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_http_methods
 from django.utils.text import slugify
@@ -12,33 +12,36 @@ from .models import Artisan, Inventory, Product, Order, OrderItems
 
 # Create your views here.
 def splash(request):
-    return render(request, 'client/customer/splash/index.html')
+    return render(request, 'client/customer/splash/splash.html')
 
 def home(request, slug=None):
+    if 'cart-product-ids' not in request.session:
+        request.session['cart-product-ids'] = []
     if slug:
         artisan = get_object_or_404(Artisan, slug=slug)
-        return render(request, 'client/customer/home/index.html', {'artisan': artisan})
+        return render(request, 'client/customer/home/home.html', {'artisan': artisan})
     else:
-        return render(request, 'client/customer/home/index.html')
+        return render(request, 'client/customer/home/home.html')
 
 def slug_home(request, slug):
     print(slug)
-    return render(request, 'client/customer/home/index.html', {'slug': slug})
+    return render(request, 'client/customer/home/home.html', {'slug': slug})
 
 def gallery(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/gallery/index.html', {'artisan': artisan})
+    return render(request, 'client/customer/gallery/gallery.html', {'artisan': artisan})
 
 def shop(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/shop/index.html', {'artisan': artisan})
+    return render(request, 'client/customer/shop/shop.html', {'artisan': artisan})
 
-def cart(request):
-    return render(request, 'client/customer/cart/index.html')
+def cart(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/cart/cart.html', {'artisan': artisan})
 
 def custom(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/custom-order-portal/index.html', {'artisan': artisan})
+    return render(request, 'client/customer/custom-order-portal/custom.html', {'artisan': artisan})
 
 def login_view(request):
     return render(request, 'client/merchant/login/login.html')
@@ -236,6 +239,57 @@ def get_all_products(request):
         return JsonResponse(list(products), safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt    
+def add_product_to_cart(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            print(data)
+            if not data or 'product_id' not in data or 'quantity' not in data:
+                return JsonResponse({'error': 'No product ID or No quantity'}, status=400)
+            try:
+                cart = request.session.get('cart-product-ids', [])
+                cart.append(data["product_id"])
+                request.session['cart-product-ids'] = cart
+
+                print(request.session['cart-product-ids'])
+                return JsonResponse({'message': 'Product ID added to cart'}, status=200)
+            except:
+                return JsonResponse({'error': 'Could not add product id to cart'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': f'could not add to cart: {e}'}, status=500)
+    elif request.method == "GET":
+        try:
+            product_ids = request.session.get('cart-product-ids', [])
+            products = Product.objects.filter(id__in=product_ids).values()
+            return JsonResponse(list(products), safe=False, status=200)
+        except Exception as e:
+            return JsonResponse({'error': f'could not retrieve cart products: {e}'}, status=500)
+    elif request.method == "DELETE":
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('product_id')
+            if not product_id:
+                return JsonResponse({'error': 'Product ID missing'}, status=400)
+
+            # Get the current cart list from the session
+            cart = request.session.get('cart-product-ids', [])
+
+            # Try to remove the product ID if it exists
+            if product_id in cart:
+                cart.remove(product_id)
+                request.session['cart-product-ids'] = cart  # Save updated list back to session
+                return JsonResponse({'message': 'Product removed from cart'})
+            else:
+                return JsonResponse({'error': 'Product not found in cart'}, status=404)
+
+        except Exception as e:
+            return JsonResponse({'error': f'Failed to remove item: {e}'}, status=500)
+
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
 
 def generate_unique_slug(shop_name):
     base_slug = slugify(shop_name)

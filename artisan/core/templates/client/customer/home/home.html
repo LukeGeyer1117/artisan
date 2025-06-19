@@ -25,7 +25,7 @@
                 <h2 id="hero-main-draw">{{ artisan.shop_name }}</h2>
                 <p id="hero-sentence-draw">Each guitar is a dialogue between wood, touch, and tone. Custom-built for those who seek purity in every note.</p>
                 <h3 id="hero-header-draw">Bespoke classical guitars made hand by hand, one at a time.</h3>
-                <a id="hero-cta-button" href="/shop">Shop our Guitars</a>
+                <a id="hero-cta-button" href="{% url 'shop' artisan.slug %}">Shop our Guitars</a>
             </div>
         </section>
 
@@ -33,10 +33,10 @@
         <div id="products-and-custom-button-holder">
             <section id="products-available" class="homepage-scroll-section">
                 <section class="scroll-see-more">
-                    <a href="/shop/">See All Products</a>
+                    <a href="{% url 'shop' artisan.slug %}">See All Products</a>
                 </section>
             </section>
-            <a id="custom-order-portal-button" href="/custom/">Custom Orders</a>
+            <a id="custom-order-portal-button" href="{% url 'custom' artisan.slug %}">Custom Orders</a>
         </div>
 
 
@@ -61,11 +61,24 @@
             </div>
         </section>
 
-        
+        <!-- Product Info Modal -->
+        <div id="product-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <img id="modal-product-image" src="" alt="Product Image">
+                <h2 id="modal-product-title">Product Title</h2>
+                <p id="modal-product-price">$0.00</p>
+                <p id="modal-product-description">Description Goes here.</p>
+                <p id="modal-product-quantity">In stock: 0</p>
+                <label for="quantity-desired">Quantity:</label>
+                <input type="number" id="quantity-desired" value="1">
+                <button id="modal-add-to-cart-btn">Add to Cart</button>
+            </div>
+        </div>
     </main>
 
     {% block footer %}
-        {% include 'client/components/footer/footer.html' with slug=artisan.slug %} {# This is where the magic happens #}
+        {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
 <body data-slug="{{ artisan.slug }}"></body>

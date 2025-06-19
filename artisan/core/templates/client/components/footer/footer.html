@@ -8,7 +8,7 @@
             <a href="{% url 'gallery' slug=artisan.slug %}">Gallery</a>
             <a href="{% url 'shop' slug=artisan.slug %}">Shop</a>
             <a href="{% url 'custom' slug=artisan.slug %}">Custom Orders</a>
-            <a href="{% url 'cart' %}">Cart</a>
+            <a href="{% url 'cart' slug=artisan.slug%}">Cart</a>
         </div>
 
         <div class="footer-column">

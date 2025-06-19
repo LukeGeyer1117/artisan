@@ -129,7 +129,7 @@
   </div>
 
     {% block footer %}
-        {% include 'client/components/merch-footer/footer.html' %} {# This is where the magic happens #}
+        {% include 'client/components/merch-footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
   <script>

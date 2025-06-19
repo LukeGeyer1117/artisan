@@ -29,7 +29,7 @@
 
 
     {% block footer %}
-        {% include 'client/components/footer/footer.html' %} {# This is where the magic happens #}
+        {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
 </body>
