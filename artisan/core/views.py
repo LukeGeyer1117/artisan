@@ -245,12 +245,14 @@ def add_product_to_cart(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            print(data)
             if not data or 'product_id' not in data or 'quantity' not in data:
                 return JsonResponse({'error': 'No product ID or No quantity'}, status=400)
             try:
-                cart = request.session.get('cart-product-ids', [])
-                cart.append(data["product_id"])
+                cart = request.session.get('cart-product-ids', {})
+                if cart == []: 
+                    cart = {}
+                print(cart)
+                cart[data['product_id']] = data['quantity']
                 request.session['cart-product-ids'] = cart
 
                 print(request.session['cart-product-ids'])
@@ -261,24 +263,51 @@ def add_product_to_cart(request):
             return JsonResponse({'error': f'could not add to cart: {e}'}, status=500)
     elif request.method == "GET":
         try:
-            product_ids = request.session.get('cart-product-ids', [])
+            raw_items = request.session.get('cart-product-ids', [])
+
+            product_ids = []
+            for item in raw_items:
+                product_ids.append(item)
+
+            print(product_ids)
+
             products = Product.objects.filter(id__in=product_ids).values()
-            return JsonResponse(list(products), safe=False, status=200)
+            return JsonResponse({'products': list(products), 'raw_data': raw_items}, safe=False, status=200)
         except Exception as e:
             return JsonResponse({'error': f'could not retrieve cart products: {e}'}, status=500)
+    # elif request.method == "PUT":
+    #     try:
+    #         data = json.loads(request.body)
+    #         if not data or 'product_id' not in data or 'quantity' not in data:
+    #             return JsonResponse({'error': 'Invalid Data'})
+    #         try:
+    #             cart = request.session.get('cart-product-ids')
+    #             cart[data['product_id']] = int(data['quantity'])
+    #             request.session['cart-product-ids'] = cart
+
+    #             print(request.session['cart-product-ids'])
+    #             return JsonResponse({'message': 'Product Quantity Edited in Cart', 'value': data['quantity']}, status=200)
+    #         except:
+    #             return JsonResponse({'error': 'Could not edit item-in-cart quantity'}, status=400)
+    #     except Exception as e:
+    #         return JsonResponse({'error': f'Could not edit cart product: {e}'}, status=500)
     elif request.method == "DELETE":
         try:
             data = json.loads(request.body)
+            print(data)
             product_id = data.get('product_id')
             if not product_id:
                 return JsonResponse({'error': 'Product ID missing'}, status=400)
+            
+            product_id = str(product_id)
 
             # Get the current cart list from the session
-            cart = request.session.get('cart-product-ids', [])
+            cart = request.session.get('cart-product-ids', {})
+            print(cart)
 
             # Try to remove the product ID if it exists
             if product_id in cart:
-                cart.remove(product_id)
+                del cart[product_id]
                 request.session['cart-product-ids'] = cart  # Save updated list back to session
                 return JsonResponse({'message': 'Product removed from cart'})
             else:

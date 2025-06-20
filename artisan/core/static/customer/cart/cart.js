@@ -19,7 +19,8 @@
       return response.json();
     })
     .then(data => {
-      if (data.length > 0) {
+      console.log(data);
+      if (data.products.length > 0) {
         document.querySelector(".cart-empty").style.display = 'none';
         document.querySelector(".cart-contents").style.display = 'block';
       }
@@ -27,28 +28,31 @@
       const totalDisplay = document.getElementById("cart-total");
       let total = 0;
 
-      data.forEach(element => {
-        const product_id = element.id;
+      const products = data.products;
+
+      products.forEach(product => {
+        console.log(product);
+        const product_id = product.id;
 
         // Create cart items for all product_ids in a session cart
         const itemDiv = document.createElement("div");
         itemDiv.className = "cart-item";
 
         const img = document.createElement("img");
-        img.src = '/media/' + element.image || "/static/images/default-product.png";
-        img.alt = element.name;
+        img.src = '/media/' + product.image || "/static/images/default-product.png";
+        img.alt = product.name;
 
         const detailsDiv = document.createElement("div");
         detailsDiv.className = "cart-item-details";
 
         const name = document.createElement("h3");
-        name.textContent = element.name;
+        name.textContent = product.name;
 
         const price = document.createElement("p");
-        price.textContent = `Price: $${element.price}`;
+        price.textContent = `Price: $${product.price}`;
 
         const quantity = document.createElement("p");
-        quantity.textContent = `Quantity: 1`;
+        quantity.textContent = `Quantity: ${data.raw_data[product.id]}`;
 
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
@@ -58,6 +62,15 @@
         removeBtn.textContent = "Remove";
         removeBtn.className = "remove-btn";
 
+        const changeQTY = document.createElement('input');
+        changeQTY.type = 'number';
+        changeQTY.max = product.quantity;
+        changeQTY.min = 1;
+        // changeQTY.style.display = 'none';
+
+        const confirmChangeBtn = document.createElement('button');
+        confirmChangeBtn.innerHTML = 'Confirm Change'
+
         detailsDiv.appendChild(name);
         detailsDiv.appendChild(price);
         detailsDiv.appendChild(quantity);
@@ -66,9 +79,13 @@
 
         itemDiv.appendChild(img);
         itemDiv.appendChild(detailsDiv);
-        container.appendChild(itemDiv);
+        itemDiv.appendChild(changeQTY);
+        itemDiv.appendChild(confirmChangeBtn);
 
-        total += parseFloat(element.price);
+        container.appendChild(itemDiv);
+        console.log(container)
+
+        total += parseFloat(product.price * product.quantity);
 
         // Add event listeners to the edit and remove buttons
         // Remove

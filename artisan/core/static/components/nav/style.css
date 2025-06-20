@@ -36,6 +36,7 @@
 .nav-links {
     display: flex;
     align-items: center;
+    justify-content: right;
     gap: 1.5rem;
     transition: max-height 0.3s ease-out;
     min-width: 450px;
