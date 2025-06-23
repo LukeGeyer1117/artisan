@@ -1,3 +1,5 @@
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+
 document.addEventListener('DOMContentLoaded', function () {
     
     // Handle a signup form submission
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log(data);
 
-        fetch('http://localhost:8000/api/artisan/', {
+        fetch(`${API_BASE_URL}/artisan/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -33,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(result => {
             let artisanID = result.id
             // Call fetch to create an inventory associated with artisan
-            return fetch('http://localhost:8000/api/inventories/', {
+            return fetch(`${API_BASE_URL}/inventories/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -65,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         password: document.getElementById('password1').value
         }
 
-        fetch('http://localhost:8000/api/login/', {
+        fetch(`${API_BASE_URL}/login/`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data),

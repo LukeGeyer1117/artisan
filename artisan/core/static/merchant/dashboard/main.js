@@ -12,11 +12,13 @@ and current orders to display for the merchant
 */
 
 let products = []
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const signOutBtn = document.getElementById('sign-out-button');
     signOutBtn.addEventListener('click', (event) => {
-        fetch('http://localhost:8000/api/session', {
+        fetch(`${API_BASE_URL}/session`, {
             method: 'GET'
         })
         .then(response => {
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     })
 
-    fetch('http://localhost:8000/api/inventory/', {
+    fetch(`${API_BASE_URL}/inventory/`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -122,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         formData.append('image', form.querySelector('#edit-image-file').files[0]);
                         formData.append('_method', 'PATCH');
 
-                        await fetch('http://localhost:8000/api/product/', {
+                        await fetch(`${API_BASE_URL}/product/`, {
                             method: 'POST',
                             body: formData,
                             credentials: 'include'
@@ -155,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     confirmDeleteBtn.addEventListener('click', function () {
                         // fetch request to delete
-                        fetch('http://localhost:8000/api/product/?id='+element.id, {
+                        fetch(`${API_BASE_URL}/product/?id=`+element.id, {
                             method: 'DELETE',
                             credentials: 'include'
                         })
@@ -211,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('quantity', form.querySelector('#quantity').value);
         formData.append('image', form.querySelector('#image-file').files[0]);
 
-        fetch('http://localhost:8000/api/product/', {
+        fetch(`${API_BASE_URL}/product/`, {
             method: 'POST',
             body: formData,
             credentials: 'include' // to send session cookie

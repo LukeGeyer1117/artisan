@@ -1,3 +1,4 @@
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 // Toggle nav on small screens
   document.addEventListener("DOMContentLoaded", function () {
@@ -12,7 +13,7 @@
     const slug = document.body.dataset.slug;
     console.log(slug);
 
-    fetch(`http://127.0.0.1:8000/api/${slug}/products/`, {
+    fetch(`${API_BASE_URL}/${slug}/products/`, {
       method: 'GET',
     })
     .then(response => {
@@ -125,7 +126,7 @@ window.addEventListener('click', (e) => {
 
 function addItemToCart(product, quantity) {
   console.log(product.id)
-  fetch('http://127.0.0.1:8000/api/cart/', {
+  fetch(`${API_BASE_URL}/cart/`, {
     method: 'POST',
     credentials: 'include',
     headers: {

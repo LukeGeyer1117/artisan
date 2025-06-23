@@ -1,0 +1,358 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
+    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        }
+
+        main {
+        flex: 1;
+        }
+
+
+        body {
+            margin: 0;
+        }
+
+        .cart-empty {
+        text-align: center;
+        padding: 5rem 2rem;
+        font-family: 'Merriweather', serif;
+        color: #2f3e46;
+        }
+
+        .cart-empty h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #1f2d3d;
+        }
+
+        .cart-empty p {
+        font-size: 1.1rem;
+        color: #5c677d;
+        margin-bottom: 2rem;
+        }
+
+        .cart-return-link {
+        display: inline-block;
+        background-color: #2f3e46;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        }
+
+        .cart-return-link:hover {
+        background-color: #1d2a33;
+        }
+
+        .cart-contents {
+        max-width: 960px;
+        margin: 4rem auto;
+        padding: 2rem;
+        font-family: 'Merriweather', serif;
+        color: #2f3e46;
+        display: none;
+        }
+
+        .cart-contents h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: #1f2d3d;
+        }
+
+        .cart-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        }
+
+        .cart-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 1rem;
+        background-color: #f9f9f7;
+        }
+
+        .cart-item img {
+        width: 100px;
+        height: auto;
+        border-radius: 6px;
+        }
+
+        .cart-item-details {
+        flex-grow: 1;
+        }
+
+        .cart-item-details h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.2rem;
+        }
+
+        .cart-item-details p {
+        margin: 0.25rem 0;
+        color: #5c677d;
+        }
+
+        .edit-btn {
+        margin-top: 0.5rem;
+        margin-right: 0.5rem;
+        color: #1d2a33;
+        border: none;
+        border-bottom: 2px solid #1d2a33;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        }
+
+        .edit-btn:hover {
+        background-color: #f9a825;
+        }
+
+
+        .remove-btn {
+        margin-top: 0.5rem;
+        color:#1d2a33;
+        border: none;
+        border-bottom: 2px solid #1d2a33;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        }
+
+        .remove-btn:hover {
+        color: white;
+        background-color: #b42b35;
+        }
+
+        .edit-btn, .remove-btn {
+        width: 6rem;
+        }
+
+        .cart-total-section {
+        margin-top: 2rem;
+        text-align: right;
+        font-size: 1.2rem;
+        }
+
+        .checkout-btn {
+        margin-top: 1rem;
+        padding: 0.75rem 2rem;
+        background-color: #2f3e46;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        }
+
+        .checkout-btn:hover {
+        background-color: #1d2a33;
+        }
+
+    </style>
+</head>
+<body>
+    {% block nav %}
+        {% include 'client/components/nav/nav.html' with slug=artisan.slug %}
+    {% endblock nav %}
+
+    <main>
+        <!-- To be shown if the cart is empty -->
+        <section class="cart-empty">
+            <h2>Your cart is currently empty</h2>
+            <p>Looks like you haven't added anything to your cart yet.</p>
+            <a href="{% url 'shop' artisan.slug %}" class="cart-return-link">Browse the Shop</a>
+        </section>
+
+        <!-- To be shown if the cart is not empty -->
+        <section class="cart-contents">
+            <h2>Your Cart</h2>
+            <div class="cart-items-list" id="cart-items-list">
+                <!-- JavaScript will populate cart items here -->
+            </div>
+            <div class="cart-total-section">
+                <p><strong>Total (w/o tax):</strong> $<span id="cart-total">0.00</span></p>
+                <button class="checkout-btn">Proceed to Checkout</button>
+            </div>
+        </section>
+
+    </main>
+
+    {% block footer %}
+        {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
+    {% endblock footer %}
+
+
+<script>
+    const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+
+    // Toggle nav on small screens
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.querySelector(".menu-toggle");
+        const links = document.querySelector(".nav-links");
+
+        toggle.addEventListener("click", () => {
+        links.classList.toggle("open");
+        });
+
+        fetch(`${API_BASE_URL}/cart`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+        })
+        .then(response => {
+        if (!response.ok) throw new Error("Failed to retrieve cart");
+        return response.json();
+        })
+        .then(data => {
+        if (data.products.length > 0) {
+            document.querySelector(".cart-empty").style.display = 'none';
+            document.querySelector(".cart-contents").style.display = 'block';
+        }
+        const container = document.getElementById("cart-items-list");
+        const totalDisplay = document.getElementById("cart-total");
+        let total = 0;
+
+        const products = data.products;
+
+        products.forEach(product => {
+            const product_id = product.id;
+
+            // Create cart items for all product_ids in a session cart
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "cart-item";
+
+            const img = document.createElement("img");
+            img.src = '/media/' + product.image || "/static/images/default-product.png";
+            img.alt = product.name;
+
+            const detailsDiv = document.createElement("div");
+            detailsDiv.className = "cart-item-details";
+
+            const name = document.createElement("h3");
+            name.textContent = product.name;
+
+            const price = document.createElement("p");
+            price.textContent = `Price: $${product.price}`;
+
+            const quantity = document.createElement("p");
+            quantity.textContent = `Quantity: ${data.raw_data[product.id]}`;
+
+            const editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.className = "edit-btn";
+
+            const removeBtn = document.createElement("button");
+            removeBtn.textContent = "Remove";
+            removeBtn.className = "remove-btn";
+
+            const changeQTY = document.createElement('input');
+            changeQTY.type = 'number';
+            changeQTY.max = product.quantity;
+            changeQTY.min = 1;
+            changeQTY.value = data.raw_data[product.id];
+            // changeQTY.style.display = 'none';
+
+            const confirmChangeBtn = document.createElement('button');
+            confirmChangeBtn.innerHTML = 'Confirm Change'
+
+            detailsDiv.appendChild(name);
+            detailsDiv.appendChild(price);
+            detailsDiv.appendChild(quantity);
+            detailsDiv.appendChild(editBtn);
+            detailsDiv.appendChild(removeBtn);
+
+            itemDiv.appendChild(img);
+            itemDiv.appendChild(detailsDiv);
+            itemDiv.appendChild(changeQTY);
+            itemDiv.appendChild(confirmChangeBtn);
+
+            changeQTY.style.display = 'none';
+            confirmChangeBtn.style.display = 'none';
+
+            container.appendChild(itemDiv);
+
+            total += parseFloat(product.price * data.raw_data[product.id]);
+
+            // Add event listeners to the edit and remove buttons
+            // Remove
+            removeBtn.addEventListener('click', async function() {
+
+            await fetch(`${API_BASE_URL}/cart/`, {
+                method: "DELETE",
+                credentials: 'include',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({product_id: product_id})
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Could not remove product from cart!");
+                return response.json();
+            })
+            .then(data => {
+                window.location.reload();
+            })
+            })
+
+            // Edit
+            editBtn.addEventListener('click', async function () {
+            // Appear the mod button and field
+            changeQTY.style.display = 'block';
+            confirmChangeBtn.style.display = 'block';
+            
+            // If customer confirms, update the session cart info
+            confirmChangeBtn.addEventListener('click', function () {
+                fetch(`${API_BASE_URL}/cart/`, {
+                method: 'PUT',
+                credentials: 'include', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({product_id: product_id, quantity: changeQTY.value})
+                })
+                .then(response => {
+                if (!response.ok) throw new Error("Could not change product-in-cart quantity");
+                return response.json();
+                })
+                .then(data => {
+                window.location.reload();
+                })
+                .catch (error => {
+                console.error(error);
+                alert("Could not update cart item!");
+                }) 
+            })
+            })
+        });
+
+        totalDisplay.textContent = total.toFixed(2);
+        })
+    });
+</script>
+</body>
+</html>

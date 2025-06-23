@@ -1,6 +1,5 @@
 ### TODO
 
-    * Change shop to show actual products
     * Take customers to an order summary page from their cart
         * Integrate payment redirect, but for now just allow the customer side to confirm the order
     * Show all of a merchant's active orders in their portal

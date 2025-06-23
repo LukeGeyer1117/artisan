@@ -12,44 +12,48 @@ from .models import Artisan, Inventory, Product, Order, OrderItems
 
 # Create your views here.
 def splash(request):
-    return render(request, 'client/customer/splash/splash.html')
+    return render(request, 'client/customer/splash.html')
 
 def home(request, slug=None):
     if 'cart-product-ids' not in request.session:
         request.session['cart-product-ids'] = []
     if slug:
         artisan = get_object_or_404(Artisan, slug=slug)
-        return render(request, 'client/customer/home/home.html', {'artisan': artisan})
+        return render(request, 'client/customer/home.html', {'artisan': artisan})
     else:
-        return render(request, 'client/customer/home/home.html')
+        return render(request, 'client/customer/home.html')
 
 def slug_home(request, slug):
     print(slug)
-    return render(request, 'client/customer/home/home.html', {'slug': slug})
+    return render(request, 'client/customer/home.html', {'slug': slug})
 
 def gallery(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/gallery/gallery.html', {'artisan': artisan})
+    return render(request, 'client/customer/gallery.html', {'artisan': artisan})
 
 def shop(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/shop/shop.html', {'artisan': artisan})
+    return render(request, 'client/customer/shop.html', {'artisan': artisan})
 
 def cart(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/cart/cart.html', {'artisan': artisan})
+    return render(request, 'client/customer/cart.html', {'artisan': artisan})
+
+def checkout(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/checkout.html', {'artisan': artisan})
 
 def custom(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
-    return render(request, 'client/customer/custom-order-portal/custom.html', {'artisan': artisan})
+    return render(request, 'client/customer/custom.html', {'artisan': artisan})
 
 def login_view(request):
-    return render(request, 'client/merchant/login/login.html')
+    return render(request, 'client/merchant/login.html')
 
 def dashboard_view(request):
     if 'artisan_id' not in request.session:
-        return render(request, 'client/merchant/login/login.html')
-    return render(request, 'client/merchant/dashboard/index.html')
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/dashboard.html')
 
 @csrf_exempt
 def clear_session(request):
@@ -242,6 +246,7 @@ def get_all_products(request):
 
 @csrf_exempt    
 def add_product_to_cart(request):
+    # Called when customer adds an item to their cart
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -261,6 +266,7 @@ def add_product_to_cart(request):
                 return JsonResponse({'error': 'Could not add product id to cart'}, status=400)
         except Exception as e:
             return JsonResponse({'error': f'could not add to cart: {e}'}, status=500)
+    # Automatically called to get all the customer's cart items
     elif request.method == "GET":
         try:
             raw_items = request.session.get('cart-product-ids', [])
@@ -275,22 +281,23 @@ def add_product_to_cart(request):
             return JsonResponse({'products': list(products), 'raw_data': raw_items}, safe=False, status=200)
         except Exception as e:
             return JsonResponse({'error': f'could not retrieve cart products: {e}'}, status=500)
-    # elif request.method == "PUT":
-    #     try:
-    #         data = json.loads(request.body)
-    #         if not data or 'product_id' not in data or 'quantity' not in data:
-    #             return JsonResponse({'error': 'Invalid Data'})
-    #         try:
-    #             cart = request.session.get('cart-product-ids')
-    #             cart[data['product_id']] = int(data['quantity'])
-    #             request.session['cart-product-ids'] = cart
+    # Allow the customer to change the quantity of an item in their cart
+    elif request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+            if not data or 'product_id' not in data or 'quantity' not in data:
+                return JsonResponse({'error': 'Invalid Data'})
+            try:
+                cart = request.session.get('cart-product-ids')
+                cart[data['product_id']] = int(data['quantity'])
+                request.session['cart-product-ids'] = cart
 
-    #             print(request.session['cart-product-ids'])
-    #             return JsonResponse({'message': 'Product Quantity Edited in Cart', 'value': data['quantity']}, status=200)
-    #         except:
-    #             return JsonResponse({'error': 'Could not edit item-in-cart quantity'}, status=400)
-    #     except Exception as e:
-    #         return JsonResponse({'error': f'Could not edit cart product: {e}'}, status=500)
+                return JsonResponse({'message': 'Product Quantity Edited in Cart', 'value': data['quantity']}, status=200)
+            except:
+                return JsonResponse({'error': 'Could not edit item-in-cart quantity'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': f'Could not edit cart product: {e}'}, status=500)
+    # Allow the customer to remove a product from their cart
     elif request.method == "DELETE":
         try:
             data = json.loads(request.body)
@@ -320,6 +327,8 @@ def add_product_to_cart(request):
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
+### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
+### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"
 def generate_unique_slug(shop_name):
     base_slug = slugify(shop_name)
     slug = base_slug

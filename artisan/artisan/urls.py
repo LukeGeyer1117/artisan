@@ -28,6 +28,7 @@ urlpatterns = [
     path('gallery/<slug:slug>/', views.gallery, name="gallery"),
     path('shop/<slug:slug>/', views.shop, name="shop"),
     path('cart/<slug:slug>/', views.cart, name="cart"),
+    path('checkout/<slug:slug>/', views.checkout, name="checkout"),
     path('custom/<slug:slug>/', views.custom, name="custom"),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
