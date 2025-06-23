@@ -29,7 +29,23 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = "/login/"
         })
     })
+    // Get all the orders assigned to the artisan
+    fetch(`${API_BASE_URL}/orders/`, {
+        method: 'GET',
+        credentials: 'include'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Could not fetch orders!");
+        return response.json();
+    })
+    .then(data => {
+        data.orders.forEach(order => {
+            console.log(order);
+            
+        })
+    })
 
+    // Get all the Products in the artisans inventory
     fetch(`${API_BASE_URL}/inventory/`, {
         method: 'GET',
         credentials: 'include'
@@ -41,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(result => {
         let inventoryItems = document.getElementById('inventory-items-flex');
         result.forEach(element => {
-            console.log(element);
             // Create an inventory item for each retrieved
             let inventoryItem = document.createElement('div');
             inventoryItem.className = 'inventory-item';

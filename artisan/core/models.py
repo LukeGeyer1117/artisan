@@ -46,6 +46,10 @@ class Order(models.Model):
     customer_name = models.CharField(max_length=100)
     customer_email = models.EmailField(max_length=100)
     customer_phone = models.CharField(max_length=12)
+    shipping_addr = models.CharField(max_length=150, default='', blank=False)
+    city = models.CharField(max_length=40, default='', blank=False)
+    state = models.CharField(max_length=2, default='', blank=False)
+    zip_code = models.CharField(max_length=10, default='', blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=20,
@@ -59,6 +63,13 @@ class Order(models.Model):
     )
     artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.customer_name} - {self.customer_email} - {self.customer_phone} - {self.created_at}"
+
 class OrderItems(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=5, decimal_places=0, default=0, blank=False)
+
+    def __str__(self):
+        return f"Product: {self.product.id} - Order: {self.order.id} - Quantity: {self.quantity}"

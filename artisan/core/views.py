@@ -43,6 +43,10 @@ def checkout(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
     return render(request, 'client/customer/checkout.html', {'artisan': artisan})
 
+def order_complete(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/order-complete.html', {'artisan': artisan})
+
 def custom(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
     return render(request, 'client/customer/custom.html', {'artisan': artisan})
@@ -100,6 +104,82 @@ def create_inventory(request):
             return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+# Create a new order, and order item items
+@csrf_exempt
+def order(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            fullname = data.get('full_name')
+            email = data.get('email')
+            phone = data.get('phone')
+            shipping_addr = data.get('shipping_addr')
+            city = data.get('city')
+            state = data.get('state')
+            zip_code = data.get('zip_code')
+            slug = data.get('slug')
+
+            order = Order.objects.create(
+                customer_name=fullname,
+                customer_email=email,
+                customer_phone=phone,
+                shipping_addr=shipping_addr,
+                city=city,
+                state=state,
+                zip_code=zip_code,
+                artisan=Artisan.objects.get(slug=slug)
+            )
+
+            products = request.session.get('cart-product-ids')
+            orderItems = []
+            for p in products:
+                orderitem = OrderItems.objects.create(
+                    order=order,
+                    product=Product.objects.get(id=p),
+                    quantity=int(products[p])
+                )
+                orderItems.append(orderitem)
+            request.session['cart-product-ids'] = {}
+            return JsonResponse({'message': "Order Created", 'order': order.id, 'order-items': len(orderItems)},status=200)
+        
+        except Artisan.DoesNotExist:
+            return JsonResponse({'error': 'Artisan not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': "Method Not Allowed"}, status=405)
+
+# Get all orders under a certain merchant
+@csrf_exempt
+def orders(request):
+    if request.method == 'GET':
+        try:
+            artisan_id = request.session.get('artisan_id')
+            artisan = Artisan.objects.get(id=artisan_id)
+
+            orders = Order.objects.filter(artisan=artisan)
+            orders_data = [
+                {
+                    'id': order.id,
+                    'customer_name': order.customer_name,
+                    'customer_email': order.customer_email,
+                    'customer_phone': order.customer_phone,
+                    'shipping_addr': order.shipping_addr,
+                    'city': order.city,
+                    'state': order.state,
+                    'zip_code': order.zip_code,
+                    'status': order.status,
+                    'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                }
+                for order in orders
+            ]
+
+            return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
+        except Order.DoesNotExist:
+            return JsonResponse({'message': 'No Orders Found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': f"Could not get orders: {e}"})
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
 
 @csrf_exempt
 def login_artisan(request):
@@ -347,6 +427,16 @@ def api_checkout(request):
         except Exception as e:
             return JsonResponse({'error': f'Failed to retrieve a checkout: {e}'}, status=500)
     return JsonResponse({"error": 'Method not allowed'}, status=405)
+
+# This is just a throwaway endpoint to simulate processing a payment.
+# This will always return a success.
+@csrf_exempt
+def process_payment(request):
+    if request.method == "POST":
+        return JsonResponse({'message': 'Payment Processed Successfully', 'payment_status': "SUCCEED"}, status=200)
+    else:
+        return JsonResponse({'message': 'Payment Processed Successfully, but use the right method!!'}, status=200)
+
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"
