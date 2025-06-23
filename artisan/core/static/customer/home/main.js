@@ -22,7 +22,7 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
     })
     .then(result => {
       result.forEach(element => {
-        // console.log(element);
+        console.log(element);
 
         // Select the parent section
         const section = document.getElementById('products-available');
@@ -71,6 +71,11 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
 
           // Add an event listener to 'Add to Cart' button to add it to session data cart
           document.getElementById("modal-add-to-cart-btn").addEventListener('click', function () {
+            if (element.quantity == '0') {
+              alert("That product is out of stock. Check back soon for restocks!");
+              document.getElementById('product-modal').style.display = 'none';
+              return;
+            }
             let quantityDesired = document.getElementById('quantity-desired').value;
             addItemToCart(element, quantityDesired);
             const modal = document.getElementById('product-modal');

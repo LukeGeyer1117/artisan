@@ -326,6 +326,27 @@ def add_product_to_cart(request):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@csrf_exempt
+def api_checkout(request):
+    # Create the session checkout data
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            request.session['checkout-total'] = data['total']
+
+            return JsonResponse({'message': "Checkout Created"}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': f'Failed to create a checkout: {e}'}, status=500)
+    # Get the session checkout data
+    elif request.method == "GET":
+        try:
+            total = request.session.get('checkout-total', 0)
+            if total == 0:
+                return JsonResponse({'error': 'No Checkout Total'})
+            return JsonResponse({'message': 'Found total', 'total': total})
+        except Exception as e:
+            return JsonResponse({'error': f'Failed to retrieve a checkout: {e}'}, status=500)
+    return JsonResponse({"error": 'Method not allowed'}, status=405)
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"

@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-slug="{{ artisan.slug }}">
     {% block nav %}
         {% include 'client/components/nav/nav.html' with slug=artisan.slug %} 
     {% endblock nav %}
@@ -53,7 +53,6 @@
         {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
-<body data-slug="{{ artisan.slug }}"></body>
 <script src="{% static 'customer/shop/shop.js' %}"></script>
 </body>
 </html>

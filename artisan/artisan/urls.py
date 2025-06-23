@@ -28,7 +28,7 @@ urlpatterns = [
     path('gallery/<slug:slug>/', views.gallery, name="gallery"),
     path('shop/<slug:slug>/', views.shop, name="shop"),
     path('cart/<slug:slug>/', views.cart, name="cart"),
-    path('checkout/<slug:slug>/', views.checkout, name="checkout"),
+    path('checkout/<slug:slug>', views.checkout, name="checkout"),
     path('custom/<slug:slug>/', views.custom, name="custom"),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
@@ -40,5 +40,6 @@ urlpatterns = [
     path('api/products/', views.get_all_products),
     path('api/login/', views.login_artisan),
     path('api/cart/', views.add_product_to_cart),
+    path('api/checkout/', views.api_checkout, name="checkout"),
     path('api/session/', views.clear_session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
