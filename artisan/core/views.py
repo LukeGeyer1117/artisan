@@ -157,7 +157,7 @@ def orders(request):
             artisan_id = request.session.get('artisan_id')
             artisan = Artisan.objects.get(id=artisan_id)
 
-            orders = Order.objects.filter(artisan=artisan)
+            orders = Order.objects.filter(artisan=artisan).order_by('created_at')
             orders_data = [
                 {
                     'id': order.id,
@@ -179,6 +179,22 @@ def orders(request):
             return JsonResponse({'message': 'No Orders Found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': f"Could not get orders: {e}"})
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+@csrf_exempt
+def order_items(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            order_id = data['order_id']
+
+            order = Order.objects.get(id=order_id)
+
+            orderItems = OrderItems.objects.filter(order=order).values()
+            print(orderItems)
+            return JsonResponse({'message': 'Found Order Items', 'orderItems': list(orderItems)})
+        except Exception as e:
+            return JsonResponse({'error': "Error getting order items " + str(e)})
     return JsonResponse({'error': 'Method Not Allowed'}, status=405)
 
 @csrf_exempt

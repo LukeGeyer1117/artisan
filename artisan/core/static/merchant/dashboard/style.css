@@ -11,8 +11,8 @@ body {
 .dashboard-main {
   flex: 1;
   padding: 3rem 0rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-main h1 {
@@ -23,9 +23,12 @@ body {
 
 .dashboard-sections {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 2rem;
   justify-content: space-between;
+  width: 80vw;
+  max-width: 1200px;
+  margin: 0vw auto 0vw auto;
 }
 
 .dashboard-card {
@@ -37,7 +40,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 280px;
+  min-width: 280px; 
+  max-height: 600px;
+  overflow-y: scroll;
+  align-items: center;
 }
 
 .dashboard-card h2 {
@@ -65,6 +71,39 @@ body {
 
 .dashboard-card button:hover {
   background-color: #3e505a;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  font-family: 'Merriweather', serif;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+  color: #2b3a42;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+tr:last-child td {
+  border-bottom: none;
 }
 
 .inventory-section {
@@ -165,12 +204,6 @@ body {
 
 .primary-btn:hover {
   background-color: #3e505a;
-}
-
-#inventory-section {
-    max-height: 600px;
-    overflow-y: scroll;
-    align-items: center;
 }
 
 /* Modal styles */

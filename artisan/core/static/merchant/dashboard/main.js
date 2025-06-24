@@ -39,11 +39,64 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
     })
     .then(data => {
+        let ordersTable = document.getElementById('orders-table');
+
         data.orders.forEach(order => {
             console.log(order);
             
-        })
+            let orderRow = document.createElement('tr');
+
+            // Define the fields you want in order
+            const fields = [
+                'customer_name', 
+                'customer_email', 
+                'created_at',
+                'status'
+            ];
+
+            fields.forEach(field => {
+                if (field != 'status'){
+                    const td = document.createElement('td');
+                    td.textContent = order[field];
+                    orderRow.appendChild(td);
+                } else {
+                    const td = document.createElement('td');
+                    const img = document.createElement('img');
+                    if (order[field] == 'pending') {
+                        img.src = '/media/images/pending_24dp_EAC452_FILL0_wght400_GRAD0_opsz24.svg'
+                    } else if (order[field] == 'approved') {
+                        img.src = '/media/images/check_circle_24dp_48752C_FILL0_wght400_GRAD0_opsz24.svg'
+                    } else if (order[field] == 'denied') {
+                        img.src = '/media/images/block_24dp_BB271A_FILL0_wght400_GRAD0_opsz24.svg'
+                    }
+                    td.appendChild(img);
+                    orderRow.appendChild(td);
+                }
+            });
+
+            ordersTable.appendChild(orderRow);
+
+            orderRow.addEventListener('click', async function () {
+                // Fetch the OrderItems attached to this order ID
+                await fetch(`${API_BASE_URL}/orderitems/`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'order_id': order.id})
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Could not fetch Order Items!");
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data.orderItems);
+                })
+            })
+        });
     })
+
 
     // Get all the Products in the artisans inventory
     fetch(`${API_BASE_URL}/inventory/`, {
