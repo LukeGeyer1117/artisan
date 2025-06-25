@@ -36,29 +36,41 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
         img.src = '/media/' + element.image;
         productDiv.appendChild(img);
 
+        // Create a product info div
+        const productInfo = document.createElement('div');
+        productInfo.className = 'product-info';
+
+        // Create product name div
+        const productName = document.createElement('div');
+        productName.className = 'info-subdiv';
+
+        // Create and append product type
+        const type = document.createElement('p');
+        type.className = 'product-type';
+        type.textContent = 'Product';
+        productName.append(type);
+
         // Create and append product name
         const h2 = document.createElement('h2');
         h2.className = 'product-name';
         h2.textContent = element.name;
-        productDiv.appendChild(h2);
+        productName.appendChild(h2);
+
+        productInfo.append(productName);
+
+        // Create and append the price and add cart div
+        const priceDiv = document.createElement('div');
+        priceDiv.className = 'info-subdiv';
 
         // Create and append price
         const h4 = document.createElement('h4');
         h4.className = 'price';
         h4.textContent = `$${element.price}`;
-        productDiv.appendChild(h4);
+        priceDiv.appendChild(h4);
 
-        // Create and append description
-        const p = document.createElement('p');
-        p.className = 'product-description-in-brief';
+        productInfo.appendChild(priceDiv);
 
-        const maxLength = 25;
-        const description = element.description || '';
-        p.textContent = description.length > maxLength 
-          ? description.slice(0, maxLength) + '...'
-          : description;
-
-        productDiv.appendChild(p);
+        productDiv.append(productInfo);
 
 
         // Insert before the "See All Products" link
