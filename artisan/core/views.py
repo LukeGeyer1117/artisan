@@ -60,12 +60,14 @@ def dashboard_view(request):
     return render(request, 'client/merchant/dashboard.html')
 
 @csrf_exempt
-def clear_session(request):
-    request.session.flush()  # Clears all session data
-    return JsonResponse({'message': 'Session cleared'})
+def session(request):
+    if request.method == 'DELETE':
+        request.session.flush()  # Clears all session data
+        return JsonResponse({'message': 'Session cleared'})
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
 
 @csrf_exempt
-def create_artisan(request):
+def artisan(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         artisan = Artisan.objects.create(
@@ -80,6 +82,18 @@ def create_artisan(request):
             accepting_custom_orders = data.get('accepting_custom_orders', False),
         )
         return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
+    elif request.method == 'GET':
+        artisan_id = request.session.get('artisan_id', '')
+        # Make sure there is an artisan logged in
+        if artisan_id == '':
+            return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
+        
+        try:
+            artisan = Artisan.objects.filter(id=artisan_id).values().first()
+            return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
+        except Artisan.DoesNotExist:
+            return JsonResponse({'error': "No Artisan Found!"}, status=404)
+        
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 
@@ -226,14 +240,12 @@ def login_artisan(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
-@require_http_methods(['POST', 'DELETE'])
+@require_http_methods(['POST', 'DELETE', 'GET'])
 def product(request):
     actual_method = request.POST.get('_method', '').upper()
     if request.method == 'POST':
         # Check to see if the acutal method tag is a 'PATCH'
         if actual_method == 'PATCH':
-            print("POST data:", request.POST)
-            print("FILES:", request.FILES)
             try:
                 product_id = request.POST.get('id')
                 if not product_id:
@@ -303,10 +315,23 @@ def product(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
+def get_product(request, product_id):
+    if request.method == 'GET':
+        try:    
+            product = Product.objects.filter(id=product_id).values().first()
+
+            if not product:
+                return JsonResponse({'error': 'Product not found'}, status=404)
+
+            return JsonResponse({'message': 'Found proudct', 'product': product}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': f'Error finding product: {e}'})
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+@csrf_exempt
 def get_inventory(request):
     if request.method == 'GET':
         artisan_id = request.session.get('artisan_id')
-        print("artisan id:", artisan_id)
         if not artisan_id:
             return JsonResponse({'error': 'Not authenticated'}, status=401)
         

@@ -13,13 +13,29 @@ and current orders to display for the merchant
 
 let products = []
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+let artisan;
 
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+    // Get the Artisan information at page load
+    await fetch(`${API_BASE_URL}/artisan`, {
+        method: 'GET',
+        credentials: 'include',
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Could Not Get Artisan Info!");
+        return response.json();
+    })
+    .then(data => {
+        artisan = data.artisan;
+        document.querySelector('.dashboard-main h1').innerHTML = 'Welcome, ' +  data.artisan.username;
+    })
+
+    // Handle Signout button click
     const signOutBtn = document.getElementById('sign-out-button');
     signOutBtn.addEventListener('click', (event) => {
-        fetch(`${API_BASE_URL}/session`, {
-            method: 'GET'
+        fetch(`${API_BASE_URL}/session/`, {
+            method: 'DELETE'
         })
         .then(response => {
             if (!response.ok) throw new Error('Failed to clear session data.');
@@ -29,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = "/login/"
         })
     })
+
     // Get all the orders assigned to the artisan
     fetch(`${API_BASE_URL}/orders/`, {
         method: 'GET',
@@ -39,10 +56,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
     })
     .then(data => {
+        // Populate the orders table with active orders
         let ordersTable = document.getElementById('orders-table');
 
         data.orders.forEach(order => {
-            console.log(order);
             
             let orderRow = document.createElement('tr');
 
@@ -77,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ordersTable.appendChild(orderRow);
 
             orderRow.addEventListener('click', async function () {
+
                 // Fetch the OrderItems attached to this order ID
                 await fetch(`${API_BASE_URL}/orderitems/`, {
                     method: 'POST',
@@ -91,7 +109,64 @@ document.addEventListener('DOMContentLoaded', function () {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data.orderItems);
+                    // Populate the customer summary table with customer contact and shipping info
+                    document.querySelector('.summary').style.display = 'flex';
+                    document.querySelector("#tr-customer-name td").innerHTML = order.customer_name;
+                    document.querySelector("#tr-customer-contact td").innerHTML = order.customer_email + " / " + order.customer_phone;
+                    document.querySelector("#tr-customer-addr td").innerHTML = order.shipping_addr;
+                    document.querySelector("#tr-customer-city td").innerHTML = order.city;
+                    document.querySelector("#tr-customer-state td").innerHTML = order.state;
+                    document.querySelector("#tr-customer-zip td").innerHTML = order.zip_code;
+
+                    // Create a summary of the items in the order for the merchant to fulfil
+                    const orderItems = data.orderItems;
+                    let subtotal = 0;
+                    document.querySelector("#td-order-date").innerHTML = order.created_at;
+                    document.querySelector("#td-order-status select").value = order.status;
+                    document.getElementById('order-products-scroll').innerHTML = '';
+                    orderItems.forEach(item => {
+                        fetch(`${API_BASE_URL}/product/${encodeURIComponent(item.product_id)}/`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Could not find product!")
+                            return response.json()
+                        })
+                        .then(data => {
+                            const product = data.product;
+                            const price = parseFloat(product.price);
+                            const quantity = parseFloat(item.quantity);
+
+                            subtotal += quantity * price;
+                            document.getElementById("td-order-subtotal").innerHTML = '$' + subtotal;
+
+                            // Create little product things
+                            // Create an inventory item for each retrieved
+                            let inventoryItem = document.createElement('div');
+                            inventoryItem.className = 'inventory-item';
+                            let inventoryItemImg = document.createElement('img');
+                            inventoryItemImg.src = '/media/' + product.image;
+                            inventoryItemImg.alt = "inventory item";
+                            inventoryItem.appendChild(inventoryItemImg);
+
+                            let inventoryItemDetails = document.createElement('div');
+                            inventoryItemDetails.className = 'inventory-details';
+
+                            let inventorydetailsh3 = document.createElement('h3');
+                            inventorydetailsh3.innerText = product.name;
+                            let inventorydetailsp = document.createElement('p');
+                            inventorydetailsp.innerHTML = 'Q: '+ item.quantity;
+
+                            inventoryItemDetails.appendChild(inventorydetailsh3);
+                            inventoryItemDetails.appendChild(inventorydetailsp);
+                            inventoryItem.appendChild(inventoryItemDetails);
+
+                            document.getElementById('order-products-scroll').appendChild(inventoryItem);
+                        })
+                    })
                 })
             })
         });

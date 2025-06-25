@@ -24,14 +24,49 @@
     <div class="dashboard-sections">
       <section class="dashboard-card" id="orders-section">
         <h2>Orders to Complete</h2>
-        <table id="orders-table">
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Placed At</th>
-            <th>Status</th>
-          </tr>
-        </table>
+
+        <div id="table-holder">
+          <table id="orders-table">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Order Placed</th>
+              <th>Status</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="summary" id="order-summary">
+          <div class="summary-details">
+            <label for="customer-summary-table"><h3>Info</h3></label>
+            <table class='summary-table' id="customer-summary-table">
+              <tr id="tr-customer-name"><th>Customer Name:</th><td></td><td></td></tr>
+              <tr id="tr-customer-contact"><th>Email/Phone#:</th><td></td><td></td></tr>
+              <tr id="tr-customer-addr"><th>Shipping Address:</th><td></td><td></td></tr>
+              <tr id="tr-customer-city"><th>City:</th><td></td><td></td></tr>
+              <tr id="tr-customer-state"><th>State:</th><td></td><td></td></tr>
+              <tr id="tr-customer-zip"><th>ZipCode:</th><td></td><td></td></tr>
+              <tr id="tr-order-info">
+                <td id="td-order-subtotal"></td>
+                <td id="td-order-date"></td>
+                <td id="td-order-status">
+                  <select name="order-status" id="order-status-select">
+                    <option value="pending">pending</option>
+                    <option value="approved">approved</option>
+                    <option value="completed">completed</option>
+                    <option value="denied">denied</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="summary-details">
+            <label for="order-products-scroll"><h3>Order Items</h3></label>
+            <div id="order-products-scroll"></div>
+          </div>
+
+        </div>
       </section>
 
       <section class="dashboard-card" id="custom-section">
@@ -49,6 +84,13 @@
       </section>
     </div>
   </main>
+
+  <!-- Order Summary Modal -->
+  <div class="modal-overlay" id="order-summary-modal">
+    <div class="modal-content">
+      <p>This is the modal where order information will appear!</p>
+    </div>
+  </div>
 
   <!-- Item Summary Modal -->
   <div class="modal-overlay" id="inventory-item-modal">

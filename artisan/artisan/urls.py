@@ -33,11 +33,12 @@ urlpatterns = [
     path('order-complete/<slug:slug>', views.order_complete, name="order_complete"),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('api/artisan/', views.create_artisan),
+    path('api/artisan/', views.artisan),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),
     path('api/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
     path('api/product/', views.product),
+    path('api/product/<str:product_id>/', views.get_product),
     path('api/products/', views.get_all_products),
     path('api/login/', views.login_artisan),
     path('api/cart/', views.add_product_to_cart),
@@ -46,5 +47,5 @@ urlpatterns = [
     path('api/order/', views.order, name="order"),
     path('api/orders/', views.orders, name="orders"),
     path('api/orderitems/', views.order_items, name="orderitems"),
-    path('api/session/', views.clear_session)
+    path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
