@@ -1,23 +1,17 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template Artisan - Home</title>
+{% block title %}Home{% endblock %}
+
+{% block extra_head %}
     <link rel="stylesheet" href="{% static 'customer/home/style.css' %}">
-    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
-    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
-</head>
-<body data-slug="{{ artisan.slug }}">
+{% endblock %}
+
+{% block content %}
+
     {% block nav %}
         {% include 'client/components/nav/nav.html' with slug=artisan.slug%}
     {% endblock nav %}
-
     <main>
 
         <section id="home-hero-section">
@@ -33,7 +27,6 @@
         <div id="products-and-custom-button-holder">
             <section id="products-available" class="homepage-scroll-section">
                 <section class="scroll-see-more">
-                    <a href="{% url 'shop' artisan.slug %}">See All Products</a>
                 </section>
             </section>
             <a id="custom-order-portal-button" href="{% url 'custom' artisan.slug %}">Custom Orders</a>
@@ -76,11 +69,13 @@
             </div>
         </div>
     </main>
-
     {% block footer %}
         {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
-<script src="{% static 'customer/home/main.js' %}"></script>
-</body>
-</html>
+{% endblock %}
+
+{% block extra_scripts %}
+    {% include 'client/components/toast-notif/toast.html' %}
+    <script src="{% static 'customer/home/main.js' %}"></script>
+{% endblock %}

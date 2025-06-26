@@ -13,12 +13,13 @@ body {
   padding: 3rem 0rem;
   display: flex;
   flex-direction: column;
+  background-color: #F9FAFB;
 }
 
 .dashboard-main h1 {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #2b3a42;
+  color: #111827;
   text-align: center;
 }
 
@@ -41,42 +42,41 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 280px; 
   overflow-y: scroll;
   align-items: center;
 }
 
 .dashboard-card h2 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
   color: #2b3a42;
 }
 
 .dashboard-card p {
   flex-grow: 1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .dashboard-card button {
   /* align-self: start; */
-  background-color: #2b3a42;
+  background-color: #111827;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .dashboard-card button:hover {
-  background-color: #3e505a;
+  background-color: #6366F1;
 }
 
 #table-holder {
   max-height: 400px;
   width: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 table {
@@ -94,11 +94,12 @@ th, td {
   padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  color: #111827;
 }
 
 th {
   background-color: #f4f4f4;
-  color: #2b3a42;
+  color: #111827;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -151,11 +152,10 @@ tr:last-child td {
   border: 1px solid #ddd;
   border-radius: 8px;
   width: 300px;
-  transition: transform 0.125s ease-in-out; /* <-- This adds the animation */
-
+  transition: transform 0.125s ease-in-out;
 }
 
-.inventory-item:hover {
+.inventory-item:hover, #new-item-box:hover {
   transform: scale(1.025);
 }
 
@@ -170,12 +170,13 @@ tr:last-child td {
   flex: 1;
   display: flex;
   flex-direction: column;
+  width: auto;
 }
 
 .inventory-details h3 {
   margin: 0 0 0.3rem;
   font-size: 1.1rem;
-  color: #2b3a42;
+  color: #6366F1;
 }
 
 .inventory-details p {
@@ -197,37 +198,109 @@ tr:last-child td {
   cursor: pointer;
 }
 
-.edit-btn {
-  background-color: #4a7a8c;
-  color: white;
+.action-btn {
+  margin-right: .25rem;
+  width: fit-content;
+  min-width: 2rem;
+  border-radius: .5rem;
+  border: none;
+  font-size: 12pt;
+  padding: .75rem 1rem;
+  background-color: #6366F1;
+  color: #F9FAFB;
+  transition: all .15s ease-in-out;
+}
+
+.action-btn:hover {
+  border: 2px solid #6366F1;
+  background-color: #F9FAFB;
+  color: #6366F1;
 }
 
 .edit-btn:hover {
   background-color: #3a626f;
 }
 
-.delete-btn {
-  background-color: #a94343;
-  color: white;
-}
 
 .delete-btn:hover {
   background-color: #8b3737;
 }
 
 .primary-btn {
-  background-color: #2b3a42;
+  background-color: #111827;
   color: white;
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   font-size: 0.95rem;
   cursor: pointer;
   border: none;
-  transition: background-color 0.2s ease;
+  transition: background-image 0.2s ease;
 }
 
 .primary-btn:hover {
-  background-color: #3e505a;
+  background-color: #6366F1;
+}
+
+#new-item-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 4px dashed #6366F1;
+  height: 7.34rem;
+  border-radius: 1rem;
+  width: 328px;
+  margin: 1rem;
+  margin-left: 0;
+  transition: all .15s ease-in-out;
+}
+
+#new-item-box h3, #new-item-box h4 {
+  margin: .25rem 0;
+}
+
+#new-item-box h3 {
+  background-color: #6366F1;
+  width: fit-content;
+  border-radius: 3rem;
+  padding: .4rem .75rem;
+  font-size: 16pt;
+  color: #F9FAFB;
+  transition: all 0.15s ease-in-out;
+}
+
+#new-item-box h4 {
+  color: #6366F1;
+  transition: all .15s ease-in-out;
+}
+
+#new-item-box:hover {
+  background-color: #6366F1;
+}
+
+#new-item-box:hover h3 {
+  color: #6366F1;
+  background-color: #F9FAFB;
+}
+
+#new-item-box:hover h4 {
+  color: #F9FAFB;
+  background-color: #6366F1;
+}
+
+.inventory-item, #new-item-box {
+  min-width: 200px;
+}
+
+@media (max-width: 500px) {
+  .inventory-item {
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+  }
+  #new-item-box {
+    width: fit-content;
+  }
 }
 
 /* Modal styles */
@@ -283,20 +356,6 @@ tr:last-child td {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
-}
-
-.modal-content button {
-  padding: 0.75rem;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.modal-content button:hover {
-  background-color: #555;
 }
 
 .label-input-div {

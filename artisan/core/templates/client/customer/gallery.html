@@ -1,23 +1,17 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template Artisan - Home</title>
+{% block title %}Gallery{% endblock %}
+
+{% block extra_head %}
     <link rel="stylesheet" href="{% static 'customer/gallery/style.css' %}">
-    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
-    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
-</head>
-<body data-slug="{{ artisan.slug }}">
+{% endblock %}
+
+{% block content %}
+
     {% block nav %}
         {% include 'client/components/nav/nav.html' with slug=artisan.slug %} 
     {% endblock nav %}
-
     <main>
         <section id="gallery-section">
             <h2 class="section-title">Gallery</h2>
@@ -34,14 +28,14 @@
                 <div class="gallery-item"><img src="{% static 'images/luthier-3392145_1280.jpg' %}" alt="Guitar back detail"></div>
             </div>
         </section>
-
     </main>
-
     {% block footer %}
         {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
+{% endblock %}
 
-<script src="{% static 'customer/gallery/gallery.js' %}"></script>
-</body>
-</html>
+{% block extra_scripts %}
+    <script src="{% static 'customer/gallery/gallery.js' %}"></script>
+{% endblock %}
+

@@ -207,8 +207,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             inventoryItemDetails.appendChild(inventorydetailsh3);
             inventoryItemDetails.appendChild(inventorydetailsp);
-            inventoryItem.appendChild(inventoryItemDetails)
-            inventoryItems.appendChild(inventoryItem);
+            inventoryItem.appendChild(inventoryItemDetails);
+
+            // Insert the item before the add more items button
+            const target = document.getElementById('new-item-box');
+            target.parentNode.insertBefore(inventoryItem, target);
 
             // Add an event listener to open the modal screen when you click an inventory item
             inventoryItem.addEventListener('click', function () {
@@ -253,7 +256,15 @@ document.addEventListener('DOMContentLoaded', async function () {
                     document.getElementById('edit-description').value = element.description;
                     document.getElementById('edit-quantity').value = element.quantity;
 
+                    let cancelled = false
+                    document.getElementById("edit-item-cancel-btn").addEventListener('click', function () {
+                        cancelled = true;
+                    });
+
                     editItemForm.onsubmit = async function (e) {
+                        if (cancelled) {
+                            return;
+                        }
                         e.preventDefault();
 
                         const form = e.target;
@@ -279,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         .then(result => {
                             editItemModal.style.display = 'none';
                             alert('Product successfully updated!');
-                            window.location.href = '/dashboard/'
+                            window.location.reload();
                         })
                         .catch(error => {
                             console.error(error);
@@ -333,7 +344,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const newItemModal = document.getElementById('new-item-modal');
     const openModalBtn = document.querySelector('.primary-btn');
 
-    openModalBtn.addEventListener('click', () => {
+    document.getElementById("new-item-box").addEventListener('click', () => {
       newItemModal.style.display = 'flex';
     });
 

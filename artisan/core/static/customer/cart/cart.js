@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             console.log(data);
-            window.location.href = `/checkout/${slug}`;
+            window.location.href = `/checkout/${slug}/`;
         })
     })
     totalDisplay.textContent = total.toFixed(2);

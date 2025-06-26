@@ -1,11 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Welcome to App Splashpage!</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Splash{% endblock %}
+
+{% block extra_head %}{% endblock %}
+
+{% block content %}
+
+    {% block nav %}
+        {% include 'client/components/nav/nav.html' with slug=artisan.slug %}
+    {% endblock %}
+    <main>
+        <h1>Welcome to App Splashpag!</h1>
+    </main>
+    {% block footer %}
+        {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
+    {% endblock %}
+
+{% endblock %}
+
+{% block extra_scripts %}{% endblock %}

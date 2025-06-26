@@ -1,23 +1,17 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Success!</title>
+{% block title %}Confirm Submission{% endblock %}
+
+{% block extra_head %}
     <link rel="stylesheet" href="{% static 'customer/custom/style.css' %}">
-    <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
-    <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
+
     {% block nav %}
         {% include 'client/components/nav/nav.html' with slug=artisan.slug %}
     {% endblock nav %}
-
     <main class="success-page">
     <section class="success-message">
         <h1>Thank You!</h1>
@@ -26,11 +20,10 @@
         <a href="../home/index.html" class="back-home-button">Return to Home</a>
     </section>
     </main>
-
-
     {% block footer %}
         {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
-</body>
-</html>
+{% endblock %}
+
+{% block extra_scripts %}{% endblock %}

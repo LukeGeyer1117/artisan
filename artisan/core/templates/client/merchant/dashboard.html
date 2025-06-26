@@ -78,9 +78,11 @@
         <h2>Inventory</h2>
         <p>Add, update, or remove products from your shop.</p>
         <div id="inventory-items-flex">
-          
+          <div id="new-item-box">
+            <h3>&plus;</h3>
+            <h4>Add a New Item</h4>
+          </div>
         </div>
-        <button class="primary-btn">Add Item</button>
       </section>
     </div>
   </main>
@@ -104,8 +106,8 @@
       </div>
       <p id="modal-id">None</p>
       <div id="modal-item-buttons">
-          <button id="edit-btn">Edit</button>
-          <button id="delete-btn">Delete</button>
+          <button class="action-btn" id="edit-btn">Edit</button>
+          <button class="action-btn" id="delete-btn">Delete</button>
       </div>
     </div>
   </div>
@@ -131,8 +133,10 @@
         <!-- image upload -->
         <input id="edit-image-file" type="file" name="image" accept="image/*" />
 
-        <button type="submit">Finish</button>
-        <button class="cancel-button" id="edit-item-cancel-btn">Cancel</button>
+        <div id="action-buttons" style="display: flex; flex-direction: row;">
+          <button type="submit" class="action-btn">Finish</button>
+          <button class="action-btn" id="edit-item-cancel-btn">Cancel</button>
+        </div>
       </form>
     </div>
   </div>
@@ -142,8 +146,8 @@
     <div class="modal-content">
       <p>Warning! Deleting a product cannot be undone.</p>
       <div id="delete-modal-buttons">
-        <button id="confirm-delete">Yes, Delete</button>
-        <button id="cancel-delete">No, Don't Delete</button>
+        <button class='action-btn' id="confirm-delete">Yes, Delete</button>
+        <button class='action-btn' id="cancel-delete">No, Don't Delete</button>
       </div>
     </div>
    </div>
@@ -170,7 +174,7 @@
         <!-- image upload -->
         <input id="image-file" type="file" name="image" accept="image/*" />
 
-        <button type="submit">Add Item</button>
+        <button type="submit" class="action-btn">Add Item</button>
       </form>
     </div>
   </div>

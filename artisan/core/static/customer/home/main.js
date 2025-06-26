@@ -11,7 +11,6 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
 
     // Select all inventory items to populate the home screen
     const slug = document.body.dataset.slug;
-    console.log(slug);
 
     fetch(`${API_BASE_URL}/${slug}/products/`, {
       method: 'GET',
@@ -22,8 +21,6 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
     })
     .then(result => {
       result.forEach(element => {
-        console.log(element);
-
         // Select the parent section
         const section = document.getElementById('products-available');
 
@@ -61,12 +58,19 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
         // Create and append the price and add cart div
         const priceDiv = document.createElement('div');
         priceDiv.className = 'info-subdiv';
+        priceDiv.id = 'price-subdiv';
 
         // Create and append price
         const h4 = document.createElement('h4');
         h4.className = 'price';
         h4.textContent = `$${element.price}`;
         priceDiv.appendChild(h4);
+
+        // Create and append Quick Add to Cart
+        const quickAdd = document.createElement('button');
+        quickAdd.className = 'quick-add-button';
+        quickAdd.innerHTML = '&plus;';
+        priceDiv.appendChild(quickAdd);
 
         productInfo.appendChild(priceDiv);
 
@@ -78,22 +82,36 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
         section.insertBefore(productDiv, seeMoreSection);
 
         // Create an event listener for each product to open a modal screen when clicked with details, and an add to cart button
-        productDiv.addEventListener('click', function () {
-          openProductModal(element);
+        // productDiv.addEventListener('click', function () {
+        //   openProductModal(element);
 
-          // Add an event listener to 'Add to Cart' button to add it to session data cart
-          document.getElementById("modal-add-to-cart-btn").addEventListener('click', function () {
-            if (element.quantity == '0') {
-              alert("That product is out of stock. Check back soon for restocks!");
-              document.getElementById('product-modal').style.display = 'none';
-              return;
-            }
-            let quantityDesired = document.getElementById('quantity-desired').value;
-            addItemToCart(element, quantityDesired);
-            const modal = document.getElementById('product-modal');
-            modal.style.display = 'none';
-          })
-        });
+        //   // Add an event listener to 'Add to Cart' button to add it to session data cart
+        //   document.getElementById("modal-add-to-cart-btn").addEventListener('click', function () {
+        //     if (element.quantity == '0') {
+        //       alert("That product is out of stock. Check back soon for restocks!");
+        //       document.getElementById('product-modal').style.display = 'none';
+        //       return;
+        //     }
+        //     let quantityDesired = document.getElementById('quantity-desired').value;
+        //     addItemToCart(element, quantityDesired);
+        //     const modal = document.getElementById('product-modal');
+        //     modal.style.display = 'none';
+        //   })
+        // });
+
+        quickAdd.addEventListener('click', function(event) {
+          event.preventDefault();
+          if (element.quantity == '0') {
+            alert('That product is out of stock. Check back soon for restocks!');
+            return;
+          }
+          let quantityDesired = 1;
+          addItemToCart(element, quantityDesired);
+          quickAdd.innerHTML = '&check;';
+          quickAdd.style.color = 'white';
+          quickAdd.style.backgroundColor = '#6366F1';
+          quickAdd.style.fontSize = '13pt';
+        })
       });
     })
 
@@ -142,7 +160,6 @@ window.addEventListener('click', (e) => {
 });
 
 function addItemToCart(product, quantity) {
-  console.log(product.id)
   fetch(`${API_BASE_URL}/cart/`, {
     method: 'POST',
     credentials: 'include',
@@ -158,11 +175,17 @@ function addItemToCart(product, quantity) {
     return response.json();
   })
   .then(data => {
-    console.log('Cart updated:', data);
-    // Optionally update the cart UI here
-    alert("Product added to cart.");
+    // Optionally update the cart UI here\
+    showToast('Added to cart!');
   })
   .catch(error => {
     console.error('Error:', error);
   });
+}
+
+function showToast(message, duration = 3000) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
 }

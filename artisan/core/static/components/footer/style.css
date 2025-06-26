@@ -1,10 +1,9 @@
 .site-footer {
-    background-color: #2B303A;
-    color: #F2ECE4;
+    background-color: #111827;
+    color: #F9FAFB;
     padding: 3rem 2rem 2rem 2rem;
     font-family: 'Merriweather', serif;
     font-size: 0.95rem;
-    border-top: 2px solid #D56C39;
 }
 
 .footer-content {
@@ -18,7 +17,6 @@
 
 .footer-column {
     flex: 1;
-    min-width: 200px;
     display: flex;
     flex-direction: column;
 }
@@ -26,19 +24,19 @@
 .footer-column h4 {
     font-size: 1.2rem;
     margin-bottom: 1rem;
-    color: #D56C39;
+    color: #F9FAFB;
     font-weight: bold;
 }
 
 .footer-column a {
-    color: #F2ECE4;
+    color: #F9FAFB;
     text-decoration: none;
     margin-bottom: 0.5rem;
     transition: color 0.2s ease;
 }
 
 .footer-column a:hover {
-    color: #D56C39;
+    color: #4F46E5;
 }
 
 .footer-column p {
