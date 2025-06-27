@@ -52,11 +52,6 @@ body {
   color: #2b3a42;
 }
 
-.dashboard-card p {
-  flex-grow: 1;
-  margin-bottom: 1rem;
-}
-
 .dashboard-card button {
   /* align-self: start; */
   background-color: #111827;
@@ -95,6 +90,10 @@ th, td {
   text-align: left;
   border-bottom: 1px solid #ddd;
   color: #111827;
+}
+
+td {
+  color: #6366F1;
 }
 
 th {
@@ -144,13 +143,15 @@ tr:last-child td {
 
 .inventory-item {
   display: flex;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: space-between;
   gap: 1rem;
-  margin: 1rem 1rem 1rem 0rem;
+  margin: 1rem 1rem 0rem 0rem;
   padding: 1rem;
   background-color: #f9f9f7;
   border: 1px solid #ddd;
   border-radius: 8px;
+  height: fit-content;
   width: 300px;
   transition: transform 0.125s ease-in-out;
 }
@@ -167,21 +168,29 @@ tr:last-child td {
 }
 
 .inventory-details {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
   width: auto;
 }
 
 .inventory-details h3 {
+  width: fit-content;
   margin: 0 0 0.3rem;
   font-size: 1.1rem;
-  color: #6366F1;
+  color: #111827;
+  text-align: right;
 }
 
 .inventory-details p {
-  margin: 0 0 0.8rem;
-  color: #555;
+  margin: 0;
+  color: #6366F1;
+  border-bottom: 2px solid #6366F1;
+  padding-bottom: 4px;
+  font-weight: bold;
+  width: fit-content;
+  line-height: 1;
 }
 
 .inventory-actions {
@@ -198,7 +207,7 @@ tr:last-child td {
   cursor: pointer;
 }
 
-.action-btn {
+/* .action-btn {
   margin-right: .25rem;
   width: fit-content;
   min-width: 2rem;
@@ -209,12 +218,25 @@ tr:last-child td {
   background-color: #6366F1;
   color: #F9FAFB;
   transition: all .15s ease-in-out;
+} */
+
+.action-btn {
+  width: 6rem;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  color: #6366F1;
+  border: none;
+  border-bottom: 2px solid #6366F1;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.25);
 }
 
 .action-btn:hover {
-  border: 2px solid #6366F1;
-  background-color: #F9FAFB;
-  color: #6366F1;
+  background-color: #6366F1;
+  color: #F9FAFB;
 }
 
 .edit-btn:hover {
@@ -250,8 +272,7 @@ tr:last-child td {
   height: 7.34rem;
   border-radius: 1rem;
   width: 328px;
-  margin: 1rem;
-  margin-left: 0;
+  margin: 1rem 1rem 0 0;
   transition: all .15s ease-in-out;
 }
 

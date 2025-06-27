@@ -200,9 +200,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             inventorydetailsh3.innerText = element.name;
             let inventorydetailsp = document.createElement('p');
             if (element.quantity > 0) {
-                inventorydetailsp.innerText = '$' + element.price + '\nIn Stock, QTY:' + element.quantity; 
+                inventorydetailsp.innerText = '$' + element.price; 
             } else {
-                inventorydetailsp.innerText = element.price + '\nOut of Stock';
+                inventorydetailsp.innerText = element.price;
             }
 
             inventoryItemDetails.appendChild(inventorydetailsh3);
