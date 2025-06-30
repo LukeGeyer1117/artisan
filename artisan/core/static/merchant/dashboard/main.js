@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
 
     // Get all the orders assigned to the artisan
-    fetch(`${API_BASE_URL}/orders/`, {
+    fetch(`${API_BASE_URL}/orders/active/`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -122,7 +122,28 @@ document.addEventListener('DOMContentLoaded', async function () {
                     const orderItems = data.orderItems;
                     let subtotal = 0;
                     document.querySelector("#td-order-date").innerHTML = order.created_at;
-                    document.querySelector("#td-order-status select").value = order.status;
+                    const orderStatusSelect = document.querySelector('#td-order-status select');
+                    orderStatusSelect.value = order.status;
+
+                    orderStatusSelect.addEventListener('change', function () {
+                        fetch(`${API_BASE_URL}/order/status/`, {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({'order_id': order.id, 'status': orderStatusSelect.value})
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Error updating order status!");
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);
+                            window.location.reload();
+                        })
+                    })
+
                     document.getElementById('order-products-scroll').innerHTML = '';
                     orderItems.forEach(item => {
                         fetch(`${API_BASE_URL}/product/${encodeURIComponent(item.product_id)}/`, {
@@ -225,13 +246,13 @@ document.addEventListener('DOMContentLoaded', async function () {
                 let modalItemProdID = document.getElementById('modal-id');
                 modalItemName.innerHTML = element.name;
                 modalItemDescription.innerHTML = element.description;
-                modalItemPrice.innerHTML = 'Unit Price: $' + element.price;
-                modalItemQuantity.innerHTML = 'Quantity In Stock: ' + element.quantity;
-                modalItemProdID.innerHTML = 'Product ID: ' + element.id;
+                modalItemPrice.innerHTML = '$' + element.price;
+                modalItemQuantity.innerHTML = element.quantity;
+                modalItemProdID.innerHTML = element.id;
 
-                let inventoryItemModalImg = document.querySelector('#inventory-item-modal .modal-content img');
-                inventoryItemImg = inventoryItem.querySelector('img');
-                inventoryItemModalImg.src = inventoryItemImg.src;
+                let inventoryItemModalImg = document.querySelector('#inventory-item-modal-content img');
+                inventoryItemImg = inventoryItem.querySelector('#inventory-item-modal-content img');
+                inventoryItemModalImg.src = '/media/' + element.image;
                 inventoryItemModal.style.display = 'flex';
 
                 let editBtn = document.getElementById('edit-btn');

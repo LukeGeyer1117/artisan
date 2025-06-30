@@ -45,7 +45,9 @@ urlpatterns = [
     path('api/checkout/', views.api_checkout, name="checkout"),
     path('api/process_payment/', views.process_payment, name="process_payment"),
     path('api/order/', views.order, name="order"),
+    path('api/order/status/', views.update_order_status),
     path('api/orders/', views.orders, name="orders"),
+    path('api/orders/active/', views.active_orders),
     path('api/orderitems/', views.order_items, name="orderitems"),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,7 +5,6 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_http_methods
 from django.utils.text import slugify
-from django.db.models import Count
 
 import json
 from .models import Artisan, Inventory, Product, Order, OrderItems
@@ -163,6 +162,23 @@ def order(request):
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': "Method Not Allowed"}, status=405)
 
+@csrf_exempt
+def update_order_status(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            order_id = data['order_id']
+            status = data['status']
+
+            order = Order.objects.get(id=order_id)
+            order.status = status
+
+            order.save()
+            return JsonResponse({'message': 'Updated order status'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
 # Get all orders under a certain merchant
 @csrf_exempt
 def orders(request):
@@ -193,6 +209,37 @@ def orders(request):
             return JsonResponse({'message': 'No Orders Found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': f"Could not get orders: {e}"})
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+# Get only orders with a 'pending' or 'approved' status
+@csrf_exempt 
+def active_orders(request):
+    if request.method == "GET":
+        try:
+            artisan_id = request.session.get('artisan_id')
+            artisan = Artisan.objects.get(id=artisan_id)
+
+            orders = Order.objects.filter(artisan=artisan, status__in=['pending', 'approved']).order_by('created_at')
+            orders_data = [
+                {
+                    'id': order.id,
+                    'customer_name': order.customer_name,
+                    'customer_email': order.customer_email,
+                    'customer_phone': order.customer_phone,
+                    'shipping_addr': order.shipping_addr,
+                    'city': order.city,
+                    'state': order.state,
+                    'zip_code': order.zip_code,
+                    'status': order.status,
+                    'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                }
+                for order in orders
+            ]
+
+            return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
     return JsonResponse({'error': 'Method Not Allowed'}, status=405)
 
 @csrf_exempt
