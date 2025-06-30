@@ -10,7 +10,7 @@ body {
 
 .dashboard-main {
   flex: 1;
-  padding: 3rem 0rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
   background-color: #F9FAFB;
@@ -18,7 +18,6 @@ body {
 
 .dashboard-main h1 {
   font-size: 2rem;
-  margin-bottom: 2rem;
   color: #111827;
   text-align: center;
 }
@@ -30,7 +29,7 @@ body {
   justify-content: space-between;
   width: 80vw;
   max-width: 1200px;
-  margin: 0vw auto 0vw auto;
+  margin: 0vw auto 2rem auto;
 }
 
 .dashboard-card {
@@ -48,7 +47,6 @@ body {
 
 .dashboard-card h2 {
   font-size: 1.5rem;
-  margin-bottom: 0rem;
   color: #2b3a42;
 }
 
@@ -69,6 +67,7 @@ body {
 }
 
 #table-holder {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   max-height: 400px;
   width: 100%;
   overflow-y: scroll;
@@ -115,6 +114,7 @@ tr:last-child td {
 #order-products-scroll {
   max-height: 300px;
   overflow-y: scroll;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .summary-table {
@@ -123,12 +123,15 @@ tr:last-child td {
 
 .summary {
   margin: 2rem 0;
+  padding: 0 2rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1rem;
   display: none;
   overflow: scroll;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
 }
 
 .inventory-section {
@@ -147,7 +150,7 @@ tr:last-child td {
   flex-direction: row;
   justify-content: space-between;
   gap: 1rem;
-  margin: 1rem 1rem 0rem 0rem;
+  margin: 1rem;
   padding: 1rem;
   background-color: #f9f9f7;
   border: 1px solid #ddd;
@@ -358,7 +361,7 @@ label {
 }
 
 .modal-content img {
-  width: 50%;
+  width: 100%;
   height: inherit;
   max-width: 25rem;
   object-fit: cover;

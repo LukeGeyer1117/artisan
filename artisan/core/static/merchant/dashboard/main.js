@@ -72,9 +72,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             ];
 
             fields.forEach(field => {
-                if (field != 'status'){
+                if (field != 'status' && field != 'created_at'){
                     const td = document.createElement('td');
                     td.textContent = order[field];
+                    orderRow.appendChild(td);
+                } else if (field == 'created_at') {
+                    const td = document.createElement('td');
+                    td.textContent = formatTimestamp(order.created_at);
                     orderRow.appendChild(td);
                 } else {
                     const td = document.createElement('td');
@@ -121,7 +125,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                     // Create a summary of the items in the order for the merchant to fulfil
                     const orderItems = data.orderItems;
                     let subtotal = 0;
-                    document.querySelector("#td-order-date").innerHTML = order.created_at;
+                    const adjustedTimestamp = formatTimestamp(order.created_at);
+                    document.querySelector("#td-order-date").innerHTML = adjustedTimestamp;
                     const orderStatusSelect = document.querySelector('#td-order-status select');
                     orderStatusSelect.value = order.status;
 
@@ -429,3 +434,23 @@ imageFile.addEventListener('change', function() {
         this.value = ''; // Clear the input
     }
 });
+
+function formatTimestamp(timestamp) {
+  const [datePart, timePart] = timestamp.split(' '); // "2025-06-24", "22:02"
+  const [year, month, day] = datePart.split('-');
+  const [hour, minute] = timePart.split(':');
+
+  const date = new Date(year, month - 1, day, hour, minute);
+
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  return `${date.toLocaleDateString('en-US', options)}`;
+}
+

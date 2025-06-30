@@ -243,6 +243,36 @@ def active_orders(request):
     return JsonResponse({'error': 'Method Not Allowed'}, status=405)
 
 @csrf_exempt
+def inactive_orders(request):
+    if request.method == "GET":
+        try:
+            artisan_id = request.session.get('artisan_id')
+            artisan = Artisan.objects.get(id=artisan_id)
+
+            orders = Order.objects.filter(artisan=artisan, status__in=['completed', 'denied']).order_by('status')
+            orders_data = [
+                {
+                    'id': order.id,
+                    'customer_name': order.customer_name,
+                    'customer_email': order.customer_email,
+                    'customer_phone': order.customer_phone,
+                    'shipping_addr': order.shipping_addr,
+                    'city': order.city,
+                    'state': order.state,
+                    'zip_code': order.zip_code,
+                    'status': order.status,
+                    'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                }
+                for order in orders
+            ]
+
+            return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+@csrf_exempt
 def order_items(request):
     if request.method == "POST":
         try:

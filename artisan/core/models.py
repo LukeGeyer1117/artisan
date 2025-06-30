@@ -33,7 +33,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     order_type = models.CharField(max_length=20, blank=True)
-    product_category = models.CharField(max_length=50, blank=True)
+    product_category = models.ForeignKey('ProductCategory', null=True, blank=True, default=None, on_delete=models.SET_NULL)
     quantity = models.DecimalField(max_digits=7, decimal_places=0, default=0, blank=True)
     description = models.CharField(max_length=500, default='', blank=True)
     image = models.ImageField(upload_to="images/", default='')
@@ -73,3 +73,10 @@ class OrderItems(models.Model):
 
     def __str__(self):
         return f"Product: {self.product.id} - Order: {self.order.id} - Quantity: {self.quantity}"
+    
+class ProductCategory(models.Model):
+    owner = models.ForeignKey(Artisan, on_delete=models.CASCADE)
+    name = models.CharField(max_length=40, default='product', blank=False)
+
+    def __str__(self):
+        return f"{self.name} - (Owner: {self.owner})"
