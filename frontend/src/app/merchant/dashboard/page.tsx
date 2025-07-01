@@ -10,11 +10,24 @@ import Table from "@/components/Table";
 import CustomerSummaryCard from "@/components/CustomerSummaryCard";
 
 export default function DashboardPage() {
+  type Artisan = {
+    id: number;
+    email: string;
+    username: string;
+    password: string;
+    shop_name: string;
+    slug: string;
+    product_specialty: string;
+    price_range_low: number;
+    price_range_high: number;
+    accepting_custom_orders: boolean;
+  }
 
   type Order = {
     id: number;
     name: string;
     email: string;
+    phone: string;
     address: string;
     city: string;
     state: string;
@@ -22,15 +35,22 @@ export default function DashboardPage() {
     subtotal?: string;
     date?: string;
     status?: string;
+    artisan: Artisan;
   };
+
+  type OrderItem = {
+    
+  }
 
   const [activeOrders, setActiveOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
   const handleOrderClick = (id: number) => {
     const order = activeOrders.find((o) => o.id === id);
     if (order) {
       setSelectedOrder(order);
+      console.log(order);
     }
   };
 
@@ -53,7 +73,11 @@ export default function DashboardPage() {
           id: order.id,
           name: order.customer_name,
           email: order.customer_email,
-          data: order.created_at.slice(0, 10), 
+          date: order.created_at.slice(0, 10), 
+          address: order.shipping_addr,
+          city: order.city,
+          state: order.state,
+          zip: order.zip_code,
           status: order.status,
         }));
 
@@ -68,10 +92,6 @@ export default function DashboardPage() {
     fetchActiveOrders();
   }, []);
 
-  useEffect(() => {
-    console.log("Active orders updated:", activeOrders);
-  }, [activeOrders]);
-
   return (
     <main className="min-h-screen bg-gray-50 p-6">
       {/* Merchant Welcome Message */}
@@ -81,7 +101,7 @@ export default function DashboardPage() {
       <div className="space-y-8">
         {/* Orders */}
         <DashboardCard id="orders-section">
-          <h2 className="text-2xl font-semibold mb-4">Orders to Complete</h2>
+          <h2 className="text-2xl font-semibold">Orders to Complete</h2>
 
           <TableHolder id="orders-table-holder">
 
@@ -100,20 +120,22 @@ export default function DashboardPage() {
           {/* Conditionally render the summary card ic selectedOrder is not null */}
 
           {selectedOrder && (
-            <CustomerSummaryCard
-              name={selectedOrder.name}
-              contact={selectedOrder.email}
-              address={selectedOrder.address}
-              city={selectedOrder.city}
-              state={selectedOrder.state}
-              zip={selectedOrder.zip}
-              subtotal={selectedOrder.subtotal}
-              orderDate={selectedOrder.date}
-              status={selectedOrder.status}
-              onStatusChange={(newStatus) =>
-                setSelectedOrder({ ...selectedOrder, status: newStatus })
-              }
-            />
+            <div>
+              <CustomerSummaryCard
+                name={selectedOrder.name}
+                contact={selectedOrder.email}
+                address={selectedOrder.address}
+                city={selectedOrder.city}
+                state={selectedOrder.state}
+                zip={selectedOrder.zip}
+                subtotal={selectedOrder.subtotal}
+                orderDate={selectedOrder.date}
+                status={selectedOrder.status}
+                onStatusChange={(newStatus) =>
+                  setSelectedOrder({ ...selectedOrder, status: newStatus })
+                }
+              />
+            </div>
           )}
         </DashboardCard>
 

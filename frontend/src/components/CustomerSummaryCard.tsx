@@ -55,8 +55,8 @@ export default function CustomerSummaryCard({
             <td colSpan={2}>{zip}</td>
           </tr>
           <tr>
-            <td className="py-1 pr-2">{subtotal}</td>
-            <td className="py-1 pr-2">{orderDate}</td>
+            <td className="py-1 pr-2">{subtotal || 0}</td>
+            <td className="py-1 pr-2">{orderDate || 'Null'}</td>
             <td className="py-1">
               <select
                 id="order-status-select"
