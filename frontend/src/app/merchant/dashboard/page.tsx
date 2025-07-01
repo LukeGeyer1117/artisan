@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const API_BASE_URL = `${typeof window !== 'undefined' ? window.location.protocol + "//" + window.location.hostname + ":8000/api" : ""}`;
 
@@ -11,27 +11,66 @@ import CustomerSummaryCard from "@/components/CustomerSummaryCard";
 
 export default function DashboardPage() {
 
+  type Order = {
+    id: number;
+    name: string;
+    email: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+    subtotal?: string;
+    date?: string;
+    status?: string;
+  };
+
+  const [activeOrders, setActiveOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const handleOrderClick = (id: number) => {
+    const order = activeOrders.find((o) => o.id === id);
+    if (order) {
+      setSelectedOrder(order);
+    }
+  };
+
   // Need to get orders first
-  try {
-    const response = await fetch(`${API_BASE_URL}/orders/active/`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' }
-    });
+  useEffect(() => {
+    async function fetchActiveOrders() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/orders/active/`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
 
-    if (!response.ok) throw new Error("Failed to fetch active orders");
-    const result = await response.json();
-    console.log(result);
+        if (!response.ok) throw new Error("Failed to fetch active orders");
 
-  } catch (error) {
-    alert('Could not fetch active orders!');
-    console.error(error);
-  }
+        const result = await response.json();
 
-  const orders = [
-    { id: 1, name: 'Alice', email: 'alice@example.com', date: '2025-06-20', status: 'pending' },
-    { id: 2, name: 'Bob', email: 'bob@example.com', date: '2025-06-21', status: 'approved' },
-  ];
+        // Map to desired format
+        const mappedOrders = result.orders.map((order: any) => ({
+          id: order.id,
+          name: order.customer_name,
+          email: order.customer_email,
+          data: order.created_at.slice(0, 10), 
+          status: order.status,
+        }));
+
+        setActiveOrders(mappedOrders);
+
+      } catch (error) {
+        alert('Could not fetch active orders!');
+        console.error(error);
+      }
+    }
+
+    fetchActiveOrders();
+  }, []);
+
+  useEffect(() => {
+    console.log("Active orders updated:", activeOrders);
+  }, [activeOrders]);
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
@@ -47,8 +86,8 @@ export default function DashboardPage() {
           <TableHolder id="orders-table-holder">
 
             <Table id="orders-table" headers={['Name', 'Email', 'Order Placed', 'Status']}>
-              {orders.map((order) => (
-                <tr key={order.id} className="border-t">
+              {activeOrders.map((order) => (
+                <tr key={order.id} className="border-t cursor-pointer hover:bg-gray-100" onClick={() => handleOrderClick(order.id)}>
                   <td className="p-3">{order.name}</td>
                   <td className="p-3">{order.email}</td>
                   <td className="p-3">{order.date}</td>
@@ -58,18 +97,24 @@ export default function DashboardPage() {
             </Table>
           </TableHolder>
 
-          <CustomerSummaryCard
-            name="Alice Johnson"
-            contact="alice@example.com / (123) 456-7890"
-            address="123 Artisan St."
-            city="Portland"
-            state="OR"
-            zip="97201"
-            subtotal="$45.00"
-            orderDate="June 30, 2025"
-            status="pending"
-            onStatusChange={(newStatus) => console.log("Status changed to:", newStatus)}
-          />
+          {/* Conditionally render the summary card ic selectedOrder is not null */}
+
+          {selectedOrder && (
+            <CustomerSummaryCard
+              name={selectedOrder.name}
+              contact={selectedOrder.email}
+              address={selectedOrder.address}
+              city={selectedOrder.city}
+              state={selectedOrder.state}
+              zip={selectedOrder.zip}
+              subtotal={selectedOrder.subtotal}
+              orderDate={selectedOrder.date}
+              status={selectedOrder.status}
+              onStatusChange={(newStatus) =>
+                setSelectedOrder({ ...selectedOrder, status: newStatus })
+              }
+            />
+          )}
         </DashboardCard>
 
         {/* Custom Orders */}
