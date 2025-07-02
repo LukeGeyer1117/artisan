@@ -1,15 +1,15 @@
-/*
-TODO:
+// /*
+// TODO:
 
-- Use session info server side to get all inventory items, custom requests, 
-and current orders to display for the merchant
+// - Use session info server side to get all inventory items, custom requests, 
+// and current orders to display for the merchant
 
-- Allow merchant to accept or deny custom requests
+// - Allow merchant to accept or deny custom requests
 
-- Setup email notifications to customer should merchant accept/deny request
+// - Setup email notifications to customer should merchant accept/deny request
 
-- Setup email notifications to merchant when new requests/orders come in
-*/
+// - Setup email notifications to merchant when new requests/orders come in
+// */
 
 let products = []
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
@@ -28,11 +28,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
     .then(data => {
         artisan = data.artisan;
-        document.querySelector('.dashboard-main h1').innerHTML = 'Welcome, ' +  data.artisan.username;
     })
 
     // Handle Signout button click
-    const signOutBtn = document.getElementById('sign-out-button');
+    const signOutBtn = document.querySelector('.navbar a');
     signOutBtn.addEventListener('click', (event) => {
         fetch(`${API_BASE_URL}/session/`, {
             method: 'DELETE'
@@ -60,6 +59,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         let ordersTable = document.getElementById('orders-table');
 
         data.orders.forEach(order => {
+            console.log(order);
             
             let orderRow = document.createElement('tr');
 

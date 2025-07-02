@@ -7,9 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Merchant Dashboard</title>
   <link rel="stylesheet" href="{% static 'merchant/dashboard/style.css' %}" />
-  <link rel="stylesheet" href="{% static 'components/nav/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
   <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Menbere:wght@100..700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- NAV -->
@@ -20,182 +23,52 @@
   <!-- Main Content -->
 
   <main class="dashboard-main">
-    <h1>Welcome, Merchant</h1>
-    <div class="dashboard-sections">
-      <section class="dashboard-card" id="orders-section">
-        <h2>Orders to Complete</h2>
-
-        <div id="table-holder">
-          <table id="orders-table">
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Order Placed</th>
-              <th>Status</th>
-            </tr>
-          </table>
-        </div>
-
-        <div class="summary" id="order-summary">
-          <div class="summary-details">
-            <label for="customer-summary-table"><h3>Info</h3></label>
-            <table class='summary-table' id="customer-summary-table">
-              <tr id="tr-customer-name"><th>Customer Name:</th><td></td><td></td></tr>
-              <tr id="tr-customer-contact"><th>Email/Phone#:</th><td></td><td></td></tr>
-              <tr id="tr-customer-addr"><th>Shipping Address:</th><td></td><td></td></tr>
-              <tr id="tr-customer-city"><th>City:</th><td></td><td></td></tr>
-              <tr id="tr-customer-state"><th>State:</th><td></td><td></td></tr>
-              <tr id="tr-customer-zip"><th>ZipCode:</th><td></td><td></td></tr>
-              <tr id="tr-order-info">
-                <td id="td-order-subtotal"></td>
-                <td id="td-order-date"></td>
-                <td id="td-order-status">
-                  <select name="order-status" id="order-status-select">
-                    <option value="pending">pending</option>
-                    <option value="approved">approved</option>
-                    <option value="completed">completed</option>
-                    <option value="denied">denied</option>
-                  </select>
-                </td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="summary-details">
-            <label for="order-products-scroll"><h3>Order Items</h3></label>
-            <div id="order-products-scroll"></div>
-          </div>
-
-        </div>
-      </section>
-
-      <section class="dashboard-card" id="custom-section">
-        <h2>Custom Requests</h2>
-        <p>No Custom Requests</p>
-      </section>
-
-      <section class="dashboard-card" id="inventory-section">
-        <h2>Inventory</h2>
-        <p>Add, update, or remove products from your shop.</p>
-        <div id="inventory-items-flex">
-          <div id="new-item-box">
-            <h3>&plus;</h3>
-            <h4>Add a New Item</h4>
-          </div>
-        </div>
-      </section>
+    <!-- Sidebar Links -->
+    <div class="dashboard-links">
+      <div class="links-group">
+        <a href="/dashboard/" class="active"><img src="/media/images/speed_64dp_4F46E5_FILL0_wght400_GRAD0_opsz48.png" alt="dashboard icon"><h3>Dashboard</h3></a>
+        <a href="/orders/"><img src="/media/images/orders_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="orders icon"><h3>Orders</h3></a>
+        <a href="/custom-requests/"><img src="/media/images/instant_mix_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="custom orders icon"><h3>Custom Orders</h3></a>
+        <a href="/inventory/"><img src="/media/images/inventory_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="inventory icon"><h3>Inventory</h3></a>
+        <a href="/reporting/"><img src="/media/images/finance_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png" alt="reporting icon"><h3>Reporting</h3></a>
+        <a href="/customize-gallery/"><img src="/media/images/photo_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="gallery icon"><h3>Gallery</h3></a>
+      </div>
+      <div class="links-group">
+        <a href="/settings/"><img src="/media/images/settings_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="settings icon"><h3>Settings</h3></a>
+      </div>
     </div>
+
+    <!-- All The DATA Sections -->
+     <section class="dashboard-sections">
+      <section class="dashboard-section" id="quick-stats">
+        <div class="dashboard-card" id="sales-orders-card">
+          <section id="sales-and-orders-section">
+            <div id="sales">
+              <p>Sales</p>
+              <h1>0</h1>
+            </div>
+            <div id="orders">
+              <p>Orders</p>
+              <h1>0</h1>
+            </div>
+          </section>
+          <section id="time-frame-section">
+            <h3 class="active">1D</h3>
+            <h3>1W</h3>
+            <h3>1M</h3>
+            <h3>1Y</h3>
+          </section>
+        </div>
+        <div class="dashboard-card" id="custom-orders-card">
+          <div id="custom-orders">
+            <p>You have...</p>
+            <h1>17</h1>
+            <p>custom requests.</p>
+          </div>
+        </div>
+      </section>
+    </section>
   </main>
-
-  <!-- Order Summary Modal -->
-  <div class="modal-overlay" id="order-summary-modal">
-    <div class="modal-content">
-      <p>This is the modal where order information will appear!</p>
-    </div>
-  </div>
-
-  <!-- Item Summary Modal -->
-  <div class="modal-overlay" id="inventory-item-modal">
-    <div class="modal-content" id="inventory-item-modal-content">
-      <img id="modal-item-image" src="{% static 'images/classical.webp' %}" alt="guitar">
-      <div class="modal-content-text-content">
-        <h3 id="modal-item-name">Item Name</h3>
-        <div class="modal-text-content-row">
-          <div>
-            <label for="modal-item-description">Description:</label>
-            <p id="modal-item-description">Description of inventory item.</p>
-          </div>
-        </div>
-        <div class="modal-text-content-row">
-          <h4>Price</h4>
-          <h4 id="modal-price">100.00</h4>
-        </div>
-        <div class="modal-text-content-row">
-          <h4>In Stock</h4>
-          <h4 id="modal-quantity">15</h4>
-        </div>
-        <div class="modal-text-content-row">
-          <h6>Product ID</h6>
-          <h6 id="modal-id">None</h6>
-        </div>
-        <div id="modal-item-buttons">
-            <button class="action-btn" id="edit-btn">Edit</button>
-            <button class="action-btn" id="delete-btn">Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Item Modal -->
-  <div class="modal-overlay" id="edit-item-modal">
-    <div class="modal-content">
-      <form id="edit-item-form">
-        <!-- name -->
-        <div class="label-input-div">
-          <input id="edit-name" type="text" name="title" placeholder="Title" maxlength="100" required />
-          <label for="edit-name" class="character-limit">100 char. limit</label>
-        </div>
-        <!-- price -->
-        <input id="edit-price" type="number" name="price" placeholder="Price" step="0.01" max="9999999999" required />
-        <!-- description -->
-        <div class="label-input-div">
-          <textarea id="edit-description" name="description" placeholder="Description" rows="4" maxlength="500" required></textarea>
-          <label for="edit-description" class="character-limit">500 char. limit</label>
-        </div>
-        <!-- quantity -->
-        <input id="edit-quantity" type="number" name="quantity" placeholder="Quantity" maxlength="9999999" required />
-        <!-- image upload -->
-        <input id="edit-image-file" type="file" name="image" accept="image/*" />
-
-        <div id="action-buttons" style="display: flex; flex-direction: row;">
-          <button type="submit" class="action-btn">Finish</button>
-          <button class="action-btn" id="edit-item-cancel-btn">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Delete Item Modal -->
-   <div class="modal-overlay" id="delete-item-modal">
-    <div class="modal-content" id="delete-modal-content">
-      <p>Warning! Deleting a product cannot be undone.</p>
-      <div id="delete-modal-buttons">
-        <button class='action-btn' id="confirm-delete">Yes, Delete</button>
-        <button class='action-btn' id="cancel-delete">No, Don't Delete</button>
-      </div>
-    </div>
-   </div>
-
-  <!-- New Item Modal -->
-  <div class="modal-overlay" id="new-item-modal">
-    <div class="modal-content">
-      <h3>Add New Item</h3>
-      <form id="add-item-form">
-        <!-- name -->
-        <div id="name-label-input" class="label-input-div">
-          <input id="name" type="text" name="title" placeholder="Title" maxlength="100" required />
-          <label for="name" class="character-limit">100 char. limit</label>
-        </div>
-        <!-- price -->
-        <input id="price" type="number" name="price" placeholder="Price" step="0.01" max="9999999999" required />
-        <!-- description -->
-        <div id="description-labl-textarea" class="label-input-div">
-          <textarea id="description" name="description" placeholder="Description" rows="4" maxlength="500" required></textarea>
-          <label for="description" class="character-limit">500 char. limit</label>
-        </div>
-        <!-- quantity -->
-        <input id="quantity" type="number" name="quantity" placeholder="Quantity" maxlength="9999999" required />
-        <!-- image upload -->
-        <input id="image-file" type="file" name="image" accept="image/*" />
-
-        <button type="submit" class="action-btn">Add Item</button>
-      </form>
-    </div>
-  </div>
-
-    {% block footer %}
-        {% include 'client/components/merch-footer/footer.html' with slug=artisan.slug %}
-    {% endblock footer %}
 
   <script>
     // Define js variables to hold static urls

@@ -1,0 +1,45 @@
+.navbar {
+  width: 100%;
+  box-sizing: border-box;
+  height: 10vh;
+  display: flex;
+  background-color: #4F46E5;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 1px .1em black;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+  left: 0;
+  padding: 0 1rem;
+}
+
+.navbar a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem 2rem;
+  gap: 1.5rem;
+  text-decoration: none;
+  color: white;
+  font-size: 12pt;
+  transition: all 0.15s ease-in-out;
+  border-radius: 64pt;
+}
+
+.navbar a:hover {
+  transform: scale(1.025);
+  background: #3b34c7;
+  cursor: pointer;
+}
+
+.navbar img {
+  transition: all .15s ease-in-out;
+  border-radius: 32rem;
+  padding: .5rem;
+}
+
+.navbar img:hover {
+  background-color: #3b34c7;
+}
