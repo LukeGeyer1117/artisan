@@ -40,6 +40,8 @@
 
     <!-- All The DATA Sections -->
      <section class="dashboard-sections">
+
+      <!-- Order, Custom Reuqests, and quick sales stats -->
       <section class="dashboard-section" id="quick-stats">
         <div class="dashboard-card" id="sales-orders-card">
           <section id="sales-and-orders-section">
@@ -67,13 +69,23 @@
           </div>
         </div>
       </section>
+
+      <!-- Active Orders -->
+      <section class="dashboard-section" id="orders-section">
+        <div class="dashboard-card" id="orders-card">
+          <table id="orders-table">
+            <tr>
+              <th>Order #</th>
+              <th>Contact</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </table>
+        </div>
+      </section>
+
     </section>
   </main>
-
-  <script>
-    // Define js variables to hold static urls
-    const IMAGE_URL = "{{ product.image.url }}";
-  </script>
-  <script src="{% static 'merchant/dashboard/main.js' %}"></script>
+  <script src="{% static 'merchant/dashboard/secondary.js' %}"></script>
 </body>
 </html>
