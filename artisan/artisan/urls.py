@@ -49,5 +49,6 @@ urlpatterns = [
     path('api/orders/', views.orders, name="orders"),
     path('api/orders/active/', views.active_orders),
     path('api/orderitems/', views.order_items, name="orderitems"),
+    path('api/custom/', views.get_custom_order),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

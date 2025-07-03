@@ -24,7 +24,7 @@
 
   <main class="dashboard-main">
     <!-- Sidebar Links -->
-    <div class="dashboard-links">
+    <div class="dashboard-links gradient-background">
       <div class="links-group">
         <a href="/dashboard/" class="active"><img src="/media/images/speed_64dp_4F46E5_FILL0_wght400_GRAD0_opsz48.png" alt="dashboard icon"><h3>Dashboard</h3></a>
         <a href="/orders/"><img src="/media/images/orders_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="orders icon"><h3>Orders</h3></a>
@@ -46,22 +46,24 @@
         <div class="dashboard-card" id="sales-orders-card">
           <section id="sales-and-orders-section">
             <div id="sales">
-              <p>Sales</p>
-              <h1>0</h1>
+              <p class="gradient-text">Sales</p>
+              <h1 class="gradient-text">0</h1>
             </div>
             <div id="orders">
-              <p>Orders</p>
-              <h1>0</h1>
+              <p class="gradient-text">Orders</p>
+              <h1 class="gradient-text">0</h1>
             </div>
           </section>
           <section id="time-frame-section">
-            <h3 class="active">1D</h3>
+            <h3 class="active gradient-text">1D</h3>
             <h3>1W</h3>
             <h3>1M</h3>
             <h3>1Y</h3>
           </section>
+
+          <div class="dashboard-card-modal gradient-background" id="reporting-redirect-modal">Go to Reporting</div>
         </div>
-        <div class="dashboard-card" id="custom-orders-card">
+        <div class="dashboard-card gradient-background" id="custom-orders-card">
           <div id="custom-orders">
             <p>You have...</p>
             <h1>17</h1>
@@ -74,13 +76,41 @@
       <section class="dashboard-section" id="orders-section">
         <div class="dashboard-card" id="orders-card">
           <table id="orders-table">
-            <tr>
+            <thead class="gradient-background">
               <th>Order #</th>
               <th>Contact</th>
               <th>Date</th>
               <th>Status</th>
-            </tr>
+            </thead>
+            <tbody class="scrollable"></tbody>
           </table>
+        </div>
+        <div class="dashboard-card" id="chosen-order-card">
+          <div>
+            <div id="order-details" class="gradient-background"> 
+              <h3>Order #0</h3>
+              <h3 style="font-size: 18pt;" id="close-chosen-order">&times;</h3>
+            </div>
+            <div id="order-items"></div>
+          </div>
+          <div id="order-total">
+            <div>Total:</div>
+            <div id="total"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-section" id="inventory-section">
+        <div class="dashboard-card"></div>
+      </section>
+
+      <section class="dashboard-section" id="bottom-links-section">
+        <div class="dashboard-card" id="bottom-links-card">
+          <a href="" class="link gradient-text">Help Center</a>
+          <a href="" class="link gradient-text">FAQ</a>
+          <a href="" class="link gradient-text">Terms & Conditions</a>
+          <a href="" class="link gradient-text">Privacy Policy</a>
+          <a href="" class="link gradient-text">Contact Us</a>
         </div>
       </section>
 

@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.text import slugify
 
 import json
-from .models import Artisan, Inventory, Product, Order, OrderItems
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest
 
 # Create your views here.
 def splash(request):
@@ -555,6 +555,18 @@ def process_payment(request):
     else:
         return JsonResponse({'message': 'Payment Processed Successfully, but use the right method!!'}, status=200)
 
+
+@csrf_exempt
+def get_custom_order(request):
+    if request.method == 'GET':
+        artisan_id = request.session.get('artisan_id')
+
+        artisan = Artisan.objects.get(id=artisan_id)
+
+        custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
+        return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
+
+    return JsonResponse({'error': 'method not allowed'}, status=405)
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"

@@ -65,6 +65,17 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.customer_name} - {self.customer_email} - {self.customer_phone} - {self.created_at}"
+    
+class CustomRequest(models.Model):
+    customer_name = models.CharField(max_length=100)
+    customer_email = models.EmailField(max_length=100)
+    customer_phone = models.CharField(max_length=12)
+    budget = models.DecimalField(max_digits=9, decimal_places=2)
+    description = models.CharField(max_length=1500)
+    artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.customer_name} - ${self.budget} - {self.description[:100]}'
 
 class OrderItems(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
