@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Merchant Dashboard</title>
+  <link rel="stylesheet" href="{% static 'merchant/inventory/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'merchant/common.css' %}">
+  <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Menbere:wght@100..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- NAV -->
+    {% block nav %}
+        {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
+    {% endblock nav %}
+
+  <!-- Main Content -->
+
+  <main class="dashboard-main">
+    <!-- Sidebar Links -->
+    <div class="dashboard-links gradient-background">
+      <div class="links-group">
+        <a href="/dashboard/"><img src="/media/icons/inactive/speed_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48 (1).svg" alt="dashboard icon"><h3>Dashboard</h3></a>
+        <a href="/orders/"><img src="/media/icons/inactive/orders_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="orders icon"><h3>Orders</h3></a>
+        <a href="/custom-requests/"><img src="/media/icons/inactive/tune_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="custom orders icon"><h3>Custom Orders</h3></a>
+        <a href="/inventory/"><img src="/media/icons/inactive/inventory_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="inventory icon"><h3>Inventory</h3></a>
+        <a href="/reporting/"><img src="/media/icons/inactive/finance_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="reporting icon"><h3>Reporting</h3></a>
+        <a href="/customize-gallery/"><img src="/media/icons/inactive/panorama_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="gallery icon"><h3>Gallery</h3></a>
+      </div>
+      <div class="links-group">
+        <a href="/settings/"><img src="/media/images/settings_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="settings icon"><h3>Settings</h3></a>
+      </div>
+    </div>
+
+    <!-- All The DATA Sections -->
+     <section class="dashboard-sections">
+
+      <!-- Help Links -->
+      <section class="dashboard-section" id="inventory-main-section">
+
+        <section class="dashboard-section" id="top-buttons-section">
+          <button class="main-button gradient-background box-shadowable" id="add-item-button">Add Item &plus;</button>
+        </section>
+
+        <section class="dashboard-section" id="inventory-table-section">
+          <table id="inventory-table">
+            <thead>
+              <th>Product ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </thead>
+            <tbody>
+              <!-- Fake Data for design purpose -->
+            </tbody>
+          </table>
+        </section>
+
+        <div class="dashboard-card" id="bottom-links-card">
+          <a href="" class="link gradient-text">Help Center</a>
+          <a href="" class="link gradient-text">FAQ</a>
+          <a href="" class="link gradient-text">Terms & Conditions</a>
+          <a href="" class="link gradient-text">Privacy Policy</a>
+          <a href="" class="link gradient-text">Contact Us</a>
+        </div>
+      </section>
+
+    </section>
+  </main>
+  <script>
+    const window_location = 'Inventory';
+    const active_URL = "/media/icons/active/inventory_64dp_4F46E5_FILL0_wght400_GRAD0_opsz48.svg"
+  </script>
+  <script src="{% static 'merchant/common.js' %}"></script>
+  <script src="{% static 'merchant/inventory/main.js' %}"></script>
+</body>
+</html>

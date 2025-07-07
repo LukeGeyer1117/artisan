@@ -1,0 +1,239 @@
+.menbere-serif {
+  font-family: "Menbere", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-family: Verdana, Tahoma, sans-serif;
+  background: linear-gradient(to bottom right, #ffffff, #f8f9fa, #f1f3f5);
+}
+
+/* Apply to a scrollable container or globally with `body` or `*` */
+.scrollable {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #4F46E5 #EEF2FF; /* thumb and track colors */
+}
+
+/* For WebKit-based browsers (Chrome, Safari, Edge) */
+.scrollable::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: #EEF2FF;
+  border-radius: 8px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background: #4F46E5;
+  border-radius: 8px;
+  border: 2px solid #EEF2FF; /* optional: gives padding around thumb */
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background: #6366F1; /* slightly lighter on hover */
+}
+
+.gradient-background {
+  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.box-shadowable {
+  box-shadow: 0px 1px 2px black;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+.dashboard-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 80px;
+  height: 92vh;
+  box-shadow: 1px 0 .1em black;
+  position: sticky;
+  left: 0;
+  top: 8vh;
+  transition: all .15s ease-in-out;
+}
+
+.links-group {
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.links-group a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  width: 40px;
+  gap: .5rem;
+  text-decoration: none;
+  padding: 1rem;
+  margin-right: 1rem;
+  transition: all 0.15s ease-in-out;
+  border-radius: 0 64pt 64pt 0;
+}
+
+.links-group a:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #3B34C7 0%, #6366F1 100%);
+  width: 150px;
+}
+
+.links-group a.active:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  width: 150px;
+}
+
+.links-group a.active, .links-group a.active h3 {
+  background-color: white;
+  color: #4F46E5;
+}
+
+.links-group a.active {
+  border-radius: 0 64pt 64pt 0;
+}
+
+.links-group a.active img {
+  fill: #4F46E5;
+}
+
+.links-group a img {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.links-group a h3 {
+  display: hidden;
+  color: white;
+  font-size: 12pt;
+  margin: 0;
+  width: 100px;
+  transform: translateX(-200%);
+  transition: transform .15s ease-out, opacity 0.15s ease-out;
+}
+
+.links-group a:hover h3 {
+  display: block;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.dashboard-sections {
+  width: 90%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.dashboard-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 2rem;
+  margin: 2rem 2rem 1rem 2rem;
+}
+
+.dashboard-card {
+  background-color: white;
+  border-radius: 32px;
+  padding: auto;
+  box-shadow: 0px 1px 2px black;
+  overflow: hidden ;
+  transition: all 0.15s ease-in-out;
+}
+
+.dashboard-card:hover {
+  transform: scale(1.01);
+}
+
+.dashboard-card-modal {
+  display: hidden;
+  transform: translateY(-100%);
+  transition: transform .15s ease-out, opacity 0.15s ease-out;
+  position: absolute;
+  font-size: 18pt;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.dashboard-card:hover > .dashboard-card-modal {
+  opacity: 1;
+  display: flex;
+  transform: translateY(0);
+}
+
+/* Bottom Links */
+
+#bottom-links-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 10rem;
+  padding: 0 2rem;
+}
+
+#bottom-links-card a {
+  padding: 1rem;
+  margin: .5rem;
+  transition: all .15s ease-in-out;
+  text-decoration: none;
+  border-radius: 32px;
+}
+
+#bottom-links-card a:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+  -webkit-text-fill-color: white;
+}
+
+/* Component Styling */
+.main-button {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14pt;
+  font-weight: bold;
+  transition: all .15s ease-in-out;
+}
+
+.main-button:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}

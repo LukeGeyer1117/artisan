@@ -1,0 +1,79 @@
+#inventory-main-section {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  height: 100%;
+}
+
+#top-buttons-section {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: right;
+  height: fit-content;
+  margin: 1rem 0 0 0;
+}
+
+#inventory-table-section {
+  margin-top: 0;
+}
+
+#inventory-table {
+  width: 100%;
+  box-sizing: border-box;
+  border-collapse: collapse;
+}
+
+#inventory-table tr {
+  border-bottom: 2px solid #4F46E5;
+}
+
+#inventory-table th {
+  text-align: left;
+  padding: 1.5rem 2rem;
+}
+
+#inventory-table td {
+  padding: 1.25rem 2rem;
+}
+
+.product-name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-name img {
+  width: 2rem;
+  height: 2rem;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-actions div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: auto;
+}
+
+.product-actions div {
+  font-size: 16pt;
+}
+
+.product-actions div img {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.action-btn {
+  padding-right: .5rem;
+  transition: all .15s ease-in-out;
+}
+
+.action-btn:hover { 
+  cursor: pointer;
+  transform: scale(1.05);
+}

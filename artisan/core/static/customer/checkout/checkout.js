@@ -71,7 +71,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             city: city,
                             state: state,
                             zip_code: zip_code,
-                            slug: slug
+                            slug: slug,
+                            total_price: paymentTotal
                         }
                     )
                 })

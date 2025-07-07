@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Merchant Dashboard</title>
   <link rel="stylesheet" href="{% static 'merchant/dashboard/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'merchant/common.css' %}">
   <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
   <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
@@ -17,7 +18,7 @@
 <body>
     <!-- NAV -->
     {% block nav %}
-        {% include 'client/components/merch-nav/nav.html' with slug=artisan.slug %}
+        {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
     {% endblock nav %}
 
   <!-- Main Content -->
@@ -26,12 +27,12 @@
     <!-- Sidebar Links -->
     <div class="dashboard-links gradient-background">
       <div class="links-group">
-        <a href="/dashboard/" class="active"><img src="/media/images/speed_64dp_4F46E5_FILL0_wght400_GRAD0_opsz48.png" alt="dashboard icon"><h3>Dashboard</h3></a>
-        <a href="/orders/"><img src="/media/images/orders_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="orders icon"><h3>Orders</h3></a>
-        <a href="/custom-requests/"><img src="/media/images/instant_mix_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="custom orders icon"><h3>Custom Orders</h3></a>
-        <a href="/inventory/"><img src="/media/images/inventory_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="inventory icon"><h3>Inventory</h3></a>
-        <a href="/reporting/"><img src="/media/images/finance_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png" alt="reporting icon"><h3>Reporting</h3></a>
-        <a href="/customize-gallery/"><img src="/media/images/photo_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="gallery icon"><h3>Gallery</h3></a>
+        <a href="/dashboard/"><img src="/media/icons/inactive/speed_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48 (1).svg" alt="dashboard icon"><h3>Dashboard</h3></a>
+        <a href="/orders/"><img src="/media/icons/inactive/orders_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="orders icon"><h3>Orders</h3></a>
+        <a href="/custom-requests/"><img src="/media/icons/inactive/tune_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="custom orders icon"><h3>Custom Orders</h3></a>
+        <a href="/inventory/"><img src="/media/icons/inactive/inventory_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="inventory icon"><h3>Inventory</h3></a>
+        <a href="/reporting/"><img src="/media/icons/inactive/finance_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="reporting icon"><h3>Reporting</h3></a>
+        <a href="/customize-gallery/"><img src="/media/icons/inactive/panorama_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="gallery icon"><h3>Gallery</h3></a>
       </div>
       <div class="links-group">
         <a href="/settings/"><img src="/media/images/settings_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="settings icon"><h3>Settings</h3></a>
@@ -64,17 +65,18 @@
           <div class="dashboard-card-modal gradient-background" id="reporting-redirect-modal">Go to Reporting</div>
         </div>
         <div class="dashboard-card gradient-background" id="custom-orders-card">
-          <div id="custom-orders">
-            <p>You have...</p>
-            <h1>17</h1>
-            <p>custom requests.</p>
-          </div>
+          <p>You have...</p>
+          <h1>17</h1>
+          <p>custom requests.</p>
+
+          <div class="dashboard-card-modal" id="custom-redirect-modal">See Custom Orders</div>
         </div>
       </section>
 
       <!-- Active Orders -->
       <section class="dashboard-section" id="orders-section">
         <div class="dashboard-card" id="orders-card">
+          <div class="dashboard-table-modal" id="orders-redirect-modal">See Orders</div>
           <table id="orders-table">
             <thead class="gradient-background">
               <th>Order #</th>
@@ -100,10 +102,33 @@
         </div>
       </section>
 
+      <!-- Quick Inventory Section -->
       <section class="dashboard-section" id="inventory-section">
-        <div class="dashboard-card"></div>
+        <div class="dashboard-card" id="inventory-card">
+          <section id="inventory-stats-section">
+            <p>Items In Stock</p>
+            <h3 id="instock">0</h3>
+            <p>Items Out of Stock</p>
+            <h3 id="outofstock">0</h3>
+            <p>Value of Current Inventory</p>
+            <h3 id="totalvalue">0</h3>
+          </section>
+          <div class="dashboard-card" id="embedded-inventory-table">
+            <div class="dashboard-table-modal" id="orders-redirect-modal">See Inventory</div>
+            <table id="inventory-table">
+              <thead class="gradient-background">
+                <th>Product #</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+              </thead>
+              <tbody class="scrollable"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
+      <!-- Help Links -->
       <section class="dashboard-section" id="bottom-links-section">
         <div class="dashboard-card" id="bottom-links-card">
           <a href="" class="link gradient-text">Help Center</a>
@@ -117,5 +142,10 @@
     </section>
   </main>
   <script src="{% static 'merchant/dashboard/secondary.js' %}"></script>
+  <script>
+    const window_location = 'Dashboard';
+    const active_URL = "/media/icons/active/speed_64dp_4F46E5_FILL0_wght400_GRAD0_opsz48.svg"
+  </script>
+  <script src="{% static 'merchant/common.js' %}"></script>
 </body>
 </html>

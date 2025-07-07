@@ -10,7 +10,7 @@
 {% block content %}
 
     {% block nav %}
-        {% include 'client/components/nav/nav.html' with slug=artisan.slug %} 
+        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %} 
     {% endblock nav %}
     <main>
         <section id="gallery-section">
@@ -30,7 +30,7 @@
         </section>
     </main>
     {% block footer %}
-        {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
+        {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
 {% endblock %}

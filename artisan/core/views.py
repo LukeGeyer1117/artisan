@@ -58,6 +58,11 @@ def dashboard_view(request):
         return render(request, 'client/merchant/login.html')
     return render(request, 'client/merchant/dashboard.html')
 
+def inventory_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/inventory.html')
+
 @csrf_exempt
 def session(request):
     if request.method == 'DELETE':
@@ -132,6 +137,7 @@ def order(request):
             state = data.get('state')
             zip_code = data.get('zip_code')
             slug = data.get('slug')
+            total_price = data.get('total_price')
 
             order = Order.objects.create(
                 customer_name=fullname,
@@ -141,6 +147,7 @@ def order(request):
                 city=city,
                 state=state,
                 zip_code=zip_code,
+                total_price=total_price,
                 artisan=Artisan.objects.get(slug=slug)
             )
 
@@ -200,6 +207,7 @@ def orders(request):
                     'zip_code': order.zip_code,
                     'status': order.status,
                     'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                    'total_price': order.total_price,
                 }
                 for order in orders
             ]
@@ -232,6 +240,7 @@ def active_orders(request):
                     'zip_code': order.zip_code,
                     'status': order.status,
                     'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                    'total_price': order.total_price,
                 }
                 for order in orders
             ]

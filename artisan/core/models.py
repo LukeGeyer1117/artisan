@@ -61,10 +61,11 @@ class Order(models.Model):
         ],
         default='pending'
     )
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.customer_name} - {self.customer_email} - {self.customer_phone} - {self.created_at}"
+        return f"{self.total_price} - {self.customer_name} - {self.customer_email} - {self.customer_phone} - {self.created_at}"
     
 class CustomRequest(models.Model):
     customer_name = models.CharField(max_length=100)

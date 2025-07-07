@@ -11,7 +11,7 @@
 
     <!-- NAV -->
     {% block nav %}
-        {% include 'client/components/nav/nav.html' with slug=artisan.slug %} 
+        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %} 
     {% endblock nav %}
     <!-- Page content -->
     <main>
@@ -46,7 +46,7 @@
     </main>
     <!-- FOOTER -->
     {% block footer %}
-        {% include 'client/components/footer/footer.html' with slug=artisan.slug %}
+        {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}
 
 {% endblock %}

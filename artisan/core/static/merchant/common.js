@@ -1,0 +1,11 @@
+let links = document.querySelectorAll('.links-group a');
+console.log(links);
+
+links.forEach(link => {
+  link.classList.remove('active');
+
+  if (window_location == link.querySelector('h3').innerHTML) {
+    link.classList.add('active');
+    link.querySelector('img').src = active_URL;
+  }
+})
