@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       const splitDiv = document.createElement('div');
       const detailsIcon = document.createElement('img');
       detailsIcon.className = 'action-btn';
+      detailsIcon.title = 'See details'
       detailsIcon.src = '/media/icons/active/eye_purple.svg';
       splitDiv.appendChild(detailsIcon);
       const editIcon = document.createElement('img');
@@ -66,6 +67,35 @@ document.addEventListener('DOMContentLoaded', async function () {
       productRow.appendChild(productActions);
 
       inventoryTableBody.appendChild(productRow);
+
+      productRow.addEventListener('click', function () {
+        const detailsModal = document.getElementById('product-details-modal');
+        showModal(detailsModal);
+
+        document.querySelector('#product-details img').src = '/media/' + product.image;
+        document.getElementById('product-title').innerHTML = product.name;
+        document.getElementById('product-price').innerHTML = product.price;
+        document.getElementById('product-stock').innerHTML = product.quantity;
+        document.getElementById('product-description').innerHTML = product.description;
+
+        detailsModal.querySelector("#product-details #close-modal-btn").addEventListener('click', function () {
+          hideModal(detailsModal);
+        });
+      })
     });
   })
 })
+
+function showModal(modal) {
+    modal.classList.add('active'); // Make it display: flex
+    requestAnimationFrame(() => {
+        modal.classList.add('show'); // Trigger animation
+    });
+}
+
+function hideModal(modal) {
+    modal.classList.remove('show'); // Start exit animation
+    setTimeout(() => {
+        modal.classList.remove('active'); // Hide after animation
+    }, 150);
+}

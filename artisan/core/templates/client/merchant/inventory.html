@@ -45,24 +45,25 @@
       <!-- Help Links -->
       <section class="dashboard-section" id="inventory-main-section">
 
-        <section class="dashboard-section" id="top-buttons-section">
-          <button class="main-button gradient-background box-shadowable" id="add-item-button">Add Item &plus;</button>
-        </section>
+        <div>
+          <section class="dashboard-section" id="top-buttons-section">
+            <button class="main-button gradient-background box-shadowable" id="add-item-button">Add Item &plus;</button>
+          </section>
 
-        <section class="dashboard-section" id="inventory-table-section">
-          <table id="inventory-table">
-            <thead>
-              <th>Product ID</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Actions</th>
-            </thead>
-            <tbody>
-              <!-- Fake Data for design purpose -->
-            </tbody>
-          </table>
-        </section>
+          <section class="dashboard-section" id="inventory-table-section">
+            <table id="inventory-table">
+              <thead>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </section>
+        </div>
 
         <div class="dashboard-card" id="bottom-links-card">
           <a href="" class="link gradient-text">Help Center</a>
@@ -72,8 +73,27 @@
           <a href="" class="link gradient-text">Contact Us</a>
         </div>
       </section>
-
     </section>
+    <div id="product-details-modal" class="">
+        <div id="product-details">
+          <h3 id="close-modal-btn">&times;</h3>
+          <h3>Preview Product</h3>
+          <img src="/media/images/classical.webp" alt="product image">
+          <label for="product-title">Title</label>
+          <p id="product-title">Product title</p>
+          <label for="product-price">Price</label>
+          <p id="product-price">Product Price</p>
+          <label for="product-stock">Stock</label>
+          <p id="product-stock">0</p>
+          <label for="product-description">Description</label>
+          <p id="product-description">...</p>
+        </div>
+        <div id="product-actions">
+          <button id="details-button" class="main-button gradient-background">Details</button>
+          <button id="edit-button" class="main-button gradient-background">Edit</button>
+          <button id="delete-button" class="main-button gradient-background">Delete</button>
+        </div>
+    </div>
   </main>
   <script>
     const window_location = 'Inventory';

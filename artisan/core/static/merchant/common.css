@@ -125,8 +125,8 @@ body {
 }
 
 .links-group a img {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .links-group a h3 {
@@ -206,10 +206,11 @@ body {
   box-sizing: border-box;
   max-height: 10rem;
   padding: 0 2rem;
+  margin: 0 1rem;
 }
 
 #bottom-links-card a {
-  padding: 1rem;
+  padding: .5rem;
   margin: .5rem;
   transition: all .15s ease-in-out;
   text-decoration: none;
@@ -224,11 +225,11 @@ body {
 
 /* Component Styling */
 .main-button {
-  padding: 1rem 1.5rem;
+  padding: .75rem 1.75rem;
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 14pt;
+  font-size: 12pt;
   font-weight: bold;
   transition: all .15s ease-in-out;
 }
