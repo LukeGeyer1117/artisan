@@ -1,5 +1,4 @@
 let links = document.querySelectorAll('.links-group a');
-console.log(links);
 
 links.forEach(link => {
   link.classList.remove('active');

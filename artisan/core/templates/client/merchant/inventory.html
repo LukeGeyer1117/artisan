@@ -25,19 +25,9 @@
 
   <main class="dashboard-main">
     <!-- Sidebar Links -->
-    <div class="dashboard-links gradient-background">
-      <div class="links-group">
-        <a href="/dashboard/"><img src="/media/icons/inactive/speed_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48 (1).svg" alt="dashboard icon"><h3>Dashboard</h3></a>
-        <a href="/orders/"><img src="/media/icons/inactive/orders_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="orders icon"><h3>Orders</h3></a>
-        <a href="/custom-requests/"><img src="/media/icons/inactive/tune_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="custom orders icon"><h3>Custom Orders</h3></a>
-        <a href="/inventory/"><img src="/media/icons/inactive/inventory_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="inventory icon"><h3>Inventory</h3></a>
-        <a href="/reporting/"><img src="/media/icons/inactive/finance_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="reporting icon"><h3>Reporting</h3></a>
-        <a href="/customize-gallery/"><img src="/media/icons/inactive/panorama_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.svg" alt="gallery icon"><h3>Gallery</h3></a>
-      </div>
-      <div class="links-group">
-        <a href="/settings/"><img src="/media/images/settings_64dp_FFFFFF_FILL0_wght400_GRAD0_opsz48.png" alt="settings icon"><h3>Settings</h3></a>
-      </div>
-    </div>
+    {% block side-links %}
+      {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
+    {% endblock side-links %}
 
     <!-- All The DATA Sections -->
      <section class="dashboard-sections">
@@ -93,6 +83,17 @@
           <button id="edit-button" class="main-button gradient-background">Edit</button>
           <button id="delete-button" class="main-button gradient-background">Delete</button>
         </div>
+    </div>
+    <!-- Confirm Delete Product Modal -->
+    <div id="confirm-delete-modal" class="modal">
+      <div id="confirm-delete-content" class="modal-content">
+        <h1 id="delete-warning-header">Warning!!!</h1>
+        <p id="delete-warning-p">You are about to delete a product. This action cannot be undone. Are you sure you want to continue?</p>
+        <div id="delete-modal-buttons">
+          <button id="cancel-delete-button">No, Don't Delete</button>
+          <button id="confirm-delete-button">Yes, Delete Product</button>
+        </div>
+      </div>
     </div>
   </main>
   <script>

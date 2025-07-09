@@ -63,6 +63,11 @@ def inventory_view(request):
         return render(request, 'client/merchant/login.html')
     return render(request, 'client/merchant/inventory.html')
 
+def new_item_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/add_item.html')
+
 @csrf_exempt
 def session(request):
     if request.method == 'DELETE':

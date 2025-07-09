@@ -2,11 +2,11 @@
   display: flex;
   flex-direction: column;
   margin: 0;
+  padding: 2rem;
+  padding-top: 0;
   height: 100%;
-  width: auto;
+  width: 100%;
   box-sizing: border-box;
-  transition: all .15s ease-in-out;
-  padding-right: 1rem;
 }
 
 #top-buttons-section {
@@ -32,11 +32,18 @@
 
 #inventory-table tr {
   border-bottom: 2px solid #4F46E5;
-  transition: all .15s ease-in-out;
+}
+
+#inventory-table tr.active {
+  color: white;
+}
+
+#inventory-table tr.active .product-actions img {
+  visibility: hidden;
 }
 
 #inventory-table tr:hover {
-  transform: scale(1.0125);
+  background-color: aliceblue;
 }
 
 #inventory-table th {
@@ -89,15 +96,15 @@
 }
 
 #product-details-modal {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 250px;
-    background-color: white;
-    height: 92vh;
-    position: sticky;
-    transition: transform .15s ease-in-out;
-    transform: translateX(100%);
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 15%;
+  background-color: white;
+  height: 92vh;
+  position: sticky;
+  /* transition: transform .25s ease-in-out; */
+  transform: translateX(100%);
 }
 
 #product-details-modal.active {
@@ -113,6 +120,9 @@
   flex-direction: column;
   padding: 1.5rem;
   padding-top: 0.5rem;
+  gap: .5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #close-modal-btn {
@@ -136,17 +146,68 @@
 
 #product-details p {
   margin-top: 0;
+  max-height: 130px;
+  overflow: hidden;
 }
 
 #product-details img {
-  width: 10rem;
+  width: 100%;
   height: 10rem;
   object-fit: cover;
+  margin: .5rem auto;
+  border-radius: 8px;
 }
 
 #product-actions {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem .5rem;
+  padding: 1.5rem 1rem;
   gap: .25rem;
+}
+
+#delete-button {
+  background: linear-gradient(90deg, #FF6E6E, #FF5555, #FF6E6E);
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #00000080;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 32px;
+  padding: 2rem;
+  width: fit-content;
+}
+
+.modal-content h1 {
+  text-align: center;
+  color: #FF6E6E;
+}
+
+.modal-content p {
+  max-width: 350px;
+  min-width: 100px;
+}
+
+#delete-modal-buttons {
+  width: 100%;
+}
+
+#delete-modal-buttons button {
+  border: none;
+  padding: 1rem;
+  border-radius: 16px;
+  width: 49%;
 }

@@ -34,6 +34,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('inventory/', views.inventory_view),
+    path('add-item/', views.new_item_view),
     path('api/artisan/', views.artisan),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),

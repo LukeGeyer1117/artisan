@@ -146,9 +146,13 @@ body {
 }
 
 .dashboard-sections {
-  width: 90%;
+  width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+.dashboard-sections.compressed {
+  width: 85%;
 }
 
 .dashboard-section {
@@ -169,7 +173,7 @@ body {
 }
 
 .dashboard-card:hover {
-  transform: scale(1.01);
+  transform: scale(1);
 }
 
 .dashboard-card-modal {
@@ -205,8 +209,8 @@ body {
   width: 100%;
   box-sizing: border-box;
   max-height: 10rem;
-  padding: 0 2rem;
-  margin: 0 1rem;
+  padding: .5rem auto;
+  margin: 0 auto;
 }
 
 #bottom-links-card a {
@@ -219,8 +223,7 @@ body {
 
 #bottom-links-card a:hover {
   transform: scale(1.05);
-  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
-  -webkit-text-fill-color: white;
+
 }
 
 /* Component Styling */

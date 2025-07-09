@@ -1,7 +1,14 @@
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
+
+  let addItemButton = document.getElementById('add-item-button');
+  addItemButton.addEventListener('click', function () {
+    window.location.href = '/add-item/';
+  })
+
   // Get all the Inventory items the merchant has created.
+
   const inventoryTableBody = document.querySelector('#inventory-table tbody');
   fetch(`${API_BASE_URL}/inventory/`, {
     method: 'GET',
@@ -43,7 +50,11 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Product Stock
       const productStock = document.createElement('td');
       productStock.className = 'product-stock';
-      productStock.append(product.quantity);
+      if (product.quantity == '0') {
+        productStock.innerHTML ="<span style='color: #FF6E6E'>Out of Stock</span>";
+      } else {
+        productStock.append(product.quantity);
+      }
       productRow.appendChild(productStock);
 
       // Product Actions
@@ -69,17 +80,34 @@ document.addEventListener('DOMContentLoaded', async function () {
       inventoryTableBody.appendChild(productRow);
 
       productRow.addEventListener('click', function () {
+        const rows = document.querySelectorAll('#inventory-table tr');
+        // Remove the classes from all rows
+        rows.forEach(r => {
+          r.classList.remove('active');
+          r.classList.remove('gradient-background');
+        })
+        // Readd it to this row
+        productRow.classList.add('active');
+        productRow.classList.add('gradient-background');
+
         const detailsModal = document.getElementById('product-details-modal');
         showModal(detailsModal);
+        document.querySelector('.dashboard-sections').classList.add('compressed');
 
         document.querySelector('#product-details img').src = '/media/' + product.image;
         document.getElementById('product-title').innerHTML = product.name;
         document.getElementById('product-price').innerHTML = product.price;
-        document.getElementById('product-stock').innerHTML = product.quantity;
+        if (product.quantity == '0') {
+            document.getElementById('product-stock').innerHTML = "<span style='color: #FF6E6E'>Out of Stock</span>";
+        } else {
+            document.getElementById('product-stock').innerHTML = product.quantity;
+        }
         document.getElementById('product-description').innerHTML = product.description;
 
         detailsModal.querySelector("#product-details #close-modal-btn").addEventListener('click', function () {
           hideModal(detailsModal);
+          document.querySelector('.dashboard-sections').classList.remove('compressed');
+          rows.forEach(r => {r.classList.remove('active');r.classList.remove('gradient-background');})
         });
       })
     });
