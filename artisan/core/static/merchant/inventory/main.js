@@ -61,11 +61,11 @@ document.addEventListener('DOMContentLoaded', async function () {
       const productActions = document.createElement('td');
       productActions.className = 'product-actions';
       const splitDiv = document.createElement('div');
-      const detailsIcon = document.createElement('img');
-      detailsIcon.className = 'action-btn';
-      detailsIcon.title = 'See details'
-      detailsIcon.src = '/media/icons/active/eye_purple.svg';
-      splitDiv.appendChild(detailsIcon);
+      // const detailsIcon = document.createElement('img');
+      // detailsIcon.className = 'action-btn';
+      // detailsIcon.title = 'See details'
+      // detailsIcon.src = '/media/icons/active/eye_purple.svg';
+      // splitDiv.appendChild(detailsIcon);
       const editIcon = document.createElement('img');
       editIcon.className = 'action-btn';
       editIcon.src = '/media/icons/active/ink_pen_purple.svg';
@@ -109,6 +109,34 @@ document.addEventListener('DOMContentLoaded', async function () {
           document.querySelector('.dashboard-sections').classList.remove('compressed');
           rows.forEach(r => {r.classList.remove('active');r.classList.remove('gradient-background');})
         });
+
+        document.getElementById('delete-button').addEventListener('click', function () {
+          document.querySelector('.modal').style.display = 'flex';
+
+          document.getElementById('cancel-delete-button').addEventListener('click', function() {
+            document.querySelector('.modal').style.display = 'none';
+          })
+
+          document.getElementById('confirm-delete-button').addEventListener('click', function() {
+            fetch(`${API_BASE_URL}/product/?id=`+product.id, {
+              method: 'DELETE',
+              credentials: 'include'
+            })
+            .then(response => {
+              if (!response.ok) throw new Error("Failed to delete product");
+              return response.json();
+            })
+            .then(result => {
+              alert("Product deleted!");
+              window.location.reload();
+            })
+            .catch(error => {
+              console.error(error);
+              alert("Failed to delete product");
+            });
+          })
+
+        })
       })
     });
   })

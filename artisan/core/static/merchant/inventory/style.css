@@ -170,6 +170,7 @@
 }
 
 .modal {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -177,7 +178,6 @@
   height: 100%;
   box-sizing: border-box;
   background-color: #00000080;
-  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -210,4 +210,14 @@
   padding: 1rem;
   border-radius: 16px;
   width: 49%;
+  color: white;
+  transition: all 0.15s ease-in-out;
+}
+
+#delete-modal-buttons button:hover {
+  transform: scale(1.0125);
+}
+
+#confirm-delete-button {
+  background: linear-gradient(90deg, #FF6E6E, #FF5555, #FF6E6E);
 }
