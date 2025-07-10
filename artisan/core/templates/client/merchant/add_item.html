@@ -29,7 +29,11 @@
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
-    <div class="dashboard-section">
+    <div class="" id="new-product-form-section">
+      <div id="back-button-div">
+        <img src="/media/icons/active/arrow_left_purple.svg" alt="go bakck arrow">
+        <h3>Back to Inventory</h3>
+      </div>
       <form id="new-product-form">
           <input type="text" id="product-name" name="product-name" placeholder="Product Name" required>
           <input type="file" id="product-image" name="product-image" accept="image/*">

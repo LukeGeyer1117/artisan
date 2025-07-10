@@ -43,11 +43,10 @@
           <section class="dashboard-section" id="inventory-table-section">
             <table id="inventory-table">
               <thead>
-                <th>Product ID</th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
                 <th>Stock</th>
-                <th>Actions</th>
               </thead>
               <tbody>
               </tbody>
@@ -64,7 +63,8 @@
         </div>
       </section>
     </section>
-    <div id="product-details-modal" class="">
+    <!-- Product Details Modal -->
+    <div id="product-details-modal" class="side-modal">
         <div id="product-details">
           <h3 id="close-modal-btn">&times;</h3>
           <h3>Preview Product</h3>
@@ -82,6 +82,23 @@
           <button id="edit-button" class="main-button gradient-background">Edit</button>
           <button id="delete-button" class="main-button gradient-background">Delete</button>
         </div>
+    </div>
+    <!-- Edit Item Modal -->
+    <div id="product-edit-modal" class="side-modal">
+      <form id="edit-details">
+        <h3>Edit Product</h3>
+        <input type="file" id="edit-image" name="product-image" accept="image/*">
+        <label for="edit-title">Title</label>
+        <input type="text" id="edit-title" required>
+        <label for="edit-price">Price</label>
+        <input type="number" id="edit-price" step=".01" required>
+        <label for="edit-stock">Stock</label>
+        <input type="number" id="edit-stock" required>
+        <label for="edit-description">Description</label>
+        <textarea name="description" id="edit-description" required></textarea>
+
+        <button type="submit" id="submit-edit-button">Complete</button>
+      </form>
     </div>
     <!-- Confirm Delete Product Modal -->
     <div id="confirm-delete-modal" class="modal">

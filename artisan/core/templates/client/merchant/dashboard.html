@@ -44,15 +44,16 @@
 
       <!-- Order, Custom Reuqests, and quick sales stats -->
       <section class="dashboard-section" id="quick-stats">
+        <h1 class="gradient-text"></h1>
         <div class="dashboard-card" id="sales-orders-card">
           <section id="sales-and-orders-section">
             <div id="sales">
               <p class="gradient-text">Sales</p>
-              <h1 class="gradient-text">0</h1>
+              <h1 class="gradient-text"></h1>
             </div>
             <div id="orders">
               <p class="gradient-text">Orders</p>
-              <h1 class="gradient-text">0</h1>
+              <h1 class="gradient-text"></h1>
             </div>
           </section>
           <section id="time-frame-section">
@@ -66,7 +67,7 @@
         </div>
         <div class="dashboard-card gradient-background" id="custom-orders-card">
           <p>You have...</p>
-          <h1>17</h1>
+          <h1></h1>
           <p>custom requests.</p>
 
           <div class="dashboard-card-modal" id="custom-redirect-modal">See Custom Orders</div>
@@ -76,9 +77,9 @@
       <!-- Active Orders -->
       <section class="dashboard-section" id="orders-section">
         <div class="dashboard-card" id="orders-card">
-          <div class="dashboard-table-modal" id="orders-redirect-modal">See Orders</div>
+          <h1 class="gradient-text">Active Orders</h1>
           <table id="orders-table">
-            <thead class="gradient-background">
+            <thead class="">
               <th>Order #</th>
               <th>Contact</th>
               <th>Date</th>
@@ -104,19 +105,10 @@
 
       <!-- Quick Inventory Section -->
       <section class="dashboard-section" id="inventory-section">
-        <div class="dashboard-card" id="inventory-card">
-          <section id="inventory-stats-section">
-            <p>Items In Stock</p>
-            <h3 id="instock">0</h3>
-            <p>Items Out of Stock</p>
-            <h3 id="outofstock">0</h3>
-            <p>Value of Current Inventory</p>
-            <h3 id="totalvalue">0</h3>
-          </section>
-          <div class="dashboard-card" id="embedded-inventory-table">
-            <div class="dashboard-table-modal" id="orders-redirect-modal">See Inventory</div>
+        <div class="dashboard-card" id="embedded-inventory-table">
+          <h1 class="gradient-text">Inventory</h1>
             <table id="inventory-table">
-              <thead class="gradient-background">
+              <thead class="">
                 <th>Product #</th>
                 <th>Name</th>
                 <th>Price</th>
@@ -125,7 +117,6 @@
               <tbody class="scrollable"></tbody>
             </table>
           </div>
-        </div>
       </section>
 
       <!-- Help Links -->

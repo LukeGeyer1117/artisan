@@ -66,7 +66,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 80px;
+  width: 200px;
   height: 92vh;
   box-shadow: 1px 0 .1em black;
   position: sticky;
@@ -90,7 +90,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: left;
-  width: 40px;
+  width: fit-content;
   gap: .5rem;
   text-decoration: none;
   padding: 1rem;
@@ -101,14 +101,11 @@ body {
 
 .links-group a:hover {
   transform: scale(1.05);
-  background: linear-gradient(135deg, #3B34C7 0%, #6366F1 100%);
-  width: 150px;
 }
 
 .links-group a.active:hover {
   transform: scale(1.05);
   background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
-  width: 150px;
 }
 
 .links-group a.active, .links-group a.active h3 {
@@ -117,7 +114,7 @@ body {
 }
 
 .links-group a.active {
-  border-radius: 0 64pt 64pt 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .links-group a.active img {
@@ -125,23 +122,21 @@ body {
 }
 
 .links-group a img {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .links-group a h3 {
-  display: hidden;
   color: white;
-  font-size: 12pt;
+  font-size: 10pt;
   margin: 0;
   width: 100px;
-  transform: translateX(-200%);
+  /* transform: translateX(-200%); */
   transition: transform .15s ease-out, opacity 0.15s ease-out;
 }
 
 .links-group a:hover h3 {
   display: block;
-  transform: translateX(0);
   opacity: 1;
 }
 
@@ -152,24 +147,30 @@ body {
 }
 
 .dashboard-sections.compressed {
-  width: 85%;
+  width: 80%;
 }
 
 .dashboard-section {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 2rem;
-  margin: 2rem 2rem 1rem 2rem;
+  gap: auto;
+  padding: 0 inherit;
+  /* margin: 2rem 2rem 1rem 2rem; */
 }
 
 .dashboard-card {
   background-color: white;
-  border-radius: 32px;
-  padding: auto;
+  border-radius: 8px;
+  margin: 1rem;
   box-shadow: 0px 1px 2px black;
   overflow: hidden ;
   transition: all 0.15s ease-in-out;
+}
+
+.dashboard-card h1 {
+  padding: 0 1rem;
+  margin: .5rem 0;
 }
 
 .dashboard-card:hover {
@@ -181,7 +182,7 @@ body {
   transform: translateY(-100%);
   transition: transform .15s ease-out, opacity 0.15s ease-out;
   position: absolute;
-  font-size: 18pt;
+  font-size: 12pt;
   top: 0;
   left: 0;
   width: 100%;
@@ -203,14 +204,13 @@ body {
 #bottom-links-card {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  width: 100%;
+  width: fit-content;
+  height: fit-content;
   box-sizing: border-box;
-  max-height: 10rem;
   padding: .5rem auto;
-  margin: 0 auto;
 }
 
 #bottom-links-card a {
@@ -223,7 +223,6 @@ body {
 
 #bottom-links-card a:hover {
   transform: scale(1.05);
-
 }
 
 /* Component Styling */
@@ -240,4 +239,11 @@ body {
 .main-button:hover {
   cursor: pointer;
   transform: scale(1.05);
+}
+
+
+@media (max-width: 1000px) {
+  .dashboard-section {
+    padding: 0;
+  }
 }

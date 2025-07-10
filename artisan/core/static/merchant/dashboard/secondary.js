@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
     .then(data => {
       artisan = data.artisan;
+      document.querySelector('#quick-stats h1').innerHTML = 'Hello, ' + artisan.username;
     })
 
     // Handle Signout button click
@@ -229,9 +230,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             totalValue += parseInt(product['price']) * parseInt(product['quantity']);
             inventoryTableBody.appendChild(productRow);
         })
-        document.getElementById('instock').innerHTML = inStock;
-        document.getElementById('outofstock').innerHTML = outOfStock;
-        document.getElementById('totalvalue').innerHTML = '$' + totalValue;
     })
 })
 

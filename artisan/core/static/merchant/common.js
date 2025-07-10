@@ -8,3 +8,5 @@ links.forEach(link => {
     link.querySelector('img').src = active_URL;
   }
 })
+
+document.querySelector('.navbar a').addEventListener('click', function () {window.location.href = '/login/'});

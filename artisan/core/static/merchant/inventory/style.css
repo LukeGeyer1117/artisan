@@ -1,8 +1,7 @@
 #inventory-main-section {
   display: flex;
   flex-direction: column;
-  margin: 0;
-  padding: 2rem;
+  padding: 1rem;
   padding-top: 0;
   height: 100%;
   width: 100%;
@@ -48,11 +47,12 @@
 
 #inventory-table th {
   text-align: left;
-  padding: 1.5rem 2rem;
+  padding: auto;
 }
 
 #inventory-table td {
-  padding: .75rem 2rem;
+  padding: 0 1rem;
+  min-height: 3rem;
 }
 
 .product-name {
@@ -95,11 +95,11 @@
   transform: scale(1.1);
 }
 
-#product-details-modal {
+#product-details-modal, #product-edit-modal {
   display: none;
   flex-direction: column;
   justify-content: space-between;
-  width: 15%;
+  width: 20%;
   background-color: white;
   height: 92vh;
   position: sticky;
@@ -107,15 +107,15 @@
   transform: translateX(100%);
 }
 
-#product-details-modal.active {
+#product-details-modal.active, #product-edit-modal.active {
     display: flex;
 }
 
-#product-details-modal.show {
+#product-details-modal.show, #product-edit-modal.show {
     transform: translateX(0%);
 }
 
-#product-details {
+#product-details, #edit-details {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
@@ -134,23 +134,23 @@
   cursor: pointer;
 }
 
-#product-details h3 {
+.side-modal h3 {
   margin: 0;
 }
 
-#product-details label {
+.side-modal label {
   color: black;
   font-weight: bold;
   font-size: 10pt;
 }
 
-#product-details p {
+.side-modal p {
   margin-top: 0;
   max-height: 130px;
-  overflow: hidden;
+  overflow-y: scroll;
 }
 
-#product-details img {
+.side-modal img {
   width: 100%;
   height: 10rem;
   object-fit: cover;
@@ -198,7 +198,6 @@
 
 .modal-content p {
   max-width: 350px;
-  min-width: 100px;
 }
 
 #delete-modal-buttons {
@@ -220,4 +219,16 @@
 
 #confirm-delete-button {
   background: linear-gradient(90deg, #FF6E6E, #FF5555, #FF6E6E);
+}
+
+@media (max-width: 650px) {
+  .product-name {
+    flex-direction: column;
+  }
+
+  #inventory-table-section {
+    padding: 0;
+  }
+
+
 }
