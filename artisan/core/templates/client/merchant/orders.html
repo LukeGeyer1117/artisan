@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Merchant Dashboard</title>
+  <link rel="stylesheet" href="{% static 'merchant/inventory/new-item.css' %}" />
+  <link rel="stylesheet" href="{% static 'merchant/common.css' %}">
+  <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Menbere:wght@100..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- NAV -->
+    {% block nav %}
+        {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
+    {% endblock nav %}
+
+  <!-- Main Content -->
+
+  <main class="dashboard-main">
+    <!-- Sidebar Links -->
+    {% block side-links %}
+      {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
+    {% endblock side-links %}
+
+  </main>
+  <script>
+    const window_location = 'Orders';
+    const active_URL = "/media/icons/active/orders_purple.svg";
+  </script>
+  <script src="{% static 'merchant/common.js' %}"></script>
+  <script src="{% static 'merchant/inventory/new-item.js' %}"></script>
+</body>
+</html>

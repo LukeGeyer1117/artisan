@@ -63,6 +63,31 @@ def inventory_view(request):
         return render(request, 'client/merchant/login.html')
     return render(request, 'client/merchant/inventory.html')
 
+def orders_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/orders.html')
+
+def custom_orders_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/custom-orders.html')
+
+def reporting_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/reporting.html')
+
+def gallery_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/gallery.html')
+
+def settings_view(request):
+    if 'artisan_id' not in request.session:
+        return render(request, 'client/merchant/login.html')
+    return render(request, 'client/merchant/settings.html')
+
 def new_item_view(request):
     if 'artisan_id' not in request.session:
         return render(request, 'client/merchant/login.html')
