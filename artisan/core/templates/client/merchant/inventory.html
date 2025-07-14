@@ -37,16 +37,20 @@
 
         <div>
           <section class="dashboard-section" id="top-buttons-section">
+            <div class="search-container box-shadowable">
+              <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
+              <span class="search-icon gradient-background"><img src="/media/icons/active/search_purple.svg" alt="search Icon"></span>
+            </div>
             <button class="main-button gradient-background box-shadowable" id="add-item-button">Add Item &plus;</button>
           </section>
 
           <section class="dashboard-section" id="inventory-table-section">
             <table id="inventory-table">
               <thead>
-                <th>ID</th>
+                <th id="id-header">ID</th>
                 <th>Name</th>
-                <th>Price</th>
-                <th>Stock</th>
+                <th id="price-header">Price</th>
+                <th id="stock-header">Stock</th>
               </thead>
               <tbody>
               </tbody>

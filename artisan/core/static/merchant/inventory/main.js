@@ -1,6 +1,10 @@
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
+  const searchInput = document.querySelector('.search-container input');
+  const searchIcon = document.querySelector('.search-container span img');
+  let searchActive = false;
+  const inventoryBody = document.querySelector('#inventory-table tbody');
   let currentProduct = null; // Track which product is being operated on
 
   // Add Item Button
@@ -9,8 +13,24 @@ document.addEventListener('DOMContentLoaded', async function () {
     window.location.href = '/add-item/';
   });
 
+  // Search Item
+  searchIcon.addEventListener('click', function () {
+    if (!searchActive) {
+      searchInput.style.width = '200px';
+      searchInput.style.minWidth = '50px';
+      searchInput.style.padding = '.8rem .5rem';
+      searchActive = true;
+    } else {
+      searchInput.style.width = '0px';
+      searchInput.style.minWidth = '0px';
+      searchInput.style.padding = '0';
+      searchActive = false;
+    }
+  })
+
   // Modal close handlers (add once)
-  document.querySelector('#product-details-modal #close-modal-btn').addEventListener('click', function () {
+  const closeModalButton = document.querySelector('#product-details-modal #close-modal-btn');
+  closeModalButton.addEventListener('click', function () {
     const detailsModal = document.getElementById('product-details-modal');
     hideModal(detailsModal);
     document.querySelector('.dashboard-sections').classList.remove('compressed');
@@ -126,9 +146,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     document.getElementById('product-description').innerHTML = product.description;
   }
-
-  // Get all the Inventory items the merchant has created
-  const inventoryTableBody = document.querySelector('#inventory-table tbody');
   
   try {
     const response = await fetch(`${API_BASE_URL}/inventory/`, {
@@ -141,60 +158,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     const data = await response.json();
     console.log(data);
 
-    data.forEach(product => {
-      console.log(product);
-      const productRow = document.createElement('tr');
+    searchAndFilter(searchInput, data);
 
-      // Create the table datums
-      // Product ID
-      const productID = document.createElement('td');
-      productID.className = 'product-id';
-      productID.innerHTML = product.id;
-      productRow.appendChild(productID);
+    searchInput.addEventListener('input', function () {
+      searchAndFilter(searchInput, data);
+    })
 
-      // Product name and img
-      const productName = document.createElement('td');
-      productName.className = 'product-name';
-      const productImg = document.createElement('img');
-      productImg.src = '/media/' + product.image;
-      productName.appendChild(productImg);
-      productName.append(' ', product.name);
-      productRow.appendChild(productName);
-
-      // Product Price
-      const productPrice = document.createElement('td');
-      productPrice.className = 'product-price';
-      productPrice.append('$' + product.price);
-      productRow.appendChild(productPrice);
-
-      // Product Stock
-      const productStock = document.createElement('td');
-      productStock.className = 'product-stock';
-      if (product.quantity == '0') {
-        productStock.innerHTML = "<span style='color: #FF6E6E'>Out of Stock</span>";
-      } else {
-        productStock.append(product.quantity);
-      }
-      productRow.appendChild(productStock);
-
-      inventoryTableBody.appendChild(productRow);
-
-      // Row click handler - simplified
-      productRow.addEventListener('click', function () {
-        // Close the editModal, if it's open
-        hideModal(document.getElementById('product-edit-modal'));
-
-        // Clear active styling from all rows
-        clearActiveRows();
-        
-        // Add active styling to clicked row
-        productRow.classList.add('active');
-        productRow.classList.add('gradient-background');
-
-        // Show product details
-        showProductDetails(product);
-      });
-    });
   } catch (error) {
     console.error('Error fetching inventory:', error);
   }
@@ -212,4 +181,87 @@ function hideModal(modal) {
   setTimeout(() => {
     modal.classList.remove('active'); // Hide after animation
   }, 150);
+}
+
+function searchAndFilter(searchInput, filteredData) {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+
+  // Filter by search term
+  if (searchTerm) {
+    console.log(`filtered data: ${filteredData}`);
+    filteredData = filteredData.filter(item => {
+      item.name.toLowerCase().includes(searchTerm) || 
+      toString(item.id).includes(searchTerm)
+    });
+
+    // Sort by relevance (exact matches, then partial)
+    filteredData.sort((a, b) => {
+      const aScore = getRelevanceSore(a, searchTerm);
+      const bScore = getRelevanceSore(b, searchTerm);
+      return bScore - aScore;
+    });
+  } else {
+    renderResults(filteredData, '')
+  }
+
+  renderResults(filteredData, searchTerm);
+}
+
+function getRelevanceScore(item, searchTerm) {
+  let score = 0;
+  const name = item.name.toLowerCase();
+  const id = toString(item.id);
+  
+  // Exact matches get highest score
+  if (name === searchTerm) score += 100;
+  if (id === searchTerm) score += 90;
+
+  // Starts with search term
+  if (name.startsWith(searchTerm)) score += 50;
+  if (id.startsWith(searchTerm)) score += 40;
+
+  // Contains search term
+  if (name.includes(searchTerm)) score += 25;
+  if (id.includes(searchTerm)) score += 20;
+  
+  return score;
+}
+
+// Highlight matching text
+function highlightText(text, searchTerm) {
+  if (!searchTerm) return text;
+
+  const regex = new RegExp(`(${searchTerm})`, 'gi');
+  return text.replace(regex, '<span class="highlight">$1</span>');
+}
+
+// Render search results
+function renderResults(filteredData, searchTerm = '') {
+  const inventoryBody = document.querySelector('#inventory-table tbody');
+  const inventoryTable = document.getElementById('inventory-table');
+    if (filteredData.length === 0) {
+      // Show "no results" message in the table body instead of separate div
+      inventoryBody.innerHTML = `
+          <tr>
+              <td colspan="6" style="text-align: center; padding: 40px; color: #666; font-size: 18px;">
+                  <div style="font-size: 48px; margin-bottom: 15px;">🔍</div>
+                  No products found matching your search criteria.
+              </td>
+          </tr>
+      `;
+      return;
+    }
+
+    console.log(filteredData, searchTerm);
+
+    inventoryTable.style.display = 'table';
+    inventoryBody.innerHTML = filteredData.map(item =>`
+      <tr>
+        <td>${highlightText(item.id, searchTerm)}</td>
+        <td></img src='/media/${item.image}>${highlightText(item.name, searchTerm)}</td>
+        <td>${highlightText(item.price, searchTerm)}</td>
+        <td>${highlightText(item.quantity, searchTerm)}</td>
+      </tr>
+    `)
+    
 }

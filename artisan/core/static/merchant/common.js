@@ -10,3 +10,4 @@ links.forEach(link => {
 })
 
 document.querySelector('.navbar a').addEventListener('click', function () {window.location.href = '/login/'});
+

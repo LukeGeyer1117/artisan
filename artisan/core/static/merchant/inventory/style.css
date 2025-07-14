@@ -15,7 +15,8 @@
   box-sizing: border-box;
   justify-content: right;
   height: fit-content;
-  margin: 1rem 0 0 0;
+  margin: 1rem 0 1rem 0;
+  gap: 1.5rem;
 }
 
 #inventory-table-section {
@@ -221,6 +222,12 @@
   background: linear-gradient(90deg, #FF6E6E, #FF5555, #FF6E6E);
 }
 
+@media (max-width: 550px) {
+  .product-id, .product-price, .product-stock, #id-header, #price-header, #stock-header {
+    display: none;
+  }
+}
+
 @media (max-width: 650px) {
   .product-name {
     flex-direction: column;
@@ -229,6 +236,4 @@
   #inventory-table-section {
     padding: 0;
   }
-
-
 }
