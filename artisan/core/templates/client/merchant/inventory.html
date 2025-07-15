@@ -45,7 +45,7 @@
           </section>
 
           <section class="dashboard-section" id="inventory-table-section">
-            <table id="inventory-table">
+            <table id="inventory-table" class="records-table">
               <thead>
                 <th id="id-header">ID</th>
                 <th>Name</th>
@@ -69,7 +69,7 @@
     </section>
     <!-- Product Details Modal -->
     <div id="product-details-modal" class="side-modal">
-        <div id="product-details">
+        <div id="product-details" class="side-modal-details">
           <h3 id="close-modal-btn">&times;</h3>
           <h3>Preview Product</h3>
           <img src="/media/images/classical.webp" alt="product image">
@@ -120,7 +120,7 @@
     const window_location = 'Inventory';
     const active_URL = "/media/icons/active/inventory_purple.svg"
   </script>
-  <script src="{% static 'merchant/common.js' %}"></script>
-  <script src="{% static 'merchant/inventory/main.js' %}"></script>
+  <script type="module" src="{% static 'merchant/common.js' %}"></script>
+  <script type="module" src="{% static 'merchant/inventory/main.js' %}"></script>
 </body>
 </html>

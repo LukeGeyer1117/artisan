@@ -19,41 +19,9 @@
   gap: 1.5rem;
 }
 
-#inventory-table-section {
+.records-table-section {
   margin: 0;
   width: auto;
-}
-
-#inventory-table {
-  width: 100%;
-  box-sizing: border-box;
-  border-collapse: collapse;
-}
-
-#inventory-table tr {
-  border-bottom: 2px solid #4F46E5;
-}
-
-#inventory-table tr.active {
-  color: white;
-}
-
-#inventory-table tr.active .product-actions img {
-  visibility: hidden;
-}
-
-#inventory-table tr:hover {
-  background-color: aliceblue;
-}
-
-#inventory-table th {
-  text-align: left;
-  padding: auto;
-}
-
-#inventory-table td {
-  padding: 0 1rem;
-  min-height: 3rem;
 }
 
 .product-name {
@@ -63,7 +31,7 @@
   gap: 1rem;
 }
 
-.product-name img {
+.records-table tr td img {
   width: 2rem;
   height: 2rem;
   object-fit: cover;
@@ -233,7 +201,7 @@
     flex-direction: column;
   }
 
-  #inventory-table-section {
+  .records-table-section {
     padding: 0;
   }
 }

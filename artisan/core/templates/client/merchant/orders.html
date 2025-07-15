@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Merchant Dashboard</title>
-  <link rel="stylesheet" href="{% static 'merchant/inventory/new-item.css' %}" />
+  <link rel="stylesheet" href="{% static 'merchant/orders/style.css' %}" />
   <link rel="stylesheet" href="{% static 'merchant/common.css' %}">
   <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
   <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
@@ -29,12 +29,70 @@
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
+    <!-- All The DATA Sections -->
+     <section class="dashboard-sections">
+
+      <!-- Help Links -->
+      <section class="dashboard-section" id="orders-main-section">
+
+        <div>
+          <section class="dashboard-section" id="top-buttons-section">
+            <div class="search-container box-shadowable">
+              <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
+              <span class="search-icon gradient-background"><img src="/media/icons/active/search_purple.svg" alt="search Icon"></span>
+            </div>
+            <button class="main-button gradient-background box-shadowable" id="add-order-button">Add Order &plus;</button>
+          </section>
+
+          <section class="dashboard-section" id="orders-table-section">
+            <table id="orders-table" class="records-table">
+              <thead>
+                <th id="id-header">ID</th>
+                <th id="customer-header">Customer</th>
+                <th id="contact-header">Contact</th>
+                <th id="placed-header">Placed</th>
+                <th id="status-header">Status</th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </section>
+        </div>
+
+        <div class="dashboard-card" id="bottom-links-card">
+          <a href="" class="link gradient-text">Help Center</a>
+          <a href="" class="link gradient-text">FAQ</a>
+          <a href="" class="link gradient-text">Terms & Conditions</a>
+          <a href="" class="link gradient-text">Privacy Policy</a>
+          <a href="" class="link gradient-text">Contact Us</a>
+        </div>
+      </section>
+    </section>
+    
+    <!-- Order Details Modal -->
+    <div id="order-details-modal" class="side-modal">
+      <div id="order-details" class="side-modal-details">
+        <h3 id="close-modal-btn">&times;</h3>
+        <h3>Order Details</h3>
+        <label for="order-name">Customer Name</label>
+        <p id="order-name">Name</p>
+        <label for="order-contact">Contact Info</label>
+        <p id="order-contact">Contact</p>
+        <label for="order-date">Date Placed</label>
+        <p id="order-date">00/00/0000</p>
+        <label for="order-total">Total</label>
+        <p id="order-total">0</p>
+        <label for="order-status">Status</label>
+        <p id="order-status">Null</p>
+      </div>
+    </div>
+
   </main>
   <script>
     const window_location = 'Orders';
-    const active_URL = "/media/icons/active/orders_purple.svg";
+    const active_URL = "/media/icons/active/orders_purple.svg"
   </script>
-  <script src="{% static 'merchant/common.js' %}"></script>
-  <script src="{% static 'merchant/inventory/new-item.js' %}"></script>
+  <script type="module" src="{% static 'merchant/common.js' %}"></script>
+  <script type="module" src="{% static 'merchant/orders/main.js' %}"></script>
 </body>
 </html>

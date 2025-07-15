@@ -1,10 +1,11 @@
+import { searchAndFilter, showModal, hideModal } from "../common.js";
+
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
   const searchInput = document.querySelector('.search-container input');
   const searchIcon = document.querySelector('.search-container span img');
   let searchActive = false;
-  const inventoryBody = document.querySelector('#inventory-table tbody');
   let currentProduct = null; // Track which product is being operated on
 
   // Add Item Button
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     window.location.href = '/add-item/';
   });
 
-  // Search Item
+  // Search Bar Expansion
   searchIcon.addEventListener('click', function () {
     if (!searchActive) {
       searchInput.style.width = '200px';
@@ -25,6 +26,16 @@ document.addEventListener('DOMContentLoaded', async function () {
       searchInput.style.minWidth = '0px';
       searchInput.style.padding = '0';
       searchActive = false;
+    }
+  })
+
+  // Listen for row clicks to open product details
+  const inventoryTable = document.getElementById('inventory-table');
+  inventoryTable.addEventListener('click', function(e) {
+    const row = e.target.closest('tr.inventory-row');
+    if (row) {
+      const item = JSON.parse(row.dataset.item);
+      showProductDetails(item);
     }
   })
 
@@ -168,100 +179,3 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.error('Error fetching inventory:', error);
   }
 });
-
-function showModal(modal) {
-  modal.classList.add('active'); // Make it display: flex
-  requestAnimationFrame(() => {
-    modal.classList.add('show'); // Trigger animation
-  });
-}
-
-function hideModal(modal) {
-  modal.classList.remove('show'); // Start exit animation
-  setTimeout(() => {
-    modal.classList.remove('active'); // Hide after animation
-  }, 150);
-}
-
-function searchAndFilter(searchInput, filteredData) {
-  const searchTerm = searchInput.value.toLowerCase().trim();
-
-  // Filter by search term
-  if (searchTerm) {
-    console.log(`filtered data: ${filteredData}`);
-    filteredData = filteredData.filter(item => {
-      item.name.toLowerCase().includes(searchTerm) || 
-      toString(item.id).includes(searchTerm)
-    });
-
-    // Sort by relevance (exact matches, then partial)
-    filteredData.sort((a, b) => {
-      const aScore = getRelevanceSore(a, searchTerm);
-      const bScore = getRelevanceSore(b, searchTerm);
-      return bScore - aScore;
-    });
-  } else {
-    renderResults(filteredData, '')
-  }
-
-  renderResults(filteredData, searchTerm);
-}
-
-function getRelevanceScore(item, searchTerm) {
-  let score = 0;
-  const name = item.name.toLowerCase();
-  const id = toString(item.id);
-  
-  // Exact matches get highest score
-  if (name === searchTerm) score += 100;
-  if (id === searchTerm) score += 90;
-
-  // Starts with search term
-  if (name.startsWith(searchTerm)) score += 50;
-  if (id.startsWith(searchTerm)) score += 40;
-
-  // Contains search term
-  if (name.includes(searchTerm)) score += 25;
-  if (id.includes(searchTerm)) score += 20;
-  
-  return score;
-}
-
-// Highlight matching text
-function highlightText(text, searchTerm) {
-  if (!searchTerm) return text;
-
-  const regex = new RegExp(`(${searchTerm})`, 'gi');
-  return text.replace(regex, '<span class="highlight">$1</span>');
-}
-
-// Render search results
-function renderResults(filteredData, searchTerm = '') {
-  const inventoryBody = document.querySelector('#inventory-table tbody');
-  const inventoryTable = document.getElementById('inventory-table');
-    if (filteredData.length === 0) {
-      // Show "no results" message in the table body instead of separate div
-      inventoryBody.innerHTML = `
-          <tr>
-              <td colspan="6" style="text-align: center; padding: 40px; color: #666; font-size: 18px;">
-                  <div style="font-size: 48px; margin-bottom: 15px;">🔍</div>
-                  No products found matching your search criteria.
-              </td>
-          </tr>
-      `;
-      return;
-    }
-
-    console.log(filteredData, searchTerm);
-
-    inventoryTable.style.display = 'table';
-    inventoryBody.innerHTML = filteredData.map(item =>`
-      <tr>
-        <td>${highlightText(item.id, searchTerm)}</td>
-        <td></img src='/media/${item.image}>${highlightText(item.name, searchTerm)}</td>
-        <td>${highlightText(item.price, searchTerm)}</td>
-        <td>${highlightText(item.quantity, searchTerm)}</td>
-      </tr>
-    `)
-    
-}
