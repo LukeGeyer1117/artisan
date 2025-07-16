@@ -293,7 +293,7 @@ body {
 
 .main-button:hover {
   cursor: pointer;
-  transform: scale(1.05);
+  box-shadow: 1px 1px 3px #000000;
 }
 
 
@@ -524,12 +524,6 @@ table tbody tr {
   transform: scale(1.025);
 }
 
-#orders-table tbody tr:hover {
-  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
-  transform: scale(1.01);
-  color: white;
-}
-
 table tbody tr:last-child {
   border-bottom: none;
 }
@@ -557,20 +551,6 @@ table tbody tr td {
   cursor: pointer;
 }
 
-#order-details {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1rem 1rem 2rem;
-  color: white;
-}
-
-#order-details h3 {
-  width: fit-content;
-  margin: 0;
-}
-
 .item-row {
   display: flex;
   flex-direction: row;
@@ -584,16 +564,6 @@ table tbody tr td {
 .item-row div {
   width: 33%;
   padding: auto;
-}
-
-#order-total {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  box-sizing: border-box;
-  justify-content: space-between;
-  padding: 2rem;
-  border-top: 2px solid #e5e5e7;
 }
 
 @media (max-width: 1200px) {
@@ -629,7 +599,7 @@ table tbody tr td {
   overflow-y: scroll;
 }
 
-#inventory-main-section {
+#inventory-main-section, #orders-main-section {
   display: flex;
   flex-direction: column;
   padding: 1rem;

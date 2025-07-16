@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   ordersTable.addEventListener('click', function(e) {
     const row = e.target.closest('tr.order-row');
     if (row) {
-      const order = JSON.parse(row.dataset.order);
+      const order = JSON.parse(row.dataset.item);
       showOrderDetails(order);
     }
   })
@@ -58,13 +58,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!response.ok) throw new Error("Could not get orders.");
 
     const data = await response.json();
-    console.log(data);
     const orders = data.orders;
 
     searchAndFilter(searchInput, orders);
 
     searchInput.addEventListener('input', function () {
-      searchAndFilter(searchInput, data);
+      searchAndFilter(searchInput, orders);
     })
   } catch (error) {
     console.error('Error fetching orders:', error)
@@ -72,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 })
 
 function showOrderDetails(order) {
-  currentOrder = order;
+  const currentOrder = order;
 
   const detailsModal = document.getElementById('order-details-modal');
   showModal(detailsModal);
@@ -82,8 +81,8 @@ function showOrderDetails(order) {
   document.getElementById('order-name').innerHTML = order.customer_name;
   document.getElementById('order-contact').innerHTML = order.customer_phone + ' / ' + order.customer_email;
   document.getElementById('order-date').innerHTML = order.created_at;
-  document.createElement('order-total').innerHTML = order.total;
-  document.getElementById('order-status').innerhtml = order.status;
+  document.getElementById('order-total').innerHTML = order.total_price;
+  document.getElementById('order-status').innerHTML = order.status;
 }
 
 function clearActiveRows(table) {

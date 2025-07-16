@@ -166,13 +166,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (!response.ok) throw new Error('Failed to fetch inventory products.');
     
-    const data = await response.json();
-    console.log(data);
-
-    searchAndFilter(searchInput, data);
+    const products = await response.json();
+    searchAndFilter(searchInput, products);
 
     searchInput.addEventListener('input', function () {
-      searchAndFilter(searchInput, data);
+      searchAndFilter(searchInput, products);
     })
 
   } catch (error) {

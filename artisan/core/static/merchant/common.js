@@ -30,10 +30,24 @@ function searchAndFilter(searchInput, filteredData) {
 
   // Filter by search term
   if (searchTerm) {
-    console.log(`filtered data: ${filteredData}`);
     filteredData = filteredData.filter(item => {
-      return item.name.toLowerCase().includes(searchTerm) || 
-             item.id.toString().includes(searchTerm);
+      // Check if it's a product (has name property)
+      if (item.name) {
+        return item.name.toLowerCase().includes(searchTerm) || 
+               item.id.toString().includes(searchTerm);
+      }
+      
+      // Check if it's an order (has customer_name property)
+      if (item.customer_name) {
+        return item.customer_name.toLowerCase().includes(searchTerm) ||
+               item.id.toString().includes(searchTerm) ||
+               (item.customer_email && item.customer_email.toLowerCase().includes(searchTerm)) ||
+               (item.customer_phone && item.customer_phone.includes(searchTerm)) ||
+               (item.total_price && String(item.total_price).includes(searchTerm));
+      }
+      
+      // Fallback: just search by id if structure is unknown
+      return item.id.toString().includes(searchTerm);
     });
 
     // Sort by relevance (exact matches, then partial)
@@ -49,20 +63,32 @@ function searchAndFilter(searchInput, filteredData) {
 
 function getRelevanceScore(item, searchTerm) {
   let score = 0;
-  const name = item.name.toLowerCase();
-  const id = toString(item.id);
   
-  // Exact matches get highest score
-  if (name === searchTerm) score += 100;
-  if (id === searchTerm) score += 90;
-
-  // Starts with search term
-  if (name.startsWith(searchTerm)) score += 50;
-  if (id.startsWith(searchTerm)) score += 40;
-
-  // Contains search term
-  if (name.includes(searchTerm)) score += 25;
-  if (id.includes(searchTerm)) score += 20;
+  // Check if it's a product
+  if (item.name) {
+    if (item.name.toLowerCase() === searchTerm) score += 100;
+    else if (item.name.toLowerCase().startsWith(searchTerm)) score += 50;
+    else if (item.name.toLowerCase().includes(searchTerm)) score += 25;
+  }
+  
+  // Check if it's an order
+  if (item.customer_name) {
+    if (item.customer_name.toLowerCase() === searchTerm) score += 100;
+    else if (item.customer_name.toLowerCase().startsWith(searchTerm)) score += 50;
+    else if (item.customer_name.toLowerCase().includes(searchTerm)) score += 25;
+    
+    if (item.customer_email && item.customer_email.toLowerCase().includes(searchTerm)) {
+      score += item.customer_email.toLowerCase() === searchTerm ? 80 : 20;
+    }
+    
+    if (item.customer_phone && item.customer_phone.includes(searchTerm)) {
+      score += item.customer_phone === searchTerm ? 80 : 20;
+    }
+  }
+  
+  // ID match (works for both products and orders)
+  if (item.id.toString() === searchTerm) score += 90;
+  else if (item.id.toString().includes(searchTerm)) score += 15;
   
   return score;
 }
@@ -92,8 +118,6 @@ function renderResults(filteredData, searchTerm = '') {
     return;
   }
 
-  console.log(filteredData, searchTerm);
-
   table.style.display = 'table';
   if (table.id == 'inventory-table') {
     tableBody.innerHTML = filteredData.map(item => `
@@ -103,19 +127,18 @@ function renderResults(filteredData, searchTerm = '') {
         <td class='price-td'>${highlightText(String(item.price), searchTerm)}</td>
         <td class='stock-td'>${highlightText(String(item.quantity), searchTerm)}</td>
       </tr>
-    `).join(''); // Added .join('') to properly convert array to string
+    `).join('');
   } else if (table.id == 'orders-table') {
-    tableBody.innerHTML = filteredData.map(item => {`
+    tableBody.innerHTML = filteredData.map(item => `
       <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
         <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
-        <td class='customer-name-td>${highlightText(String(item.customer_name), searchTerm)}</td>
+        <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
         <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
         <td class='order-date-td'>${highlightText(String(item.created_at), searchTerm)}</td>
-        <td class='order-total-td>${highlightText(String(item.total_price), searchTerm)}</td>
-        <td class='order-status-td>${highlightText(String(item.status), searchTerm)}</td>
+        <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
+        <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
       </tr>
-      `
-    })
+    `).join('');
   }
 }
 
