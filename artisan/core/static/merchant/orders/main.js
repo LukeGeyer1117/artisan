@@ -78,6 +78,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     const orderStatusSelect = document.getElementById('order-status');
     orderStatusSelect.value = order.status;
 
+    fetch(`${API_BASE_URL}/orderitems/`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'order_id': order.id})
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("could not fetch Order Items");
+      return response.json();
+    })
+    .then(data => {
+      const orderItems = data.orderItems;
+      console.log(orderItems);
+
+      orderItems.forEach(item => {
+        addOrderItem(item);
+      })
+    })
+
     // Check for order status changes
     const oldStatus = currentOrder.status;
     const statusChangeBtn = document.getElementById('order-status-change-button');
@@ -112,5 +133,43 @@ document.addEventListener('DOMContentLoaded', async function () {
       r.classList.remove('active');
       r.classlis.remove('gradient-background');
     });
+  }
+
+  function addOrderItem(orderItem) {
+      const ordersProducts = document.getElementById('order-products');
+      const quantity = orderItem.quantity;
+
+      fetch(`${API_BASE_URL}/product/${encodeURIComponent(orderItem.product_id)}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Could not find product!");
+        return response.json();
+      })
+      .then(data => {
+        const product = data.product;
+        
+        // Create a order-product listing
+        const order_product = document.createElement('div');
+        order_product.className = 'order-product';
+        order_product.innerHTML = `
+          <img src='/media/${product.image}' alt='${product.name}'>
+          <div class="order-product-details">
+            <h4>ID</h4>
+            <p>${product.id}</p>
+            <h4>Name</h4>
+            <p>${product.name}</p>
+            <h4>Price</h4>
+            <p>${product.price}</p>
+            <h4>Quantity</h4>
+            <p>${quantity}</p>
+          </div>
+        `;
+        ordersProducts.appendChild(order_product);
+      })
+      .catch(error => {
+        console.error('Error adding order item:', error);
+      });
   }
 })

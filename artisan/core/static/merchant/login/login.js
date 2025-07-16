@@ -33,22 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         })
         .then(result => {
-            let artisanID = result.id
-            // Call fetch to create an inventory associated with artisan
-            return fetch(`${API_BASE_URL}/inventories/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'artisan_id': artisanID})
-            })
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to create inventory");
-                return response.json();
-            })
-            .then(result => {
-                window.location.href = '/login/';
-            })
+            window.location.reload();
         })
         .catch(error => {
             console.error(error);

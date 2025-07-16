@@ -115,6 +115,8 @@ def artisan(request):
             price_range_high = data.get('price_range_high', 0),
             accepting_custom_orders = data.get('accepting_custom_orders', False),
         )
+
+        inventory = Inventory.objects.create(artisan=artisan)
         return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
     elif request.method == 'GET':
         artisan_id = request.session.get('artisan_id', '')
