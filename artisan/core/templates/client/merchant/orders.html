@@ -38,25 +38,57 @@
         <div>
           <section class="dashboard-section" id="top-buttons-section">
             <div class="search-container box-shadowable">
-              <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
               <span class="search-icon gradient-background"><img src="/media/icons/active/search_purple.svg" alt="search Icon"></span>
+              <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
             </div>
-            <button class="main-button gradient-background box-shadowable" id="add-order-button">Add Order &plus;</button>
           </section>
 
           <section class="dashboard-section" id="orders-table-section">
-            <table id="orders-table" class="records-table">
-              <thead>
-                <th id="id-header">ID</th>
-                <th id="customer-header">Customer</th>
-                <th id="contact-header">Contact</th>
-                <th id="placed-header">Placed</th>
-                <th id="total-header">Total</th>
-                <th id="status-header">Status</th>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
+            <h1>Active Orders</h1>
+            <div class="table-holder">
+              <table id="orders-table" class="records-table">
+                <thead>
+                  <th id="id-header">ID</th>
+                  <th id="customer-header">Customer</th>
+                  <th id="contact-header">Contact</th>
+                  <th id="placed-header">Placed</th>
+                  <th id="total-header">Total</th>
+                  <th id="status-header">Status</th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <h1>Inactive Orders</h1>
+            <div class="table-holder">
+              <table id="inactive-orders-table" class="records-table">
+                <thead>
+                  <th id="id-header">ID</th>
+                  <th id="customer-header">Customer</th>
+                  <th id="contact-header">Contact</th>
+                  <th id="placed-header">Placed</th>
+                  <th id="total-header">Total</th>
+                  <th id="status-header">Status</th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div> 
+            <h1>Completed Orders</h1>
+            <div class="table-holder">
+              <table id="completed-orders-table" class="records-table">
+                <thead>
+                  <th id="id-header">ID</th>
+                  <th id="customer-header">Customer</th>
+                  <th id="contact-header">Contact</th>
+                  <th id="placed-header">Placed</th>
+                  <th id="total-header">Total</th>
+                  <th id="status-header">Status</th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
           </section>
         </div>
 
@@ -84,7 +116,14 @@
         <label for="order-total">Total</label>
         <p id="order-total">0</p>
         <label for="order-status">Status</label>
-        <p id="order-status">Null</p>
+        <select name="order-status" id="order-status">
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="denied">Denied</option>
+          <option value="in_progress">In Progress</option>  
+          <option value="completed">Complete</option>
+        </select>
+        <button class="submit-button" id="order-status-change-button">Change Status</button>
       </div>
     </div>
 

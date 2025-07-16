@@ -43,7 +43,8 @@ function searchAndFilter(searchInput, filteredData) {
                item.id.toString().includes(searchTerm) ||
                (item.customer_email && item.customer_email.toLowerCase().includes(searchTerm)) ||
                (item.customer_phone && item.customer_phone.includes(searchTerm)) ||
-               (item.total_price && String(item.total_price).includes(searchTerm));
+               (item.total_price && String(item.total_price).includes(searchTerm)) ||
+               (item.created_at && formatTimestamp(item.created_at).includes(searchTerm));
       }
       
       // Fallback: just search by id if structure is unknown
@@ -102,44 +103,109 @@ function highlightText(text, searchTerm) {
 }
 
 function renderResults(filteredData, searchTerm = '') {
-  const tableBody = document.querySelector('.records-table tbody');
-  const table = document.querySelector('.records-table');
-  
-  if (filteredData.length === 0) {
-    // Show "no results" message in the table body instead of separate div
-    tableBody.innerHTML = `
+  const tables = document.querySelectorAll('.records-table');
+
+  const emptyTableHTML = `
         <tr>
             <td colspan="6" style="text-align: center; padding: 40px; color: #666; font-size: 18px;">
                 <div style="font-size: 48px; margin-bottom: 15px;">🔍</div>
                 No products found matching your search criteria.
             </td>
         </tr>
-    `;
-    return;
-  }
+        `;
 
-  table.style.display = 'table';
-  if (table.id == 'inventory-table') {
-    tableBody.innerHTML = filteredData.map(item => `
-      <tr class='inventory-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
-        <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
-        <td class='name-td'><img src='/media/${item.image}' alt='${item.name}'> ${highlightText(item.name, searchTerm)}</td>
-        <td class='price-td'>${highlightText(String(item.price), searchTerm)}</td>
-        <td class='stock-td'>${highlightText(String(item.quantity), searchTerm)}</td>
-      </tr>
-    `).join('');
-  } else if (table.id == 'orders-table') {
-    tableBody.innerHTML = filteredData.map(item => `
-      <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
-        <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
-        <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
-        <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
-        <td class='order-date-td'>${highlightText(String(item.created_at), searchTerm)}</td>
-        <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
-        <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
-      </tr>
-    `).join('');
-  }
+  tables.forEach(table => {
+    const tableBody = table.querySelector('tbody'); // Get the specific tbody for this table
+    table.style.display = 'table';
+    if (table.id == 'inventory-table') {
+      if (filteredData.length > 0) {
+        tableBody.innerHTML = filteredData.map(item => `
+          <tr class='inventory-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='name-td'><img src='/media/${item.image}' alt='${item.name}'> <div>${highlightText(item.name, searchTerm)}</div></td>
+            <td class='price-td'>${highlightText(String(item.price), searchTerm)}</td>
+            <td class='stock-td'>${highlightText(String(item.quantity), searchTerm)}</td>
+          </tr>
+        `).join('');
+      } else {
+        tableBody.innerHTML = emptyTableHTML;
+      }
+
+    } else if (table.id == 'orders-table') {
+      // Filter orders to only show pending, approved, or in_progress statuses
+      const validStatuses = ['pending', 'approved', 'in_progress'];
+      const filteredOrders = filteredData.filter(item => 
+        validStatuses.includes(item.status)
+      );
+      if (filteredOrders.length > 0) {
+        tableBody.innerHTML = filteredOrders.map(item => `
+          <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
+            <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
+            <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
+            <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
+            <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
+          </tr>
+        `).join('');
+      } else {tableBody.innerHTML = emptyTableHTML;}
+
+    } else if (table.id == 'inactive-orders-table') {
+      const validStatuses = ['denied'];
+      const filteredOrders = filteredData.filter(item => 
+        validStatuses.includes(item.status)
+      );
+      if (filteredOrders.length > 0) {
+        tableBody.innerHTML = filteredOrders.map(item => `
+          <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
+            <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
+            <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
+            <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
+            <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
+          </tr>
+        `).join('');
+      } else {tableBody.innerHTML = emptyTableHTML;}
+
+    } else if (table.id == 'completed-orders-table') {
+      const validStatuses = ['completed'];
+      const filteredOrders = filteredData.filter(item => 
+        validStatuses.includes(item.status)
+      );
+      if (filteredOrders.length > 0) {
+        tableBody.innerHTML = filteredOrders.map(item => `
+          <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
+            <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
+            <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
+            <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
+            <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
+          </tr>
+        `).join('');
+      } else {tableBody.innerHTML = emptyTableHTML;}
+    }
+  })
 }
 
-export {searchAndFilter, showModal, hideModal};
+function formatTimestamp(timestamp) {
+  const [datePart, timePart] = timestamp.split(' '); // "2025-06-24", "22:02"
+  const [year, month, day] = datePart.split('-');
+  const [hour, minute] = timePart.split(':');
+
+  const date = new Date(year, month - 1, day, hour, minute);
+
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  return `${date.toLocaleDateString('en-US', options)}`;
+}
+
+export {searchAndFilter, showModal, hideModal, formatTimestamp};

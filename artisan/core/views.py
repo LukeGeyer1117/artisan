@@ -257,7 +257,7 @@ def active_orders(request):
             artisan_id = request.session.get('artisan_id')
             artisan = Artisan.objects.get(id=artisan_id)
 
-            orders = Order.objects.filter(artisan=artisan, status__in=['pending', 'approved']).order_by('created_at')
+            orders = Order.objects.filter(artisan=artisan, status__in=['pending', 'approved', 'in_progress']).order_by('created_at')
             orders_data = [
                 {
                     'id': order.id,

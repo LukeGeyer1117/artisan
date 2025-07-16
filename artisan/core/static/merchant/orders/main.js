@@ -1,4 +1,4 @@
-import { searchAndFilter, showModal, hideModal } from "../common.js";
+import { searchAndFilter, showModal, hideModal, formatTimestamp } from "../common.js";
 
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
@@ -7,12 +7,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   const searchIcon = document.querySelector('.search-container span img');
   let searchActive = false;
   let currentOrder = null; // Track which order is being operated on
-
-  // Add order button
-  let addOrderButton = document.getElementById('add-order-button');
-  addOrderButton.addEventListener('click', function() {
-    window.location.href = '/';
-  });
 
   // Search Bar Expansion 
   searchIcon.addEventListener('click', function () {
@@ -30,13 +24,15 @@ document.addEventListener('DOMContentLoaded', async function () {
   });
 
   // Listen for row clicks to open order details
-  const ordersTable = document.getElementById('orders-table');
-  ordersTable.addEventListener('click', function(e) {
-    const row = e.target.closest('tr.order-row');
-    if (row) {
-      const order = JSON.parse(row.dataset.item);
-      showOrderDetails(order);
-    }
+  const tables = document.querySelectorAll('.records-table');
+  tables.forEach(table => {
+    table.addEventListener('click', function (e) {
+      const row = e.target.closest('tr.order-row');
+      if (row) {
+        const order = JSON.parse(row.dataset.item);
+        showOrderDetails(order);
+      }
+    })
   })
 
   // Modal close handlers
@@ -50,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Fetch the orders belonging to the merchant
   try {
-    const response = await fetch(`${API_BASE_URL}/orders/active/`, {
+    const response = await fetch(`${API_BASE_URL}/orders/`, {
       method: 'GET',
       credentials: 'include'
     })
@@ -68,27 +64,53 @@ document.addEventListener('DOMContentLoaded', async function () {
   } catch (error) {
     console.error('Error fetching orders:', error)
   }
+  function showOrderDetails(order) {
+    currentOrder = order;
+    const detailsModal = document.getElementById('order-details-modal');
+    showModal(detailsModal);
+    document.querySelector('.dashboard-sections').classList.add('compressed');
+
+    // Populate modal with product data
+    document.getElementById('order-name').innerHTML = order.customer_name;
+    document.getElementById('order-contact').innerHTML = order.customer_phone + ' / ' + order.customer_email;
+    document.getElementById('order-date').innerHTML = formatTimestamp(order.created_at);
+    document.getElementById('order-total').innerHTML = order.total_price;
+    const orderStatusSelect = document.getElementById('order-status');
+    orderStatusSelect.value = order.status;
+
+    // Check for order status changes
+    const oldStatus = currentOrder.status;
+    const statusChangeBtn = document.getElementById('order-status-change-button');
+    statusChangeBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      let currentStatus = orderStatusSelect.value;
+      if (currentStatus === oldStatus) {
+        alert('Order status was not changed.');
+      } else {
+        fetch(`${API_BASE_URL}/order/status/`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({'order_id': currentOrder.id, 'status': currentStatus})
+        })
+        .then(response => {
+          if (!response.ok) throw new Error("Error updating order status!");
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+          window.location.reload();
+        })
+      }
+    })
+  }
+
+  function clearActiveRows(table) {
+    const rows = table.querySelector('tbody tr');
+    rows.forEach(r => {
+      r.classList.remove('active');
+      r.classlis.remove('gradient-background');
+    });
+  }
 })
-
-function showOrderDetails(order) {
-  const currentOrder = order;
-
-  const detailsModal = document.getElementById('order-details-modal');
-  showModal(detailsModal);
-  document.querySelector('.dashboard-sections').classList.add('compressed');
-
-  // Populate modal with product data
-  document.getElementById('order-name').innerHTML = order.customer_name;
-  document.getElementById('order-contact').innerHTML = order.customer_phone + ' / ' + order.customer_email;
-  document.getElementById('order-date').innerHTML = order.created_at;
-  document.getElementById('order-total').innerHTML = order.total_price;
-  document.getElementById('order-status').innerHTML = order.status;
-}
-
-function clearActiveRows(table) {
-  const rows = table.querySelector('tbody tr');
-  rows.forEach(r => {
-    r.classList.remove('active');
-    r.classlis.remove('gradient-background');
-  });
-}

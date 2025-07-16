@@ -303,6 +303,12 @@ body {
   }
 }
 
+.table-holder {
+  height: fit-content;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
 .records-table {
   width: 100%;
   box-sizing: border-box;
@@ -332,7 +338,6 @@ body {
 
 .records-table tr td {
   padding: 1rem;
-  min-height: 3rem;
 }
 
 #reporting-redirect-modal {
@@ -614,7 +619,7 @@ table tbody tr td {
   flex-direction: row;
   width: 100%;
   box-sizing: border-box;
-  justify-content: right;
+  justify-content: space-between;
   height: fit-content;
   margin: 1rem 0 1rem 0;
   gap: 1.5rem;
@@ -805,4 +810,25 @@ table tbody tr td {
   .records-table-section {
     padding: 0;
   }
+}
+
+.name-td {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  width: fit-content;
+}
+
+.name-td div {
+  width: fit-content;
+}
+
+.customer-contact-td, .order-date-td {
+  font-size: small;
+}
+
+#orders-table-section {
+  display: flex;
+  flex-direction: column;
 }

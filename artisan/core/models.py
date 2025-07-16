@@ -58,6 +58,7 @@ class Order(models.Model):
             ('pending', 'Pending'),
             ('approved', 'Approved'),
             ('denied', 'Denied'),
+            ('in_progress', 'In_Progress'),
             ('completed', 'Completed')
         ],
         default='pending'
