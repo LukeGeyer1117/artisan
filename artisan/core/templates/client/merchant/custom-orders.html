@@ -29,12 +29,109 @@
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
+  <!-- All The DATA Sections -->
+    <section class="dashboard-sections">
+
+    <!-- Help Links -->
+    <section class="dashboard-section" id="orders-main-section">
+
+      <div>
+        <section class="dashboard-section" id="top-buttons-section">
+          <div class="search-container box-shadowable">
+            <span class="search-icon gradient-background"><img src="/media/icons/active/search_purple.svg" alt="search Icon"></span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
+          </div>
+        </section>
+
+        <section class="dashboard-section" id="requests-table-section">
+          <h1>Pending Requests</h1>
+          <div class="table-holder">
+            <table id="requests-table" class="records-table">
+              <thead>
+                <th class="id-header">ID</th>
+                <th class="customer-header">Customer</th>
+                <th class="contact-header">Contact</th>
+                <th class="total-header">Budget</th>
+                <th class="status-header">Status</th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <h1>Denied Requests</h1>
+          <div class="table-holder">
+            <table id="denied-requests-table" class="records-table">
+              <thead>
+                <th class="id-header">ID</th>
+                <th class="customer-header">Customer</th>
+                <th class="contact-header">Contact</th>
+                <th class="total-header">Budget</th>
+                <th class="status-header">Status</th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div> 
+          <h1>Completed Requests</h1>
+          <div class="table-holder">
+            <table id="completed-requests-table" class="records-table">
+              <thead>
+                <th class="id-header">ID</th>
+                <th class="customer-header">Customer</th>
+                <th class="contact-header">Contact</th>
+                <th class="total-header">Budget</th>
+                <th class="status-header">Status</th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="dashboard-card" id="bottom-links-card">
+        <a href="" class="link gradient-text">Help Center</a>
+        <a href="" class="link gradient-text">FAQ</a>
+        <a href="" class="link gradient-text">Terms & Conditions</a>
+        <a href="" class="link gradient-text">Privacy Policy</a>
+        <a href="" class="link gradient-text">Contact Us</a>
+      </div>
+    </section>
+  </section>
+
+  <!-- Custom Request Details Modal -->
+   <div id="request-details-modal" class="side-modal">
+    <div id="request-details" class="side-modal-details">
+      <h3 id="close-modal-btn">&times;</h3>
+      <h3>Request Details</h3>
+      <label for="request-name">Customer Name</label>
+      <p id="request-name"></p>
+      <label for="request-contact">Contact Info</label>
+      <p id="request-contact"></p>
+      <label for="request-budget">Budget</label>
+      <p id="request-budget"></p>
+      <label for="request-description">Description</label>
+      <p id="request-description"></p>
+      <label for="request-status">Status</label>
+      <select name="request-status" id="request-status">
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="denied">Denied</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Complete</option>
+      </select>
+      <button class="submit-button" id="request-status-change-button">Change Status</button>
+      <h3>Images</h3>
+      <div id="request-images"></div>
+    </div>
+   </div>
+
   </main>
   <script>
     const window_location = 'Custom Orders';
     const active_URL = "/media/icons/active/custom_purple.svg";
   </script>
-  <script src="{% static 'merchant/common.js' %}"></script>
-  <script src="{% static 'merchant/inventory/new-item.js' %}"></script>
+  <script type="module" src="{% static 'merchant/common.js' %}"></script>
+  <script type="module" src="{% static 'merchant/custom-requests/main.js' %}"></script>
 </body>
 </html>

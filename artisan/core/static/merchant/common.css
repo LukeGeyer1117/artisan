@@ -609,8 +609,7 @@ table tbody tr td {
   flex-direction: column;
   padding: 1rem;
   padding-top: 0;
-  height: 95vh;
-  overflow: scroll;
+  overflow-y: scroll;
   width: 100%;
   box-sizing: border-box;
 }
@@ -829,15 +828,55 @@ table tbody tr td {
   font-size: small;
 }
 
-#orders-table-section {
+#orders-table-section, #requests-table-section {
   display: flex;
   flex-direction: column;
 }
 
+#order-products {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-product {
+  display: flex;
+  flex-direction: row;
+  gap: .5rem;
+  margin: 0.5rem 0;
+  border-bottom: 1px solid #b1b1b1;
+  padding-bottom: .5rem;
+}
+
 .order-product img {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   object-fit: cover;
   display: flex;
   flex-direction: row;
+  margin: 0;
+}
+
+.order-product-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: .25rem;
+}
+
+.order-product-details div {
+  display: flex;
+  flex-direction: row;
+  gap: .25rem;
+}
+
+.order-product-details div h4 {
+  margin: 0;
+  font-size: 10pt;
+}
+
+.order-product-details div p {
+  height: 15px;
+  font-size: 10pt;
+  margin: 0;
+  overflow-y: hidden;
 }

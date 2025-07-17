@@ -218,6 +218,23 @@ def update_order_status(request):
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@csrf_exempt
+def change_custom_status(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            request_id = data['request_id']
+            status = data['status']
+            
+            request = CustomRequest.objects.get(id=request_id)
+            request.status = status
+
+            request.save()
+            return JsonResponse({'message': 'Updated order status'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
 # Get all orders under a certain merchant
 @csrf_exempt
 def orders(request):

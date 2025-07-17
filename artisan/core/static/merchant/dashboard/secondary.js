@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         })
     })
 
+    document.getElementById('reporting-redirect-modal').addEventListener('click', function () {
+        window.location.href = '/reporting/'
+    })
+
     // Get all the custom requests assigned to the artisan
     fetch(`${API_BASE_URL}/custom/`, {
         method: 'GET',

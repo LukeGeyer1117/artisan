@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       const orderItems = data.orderItems;
       console.log(orderItems);
 
+      document.getElementById('order-products').innerHTML = '';
+
       orderItems.forEach(item => {
         addOrderItem(item);
       })
@@ -148,22 +150,25 @@ document.addEventListener('DOMContentLoaded', async function () {
         return response.json();
       })
       .then(data => {
-        const product = data.product;
-        
+        const product = data.product;        
         // Create a order-product listing
         const order_product = document.createElement('div');
         order_product.className = 'order-product';
         order_product.innerHTML = `
           <img src='/media/${product.image}' alt='${product.name}'>
           <div class="order-product-details">
-            <h4>ID</h4>
-            <p>${product.id}</p>
-            <h4>Name</h4>
-            <p>${product.name}</p>
-            <h4>Price</h4>
-            <p>${product.price}</p>
-            <h4>Quantity</h4>
-            <p>${quantity}</p>
+            <div>
+              <h4>Name:</h4>
+              <p>${product.name}</p>
+            </div>
+            <div>
+              <h4>Price:</h4>
+              <p>${product.price}</p>
+            </div>
+            <div>
+              <h4>Quantity:</h4>
+              <p>${quantity}</p>
+            </div>
           </div>
         `;
         ordersProducts.appendChild(order_product);

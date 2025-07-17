@@ -76,9 +76,20 @@ class CustomRequest(models.Model):
     budget = models.DecimalField(max_digits=9, decimal_places=2)
     description = models.CharField(max_length=1500)
     artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('approved', 'Approved'),
+            ('denied', 'Denied'),
+            ('in_progress', 'In_Progress'),
+            ('completed', 'Completed')
+        ],
+        default='pending'
+    )
 
     def __str__(self):
-        return f'{self.customer_name} - ${self.budget} - {self.description[:100]}'
+        return f'{self.customer_name} - ${self.budget} - {self.description[:25]}'
 
 class OrderItems(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

@@ -38,13 +38,22 @@ function searchAndFilter(searchInput, filteredData) {
       }
       
       // Check if it's an order (has customer_name property)
-      if (item.customer_name) {
+      if (item.customer_name && !item.budget) {
         return item.customer_name.toLowerCase().includes(searchTerm) ||
                item.id.toString().includes(searchTerm) ||
                (item.customer_email && item.customer_email.toLowerCase().includes(searchTerm)) ||
                (item.customer_phone && item.customer_phone.includes(searchTerm)) ||
                (item.total_price && String(item.total_price).includes(searchTerm)) ||
                (item.created_at && formatTimestamp(item.created_at).includes(searchTerm));
+      }
+
+      // Check if it's a custom request (has the budget property)
+      if (item.budget) {
+        return item.customer_name.toLowerCase().includes(searchTerm) ||
+               item.id.toString().includes(searchTerm) ||
+               (item.customer_email && item.customer_email.toLowerCase().includes(searchTerm)) ||
+               (item.customer_phone && item.customer_phone.includes(searchTerm)) ||
+               (item.budget && String(item.budget).includes(searchTerm));
       }
       
       // Fallback: just search by id if structure is unknown
@@ -72,7 +81,7 @@ function getRelevanceScore(item, searchTerm) {
     else if (item.name.toLowerCase().includes(searchTerm)) score += 25;
   }
   
-  // Check if it's an order
+  // Check if it's an order or customer_request
   if (item.customer_name) {
     if (item.customer_name.toLowerCase() === searchTerm) score += 100;
     else if (item.customer_name.toLowerCase().startsWith(searchTerm)) score += 50;
@@ -107,8 +116,8 @@ function renderResults(filteredData, searchTerm = '') {
 
   const emptyTableHTML = `
         <tr>
-            <td colspan="6" style="text-align: center; padding: 40px; color: #666; font-size: 18px;">
-                <div style="font-size: 48px; margin-bottom: 15px;">🔍</div>
+            <td colspan="6" style="text-align: center; padding: 20px; color: #666; font-size: 18px;">
+                <div style="font-size: 32px; margin-bottom: 15px;">🔍</div>
                 No products found matching your search criteria.
             </td>
         </tr>
@@ -185,6 +194,60 @@ function renderResults(filteredData, searchTerm = '') {
           </tr>
         `).join('');
       } else {tableBody.innerHTML = emptyTableHTML;}
+    }
+
+    // Requests
+    else if (table.id == 'requests-table') {
+      // filter request to only show pending, approved, or in_progress
+      const validStatuses = ['pending', 'approved', 'in_progress'];
+      const filteredRequests = filteredData.filter(item =>
+        validStatuses.includes(item.status)
+      );
+      if (filteredRequests.length > 0) {
+        tableBody.innerHTML = filteredRequests.map(item => `
+          <tr class='request-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='request-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
+            <td class='request-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
+            <td class='request-budget-td'>${highlightText(String(item.budget), searchTerm)}</td>
+            <td class='request-status-td'>${highlightText(String(item.status), searchTerm)}</td>
+          </tr>
+        `).join('');
+      }
+    } else if (table.id == 'denied-requests-table') {
+      // filter request to only show pending, approved, or in_progress
+      const validStatuses = ['denied'];
+      const filteredRequests = filteredData.filter(item =>
+        validStatuses.includes(item.status)
+      );
+      if (filteredRequests.length > 0) {
+        tableBody.innerHTML = filteredRequests.map(item => `
+          <tr class='request-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='request-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
+            <td class='request-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
+            <td class='request-budget-td'>${highlightText(String(item.budget), searchTerm)}</td>
+            <td class='request-status-td'>${highlightText(String(item.status), searchTerm)}</td>
+          </tr>
+        `).join('');
+      }
+    } else if (table.id == 'completed-requests-table') {
+      // filter request to only show pending, approved, or in_progress
+      const validStatuses = ['completed'];
+      const filteredRequests = filteredData.filter(item =>
+        validStatuses.includes(item.status)
+      );
+      if (filteredRequests.length > 0) {
+        tableBody.innerHTML = filteredRequests.map(item => `
+          <tr class='request-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
+            <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
+            <td class='request-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
+            <td class='request-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
+            <td class='request-budget-td'>${highlightText(String(item.budget), searchTerm)}</td>
+            <td class='request-status-td'>${highlightText(String(item.status), searchTerm)}</td>
+          </tr>
+        `).join('');
+      }
     }
   })
 }
