@@ -29,12 +29,47 @@
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
+    <!-- Under Construction -->
+    <div class="content">
+      <div class="gallery-header">
+        <h1>Gallery Setup</h1>
+        <p>Upload and arrange your gallery images in the perfect order</p>
+      </div>
+
+      <div class="upload-section">
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text">Click to upload images</div>
+          <div class="upload-subtext">Or drag and drop files here (JPG, PNG, WebP)</div>
+          <input type="file" id="fileInput" multiple accept="image/*">
+        </div>
+      </div>
+
+      <div id="galleryContainer">
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Gallery items will be inserted here -->
+        </div>
+        
+        <div class="empty-state" id="emptyState">
+          <div class="empty-state-icon">🖼️</div>
+          <h3>No images uploaded yet</h3>
+          <p>Upload some images to get started with your gallery</p>
+        </div>
+      </div>
+
+      <div class="save-section">
+        <button class="save-btn" id="saveBtn" disabled>Save Gallery Order</button>
+        <div class="status-message" id="statusMessage"></div>
+      </div>
+    </div>
+  </main>
+
   </main>
   <script>
     const window_location = 'Gallery';
     const active_URL = "/media/icons/active/gallery_purple.svg";
   </script>
   <script type="module" src="{% static 'merchant/common.js' %}"></script>
-  <script src="{% static 'merchant/inventory/new-item.js' %}"></script>
+  <script type="module" src="{% static 'merchant/gallery.js' %}"></script>
 </body>
 </html>

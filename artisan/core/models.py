@@ -34,7 +34,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     order_type = models.CharField(max_length=20, blank=True)
-    product_category = models.ForeignKey('ProductCategory', null=True, blank=True, default=None, on_delete=models.SET_NULL)
+    category = models.ForeignKey('Category', null=True, blank=True, default=None, on_delete=models.SET_NULL)
     quantity = models.DecimalField(max_digits=7, decimal_places=0, default=0, blank=True)
     description = models.CharField(max_length=500, default='', blank=True)
     image = models.ImageField(upload_to="images/", default='')
@@ -99,9 +99,48 @@ class OrderItems(models.Model):
     def __str__(self):
         return f"Product: {self.product.id} - Order: {self.order.id} - Quantity: {self.quantity}"
     
-class ProductCategory(models.Model):
+class Category(models.Model):
     owner = models.ForeignKey(Artisan, on_delete=models.CASCADE)
     name = models.CharField(max_length=40, default='product', blank=False)
 
     def __str__(self):
         return f"{self.name} - (Owner: {self.owner})"
+    
+class GalleryImage(models.Model):
+    artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE, related_name='gallery_images')
+    image = models.ImageField(upload_to=f'gallery/')
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+        unique_together = ['artisan', 'order'] # Ensure unique order per merchant
+
+    def __str__(self):
+        return f"Gallery Image {self.id} - Order {self.order}"
+    
+    def save(self, *args, **kwargs):
+        if not self.order:
+            # Auto-assign order if not provided
+            last_image = GalleryImage.objects.filter(artisan=self.artisan).order_by('-order').first()
+            self.order = (last_image.order + 1) if last_image else 0
+        super().save(*args, **kwargs)
+
+class LogoImage(models.Model):
+    artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE, related_name='logo_images')
+    image = models.ImageField(upload_to='logos/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Logo Image {self.id} - artisan - {self.artisan.username}"
+    
+class HeroImage(models.Model):
+    artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE, related_name='hero_images')
+    image = models.ImageField(upload_to='heros/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Hero Image {self.id} - artisan - {self.artisan.username}"

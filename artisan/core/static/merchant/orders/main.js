@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     currentOrder = order;
     const detailsModal = document.getElementById('order-details-modal');
     showModal(detailsModal);
-    document.querySelector('.dashboard-sections').classList.add('compressed');
+    // document.querySelector('.dashboard-sections').classList.add('compressed');
 
     // Populate modal with product data
     document.getElementById('order-name').innerHTML = order.customer_name;

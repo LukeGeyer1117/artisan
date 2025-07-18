@@ -9,6 +9,15 @@ links.forEach(link => {
   }
 })
 
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('hamburger-btn');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function () {
+    sidebar.classList.toggle('open');
+  });
+});
+
 document.querySelector('.navbar a').addEventListener('click', function () {window.location.href = '/login/'});
 
 function showModal(modal) {

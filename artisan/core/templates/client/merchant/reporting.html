@@ -29,6 +29,11 @@
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
+    <!-- Under Construction -->
+    {% block under-construction %}
+      {% include 'client/components/construction/construction.html' with slug=artisan.slug %}
+    {% endblock under-construction %}
+
   </main>
   <script>
     const window_location = 'Reporting';

@@ -187,12 +187,6 @@ table tbody tr {
   transform: scale(1.025);
 }
 
-#orders-table tbody tr:hover {
-  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
-  transform: scale(1.01);
-  color: white;
-}
-
 table tbody tr:last-child {
   border-bottom: none;
 }

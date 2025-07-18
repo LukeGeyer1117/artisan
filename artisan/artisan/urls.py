@@ -58,5 +58,9 @@ urlpatterns = [
     path('api/orderitems/', views.order_items, name="orderitems"),
     path('api/custom/', views.get_custom_order),
     path('api/custom/status', views.change_custom_status),
+    path('api/gallery/upload/', views.upload_image, name='upload_image'),
+    path('api/gallery/save-order/', views.save_gallery_order, name='save_gallery_order'),
+    path('api/gallery/', views.get_gallery_images, name='get_gallery_images'),
+    path('api/gallery/delete/<int:image_id>/', views.delete_image, name='delete_image'),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

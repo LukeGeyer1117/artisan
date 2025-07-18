@@ -5,9 +5,10 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_http_methods
 from django.utils.text import slugify
+from django.db import transaction
 
 import json
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage
 
 # Create your views here.
 def splash(request):
@@ -625,6 +626,142 @@ def get_custom_order(request):
         return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
 
     return JsonResponse({'error': 'method not allowed'}, status=405)
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def upload_image(request):
+    """Handle image upload"""
+    if 'image' not in request.FILES:
+        return JsonResponse({'error': 'No image provided'}, status=400)
+    
+    image = request.FILES['image']
+
+    # validate file type
+    if not image.content_type.startswith('image/'):
+        return JsonResponse({'error': 'Invalid file type'}, status=400)
+    
+    # Create gallery image instance
+    gallery_image = GalleryImage(
+        artisan=Artisan.objects.get(id=request.session.get('artisan_id')), 
+        image=image
+    )
+    gallery_image.save()
+
+    return JsonResponse({
+        'id': gallery_image.id,
+        'url': gallery_image.image.url,
+        'order': gallery_image.order
+    })
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def save_gallery_order(request):
+    """Save the new order of gallery images"""
+    try:
+        # Get the artisan_id from session
+        artisan_id = request.session.get('artisan_id')
+        if not artisan_id:
+            return JsonResponse({'error': 'No artisan session found'}, status=400)
+        
+        # Get the specific artisan object
+        artisan = Artisan.objects.get(id=artisan_id)
+        
+        # Parse JSON data
+        data = json.loads(request.body)
+        images_data = data.get('images', [])
+        
+        if not images_data:
+            return JsonResponse({'error': 'No images provided'}, status=400)
+        
+        # Use transaction to ensure data consistency
+        with transaction.atomic():
+            # First, temporarily set all orders to negative values to avoid unique constraint conflicts
+            gallery_images = GalleryImage.objects.filter(artisan=artisan).order_by('order')
+            for i, image in enumerate(gallery_images):
+                image.order = -(i + 1)
+                image.save()
+            
+            # Then update with the new order values
+            for image_data in images_data:
+                image_id = image_data.get('id')
+                new_order = image_data.get('order')
+                
+                # Verify the image exists and belongs to this artisan
+                try:
+                    image = GalleryImage.objects.get(id=image_id, artisan=artisan)
+                    image.order = new_order
+                    image.save()
+                except GalleryImage.DoesNotExist:
+                    print(f"Warning: Image {image_id} not found for artisan {artisan_id}")
+                    continue
+        
+        return JsonResponse({'success': True})
+    
+    except Artisan.DoesNotExist:
+        return JsonResponse({'error': 'Artisan not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        print(f"Save order error: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+def get_gallery_images(request):
+    """Get all gallery images for the current merchant"""
+    images = GalleryImage.objects.filter(artisan=Artisan.objects.get(id=request.session.get('artisan_id'))).order_by('order')
+
+    images_data = [
+        {
+            'id': img.id,
+            'url': img.image.url,
+            'order': img.order
+        } for img in images
+    ]
+
+    return JsonResponse({'images': images_data})
+
+@csrf_exempt
+@require_http_methods(['DELETE'])
+def delete_image(request, image_id):
+    """Delete a gallery image and reorder remaining images"""
+    try:
+        # Get the artisan_id from session
+        artisan_id = request.session.get('artisan_id')
+        if not artisan_id:
+            return JsonResponse({'error': 'No artisan session found'}, status=400)
+        
+        # Get the specific artisan object
+        artisan = Artisan.objects.get(id=artisan_id)
+        
+        # Get the image to delete
+        image = get_object_or_404(GalleryImage, id=image_id, artisan=artisan)
+        deleted_order = image.order
+        
+        # Use transaction to ensure data consistency
+        with transaction.atomic():
+            # Delete the image
+            image.delete()
+            
+            # Reorder remaining images to fill the gap
+            remaining_images = GalleryImage.objects.filter(
+                artisan=artisan,
+                order__gt=deleted_order
+            ).order_by('order')
+            
+            for idx, img in enumerate(remaining_images):
+                img.order = deleted_order + idx
+                img.save()
+        
+        return JsonResponse({'success': True})
+    
+    except Artisan.DoesNotExist:
+        return JsonResponse({'error': 'Artisan not found'}, status=404)
+    except Exception as e:
+        print(f"Delete error: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"

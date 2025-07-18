@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     currentRequest = request;
     const detailsModal = document.getElementById('request-details-modal');
     showModal(detailsModal);
-    document.querySelector('.dashboard-sections').classList.add('compressed');
+    // document.querySelector('.dashboard-sections').classList.add('compressed');
 
     // Populate modal with request data
     document.getElementById('request-name').innerHTML = request.customer_name;

@@ -64,17 +64,6 @@
   transform: scale(1.1);
 }
 
-#product-details-modal, #product-edit-modal {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 20%;
-  background-color: white;
-  height: 92vh;
-  position: sticky;
-  /* transition: transform .25s ease-in-out; */
-  transform: translateX(100%);
-}
 
 #product-details-modal.active, #product-edit-modal.active {
     display: flex;

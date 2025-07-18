@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     
     const detailsModal = document.getElementById('product-details-modal');
     showModal(detailsModal);
-    document.querySelector('.dashboard-sections').classList.add('compressed');
+    // document.querySelector('.dashboard-sections').classList.add('compressed');
 
     // Populate modal with product data
     document.querySelector('#product-details img').src = '/media/' + product.image;
