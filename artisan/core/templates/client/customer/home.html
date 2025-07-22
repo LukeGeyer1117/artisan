@@ -4,7 +4,7 @@
 {% block title %}Home{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'customer/home/style.css' %}">
+    <link rel="stylesheet" href="{% static 'customer/styles/home.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -77,5 +77,5 @@
 
 {% block extra_scripts %}
     {% include 'client/components/toast-notif/toast.html' %}
-    <script src="{% static 'customer/home/main.js' %}"></script>
+    <script src="{% static 'customer/scripts/home.js' %}"></script>
 {% endblock %}

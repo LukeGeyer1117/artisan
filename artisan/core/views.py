@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from django.db import transaction
 
 import json
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage
 
 # Create your views here.
 def splash(request):
@@ -761,7 +761,84 @@ def delete_image(request, image_id):
     except Exception as e:
         print(f"Delete error: {e}")
         return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+def get_hero_image(request, slug):
+    if request.method == 'GET':
+        artisan = get_object_or_404(Artisan, slug=slug)
+        hero = get_object_or_404(HeroImage, artisan=artisan)
 
+        try:
+            # check if the image file exists
+            if not hero.image:
+                return JsonResponse({'error': 'Image not found'}, status=404)
+            
+            return JsonResponse({'message': 'Found hero image', 'image_url': hero.image.url}, status= 200)
+        except Exception as e:
+            return JsonResponse({'error': 'Error serving image'}, status=500)
+    return JsonResponse({'error': "Method Not Allowed"}, status=405)
+
+@csrf_exempt
+def get_logo_image(request, slug):
+    if request.method == 'GET':
+        artisan = get_object_or_404(Artisan, slug=slug)
+        logo = get_object_or_404(LogoImage, artisan=artisan)
+
+        try:
+            # Check if the image file exists
+            if not logo.image:
+                return JsonResponse({'error': "Image not found"})
+        
+            return JsonResponse({'message': "Found logo_image", 'image_url': logo.image.url}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': "Error serving image"}, status=500)
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+@csrf_exempt
+def create_hero_image(request):
+    pass
+
+@csrf_exempt
+def create_logo_image(request):
+    if request.method == 'POST':
+        artisan_id = request.session.get('artisan_id')
+
+        if not artisan_id:
+            return JsonResponse({'error': 'Not authenticated'})
+        artisan = get_object_or_404(Artisan, id=artisan_id)
+        
+        if 'image' not in request.FILES:
+            return JsonResponse({'error': 'no image file provided'}, status=400)
+        
+        image_file = request.FILES['image']
+        
+        # validate file types
+        allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+        if image_file.content_type not in allowed_types:
+            return JsonResponse({'error': 'Invalid file type. Only JPEG, PNG, GIF, and WebP allowed'}, status=400)
+        
+        # validate file size (max 5mb)
+        max_size = 5 * 1024**2
+        if image_file.size > max_size:
+            return JsonResponse({'error': 'File too large, maximum size is 5MB'}, status=400)
+        
+        # Check if the artisan already has a logo image. Create new if not, update if so.
+        try:
+            logo = LogoImage.objects.get(artisan=artisan)
+            logo.image = image_file
+            logo.save()
+            message = "Logo image updated successfully"
+        except LogoImage.DoesNotExist:
+            logo = LogoImage.objects.create(artisan=artisan, image=image_file)
+            message = "Logo image created successfully"
+
+        return JsonResponse({
+            'message': message,
+            'image_url': logo.image_url,
+            'logo_id': logo.id
+        }, status=201)
+    return JsonResponse({'error': "Method Not Allowed"}, status=405)
+        
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"
