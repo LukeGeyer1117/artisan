@@ -16,31 +16,47 @@
     <!-- Page content -->
     <main>
         <section class="shop-section">
-        <h2 class="section-title">Shop</h2>
-        <p class="section-description">Browse our selection of handcrafted instruments — each piece tells its own story.</p>
-
-        <div class="shop-grid">
-            No Shop Items Found
-        </div>
+            <div class="shop-filters">
+                <h3>Showing 0 Products</h3>
+                <label for="product-search-input">Search:</label>
+                <input type="text" id="product-search-input" class="search-input" placeholder="Search by name">
+                <div id="category-filter">
+                    <label for="categories-select">Categories</label>
+                    <select name="categories" id="categories-select">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div id="price-filter">
+                    <label for="budget-inputs">Budget Range</label>
+                    <div id="budget-inputs">
+                        <input type="number" class="budget-input" id="budget-low" placeholder="min budget">
+                        <input type="number" class="budget-input" id="budget-high" placeholder="max budget">
+                    </div>
+                </div>
+            </div>
+            <div class="shop-grid">
+                No Shop Items Found
+            </div>
+            <div class="spacer-div"></div>
         </section>
 
         <!-- Dynamic Product Modal -->
         <div id="product-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modal-title">Product Name</h2>
-            <img id="modal-image" src="" alt="Product Image">
-            <p id="modal-description">Product description goes here...</p>
-            <p class="price" id="modal-price">$0.00</p>
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modal-title">Product Name</h2>
+                <img id="modal-image" src="" alt="Product Image">
+                <p id="modal-description">Product description goes here...</p>
+                <p class="price" id="modal-price">$0.00</p>
 
-            <!-- Quantity Input -->
-            <div class="modal-quantity-group">
-            <label for="modal-quantity">Quantity:</label>
-            <input type="number" id="modal-quantity" value="1">
+                <!-- Quantity Input -->
+                <div class="modal-quantity-group">
+                <label for="modal-quantity">Quantity:</label>
+                <input type="number" id="modal-quantity" value="1">
+                </div>
+
+                <button class="add-to-cart" id="modal-add-to-cart">Add to Cart</button>
             </div>
-
-            <button class="add-to-cart" id="modal-add-to-cart">Add to Cart</button>
-        </div>
         </div>
 
     </main>

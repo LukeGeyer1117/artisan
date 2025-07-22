@@ -123,20 +123,44 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 .homepage-scroll-section {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
-    padding: 2rem 2rem;
-    overflow-x: auto;
-    width: 80%;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    width: 75%;
+    overflow-x: hidden;
     max-width: 1200px;
-    margin-bottom: 1rem;
     scroll-snap-type: x mandatory;
     scroll-padding: 1rem;
     height: fit-content;
+    position: relative;
+}
+
+#scroller-buttons-div {
+    padding-bottom: 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.scroll-button {
+    height: fit-content;
+    width: 60px;
+    border: none;
+    color: white;
+    font-size: 32pt;
+    background-color: black;
+    transition: all .1s ease-in-out;
+}
+
+.scroll-button:hover {
+    transform: scale(1.025);
 }
 
 @media (max-width: 700px) {
@@ -156,37 +180,33 @@
     .product {
         max-width: 100%;
     }
+
+    #scroller-buttons-div {
+        display: none;
+    }
 }
 
 .product {
     flex: 0 0 auto;
-    width: 220px;
-    background: #ffffff;
-    border-radius: 1rem;
-    height: 350px;
+    width: 300px;
+    height: fit-content;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     scroll-snap-align: start;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
 }
 
 .product:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 2px white;
 }
 
 .product img {
-    height: 180px;
+    height: 300px;
     width: 100%;
     object-fit: cover;
     margin-bottom: 0.75rem;
-    border-radius: 1rem 1rem 0rem 0rem;
     overflow: hidden;
     transition: 0.2s all ease-in;
-}
-
-.product:hover img {
-    transform: scale(1.05);
 }
 
 .product-info {
@@ -199,7 +219,7 @@
 
 .product-type {
     margin: 0;
-    color: #797878;
+    color: #afafaf;
     font-size: 10pt;
 }
 
@@ -207,7 +227,7 @@
     font-size: 1.1rem;
     font-weight: bold;
     margin: 0.5rem 0 0;
-    color: #2B303A;
+    color: #ffffff;
 }
 
 #price-subdiv {
@@ -219,7 +239,7 @@
 }
 
 .price {
-    font-size: 1rem;
+    font-size: 1.08rem;
     font-weight: 600;
     color: #6366F1;
     border-bottom: 2px solid #6366F1;
@@ -271,9 +291,11 @@
 
 #behind-the-craft {
     color: #2B303A;
-    padding: 4rem 2rem;
+    padding: 4rem 0rem;
     display: flex;
     justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .craft-content {
@@ -281,12 +303,13 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 3rem;
-    max-width: 1100px;
+    width: 75%;
     align-items: center;
     justify-content: center;
 }
 
 .craft-text {
+    color: white;
     flex: 1 1 350px;
 }
 

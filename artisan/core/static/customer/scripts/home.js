@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
   })
   .then(result => {
     result.forEach(element => {
+      console.log(element);
       // Select the parent section
       const section = document.getElementById('products-available');
 
@@ -58,8 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Create and append product type
       const type = document.createElement('p');
       type.className = 'product-type';
-      type.textContent = 'Product';
-      productName.append(type);
+      type.textContent = element.category_id;
+      console.log(element.category_id);
 
       // Create and append product name
       const h2 = document.createElement('h2');
@@ -126,9 +127,9 @@ document.addEventListener("DOMContentLoaded", function () {
         quickAdd.style.backgroundColor = '#6366F1';
         quickAdd.style.fontSize = '13pt';
       })
+      new ProductScroller();
     });
   })
-
 });
 
 // Open the modal and populate it
@@ -202,4 +203,168 @@ function showToast(message, duration = 3000) {
   toast.textContent = message;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+class ProductScroller {
+  constructor() {
+    this.container = document.getElementById('products-available');
+    this.prevBtn = document.getElementById('scroll-left-button');
+    this.nextBtn = document.getElementById('scroll-right-button');
+    this.scrollContainer = this.container.querySelector('.scroll-see-more') || this.container;
+    this.indicatorContainer = document.getElementById('indicator-container');
+    
+    this.currentIndex = 0;
+    this.itemsToShow = this.calculateItemsToShow();
+    this.totalItems = this.container.children.length;
+    this.maxIndex = Math.max(0, this.totalItems - this.itemsToShow);
+    
+    this.init();
+  }
+  
+  calculateItemsToShow() {
+    const containerWidth = this.container.parentElement.clientWidth;
+    const itemWidth = 320; // Product width + gap
+    return Math.floor(containerWidth / itemWidth);
+  }
+  
+  init() {
+    this.createIndicators();
+    this.updateButtons();
+    this.updateIndicators();
+    
+    // Event listeners
+    this.prevBtn.addEventListener('click', () => this.scrollPrev());
+    this.nextBtn.addEventListener('click', () => this.scrollNext());
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      this.itemsToShow = this.calculateItemsToShow();
+      this.maxIndex = Math.max(0, this.totalItems - this.itemsToShow);
+      this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
+      this.updateScroll();
+      this.createIndicators();
+      this.updateButtons();
+      this.updateIndicators();
+    });
+    
+    // Touch/swipe support for mobile
+    this.addTouchSupport();
+  }
+  
+  createIndicators() {
+    this.indicatorContainer.innerHTML = '';
+    const totalPages = this.maxIndex + 1;
+    
+    if (totalPages <= 1) {
+        this.indicatorContainer.style.display = 'none';
+        return;
+    }
+    
+    this.indicatorContainer.style.display = 'flex';
+    
+    for (let i = 0; i < totalPages; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'indicator-dot';
+      dot.addEventListener('click', () => this.scrollToIndex(i));
+      this.indicatorContainer.appendChild(dot);
+    }
+  }
+  
+  scrollPrev() {
+    if (this.currentIndex > 0) {
+        this.currentIndex--;
+        this.updateScroll();
+        this.updateButtons();
+        this.updateIndicators();
+    }
+  }
+  
+  scrollNext() {
+    if (this.currentIndex < this.maxIndex) {
+        this.currentIndex++;
+        this.updateScroll();
+        this.updateButtons();
+        this.updateIndicators();
+    }
+  }
+  
+  scrollToIndex(index) {
+    this.currentIndex = Math.max(0, Math.min(index, this.maxIndex));
+    this.updateScroll();
+    this.updateButtons();
+    this.updateIndicators();
+  }
+  
+  updateScroll() {
+    const scrollAmount = this.currentIndex * (320); // item width + gap
+    this.container.querySelectorAll('.product').forEach(product => {
+      product.style.transform = `translateX(-${scrollAmount}px)`;
+    })
+  }
+  
+  updateButtons() {
+    this.prevBtn.disabled = this.currentIndex <= 0;
+    this.nextBtn.disabled = this.currentIndex >= this.maxIndex;
+  }
+  
+  updateIndicators() {
+    const dots = this.indicatorContainer.querySelectorAll('.indicator-dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === this.currentIndex);
+    });
+  }
+  
+  addTouchSupport() {
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
+    let isHorizontalSwipe = false;
+    
+    this.scrollContainer.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isDragging = true;
+      isHorizontalSwipe = false;
+    }, { passive: true });
+    
+    this.scrollContainer.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const deltaX = Math.abs(currentX - startX);
+      const deltaY = Math.abs(currentY - startY);
+      
+      // Determine if this is a horizontal swipe
+      if (deltaX > deltaY && deltaX > 10) {
+          isHorizontalSwipe = true;
+      }
+      
+      // Only prevent default for horizontal swipes to allow vertical scrolling
+      if (isHorizontalSwipe) {
+          e.preventDefault();
+      }
+    }, { passive: false });
+    
+    this.scrollContainer.addEventListener('touchend', (e) => {
+      if (!isDragging || !isHorizontalSwipe) {
+          isDragging = false;
+          return;
+      }
+      
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      
+      if (Math.abs(diff) > 50) { // Minimum swipe distance
+          if (diff > 0) {
+              this.scrollNext();
+          } else {
+              this.scrollPrev();
+          }
+      }
+      
+      isDragging = false;
+      isHorizontalSwipe = false;
+    }, { passive: true });
+  }
 }

@@ -779,13 +779,13 @@ table tbody tr td {
 
 .side-modal p {
   margin-top: 0;
-  max-height: 130px;
+  max-height: 100px;
   overflow-y: scroll;
 }
 
 .side-modal img {
   width: 100%;
-  height: 10rem;
+  height: 15rem;
   object-fit: cover;
   margin: .5rem auto;
   border-radius: 8px;

@@ -40,50 +40,29 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!response.ok) throw new Error("Failed to fetch all products!");
     return response.json();
   })
-  .then(result => {
+  .then(data => {
     // If results found, clear the "no items found" message
-    if (result.length > 0) {
+    if (data.length > 0) {
       shopGrid.innerHTML = '';
     }
-    result.forEach(product => {
-      console.log(product);
-
-      // Create the shop item container
+    document.querySelector('.shop-filters h3').innerHTML = `Showing ${data.length} Products`
+    data.forEach(product => {
       const item = document.createElement('div');
       item.className = 'shop-item';
-
-      // Create and append image
-      const img = document.createElement('img');
-      img.src = '/media/' + product.image || '/static/images/fallback.webp'; // Fallback image if needed
-      img.alt = product.name;
-      item.appendChild(img);
-
-      // Info container
-      const info = document.createElement('div');
-      info.className = 'item-info';
-
-      const name = document.createElement('h3');
-      name.textContent = product.name;
-
-      const price = document.createElement('p');
-      price.className = 'price';
-      price.textContent = `$${parseFloat(product.price).toFixed(2)}`;
-
-      const desc = document.createElement('p');
-      desc.className = 'short-desc';
-      desc.textContent = product.description?.substring(0, 100) + '...';
-
-      // Append elements
-      info.appendChild(name);
-      info.appendChild(price);
-      info.appendChild(desc);
-      item.appendChild(info);
-      shopGrid.appendChild(item);
+      item.innerHTML = `
+        <img src='/media/${product.image}' alt='${product.name}'>
+        <div class='item-info'>
+          <h3 class='name'>${product.name}</h3>
+          <p class='price'>$${parseFloat(product.price).toFixed(2)}</p>
+        </div>
+      `;
 
       // Open the modal screen on click
       item.addEventListener('click', function () {
         openModal(product);
       })
+
+      shopGrid.appendChild(item);
     });
   });
 });
