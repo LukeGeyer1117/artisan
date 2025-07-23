@@ -4,6 +4,7 @@
 {% block title %}Item{% endblock %}
 
 {% block extra_head %}
+  <link rel="stylesheet" href="{% static 'customer/styles/item.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -11,7 +12,27 @@
     {% block nav %}
         {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %} 
     {% endblock nav %}
-    <main>
+    <main data-item-id="{{ item.id }}" style="display: flex; flex-direction: column; align-items: center;">
+      <div class="cross-bar" style="display: flex; flex-direction: row; width: 80%; justify-content: flex-start; margin-bottom: 1rem;">
+        <div class="back-button" style="display: flex; flex-direction: row; align-items: center; gap: .5rem;">
+          <img src="/media/icons/active/arrow_back.png" alt="back arrow" style="width: 16px; height: 16px;">
+          <h3 style="color: white; margin: 0; font-size: 12pt;">Return to Shop</h3>
+        </div>
+      </div>
+      <div class="item-main-section" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 2rem;">
+        <div class="item-photos-section" style="display: flex; flex-direction: row; width: fit-content; gap: 1rem;">
+          <div class="item-photos-multi" style="display: flex; flex-direction: column; height: 100%; overflow-y: scroll;"></div>
+          <img class="item-photos-main" style="width: 20rem; height: fit-content; object-fit: cover;">
+        </div>
+        <div class="item-details-section" style="display: flex; flex-direction: column; gap: 1rem;">
+          <h2 class="product-title" style="color: white; margin: 0; width: fit-content;"></h2>
+          <h4 class="product-category" style="color: #8D8D8D; margin: 0;"></h4>
+          <h3 class="product-price" style="color: white; margin: 0;"></h3>
+          <button class="add-to-cart-button" style="border: none; background-color: white; color: black; padding: .5rem 4rem; width: fit-content;">Add to Cart</button>
+          <h4 class="product-description-header" style="margin: 0; color: #8D8D8D;">Description</h4>
+          <p class="product-description-body" style="color: white; margin: 0; font-size: 12pt; max-width: 500px;"></p>
+        </div>
+      </div>
     </main>
     {% block footer %}
         {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
@@ -20,4 +41,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
+    <script src="{% static 'customer/scripts/item.js' %}"></script>
 {% endblock %}

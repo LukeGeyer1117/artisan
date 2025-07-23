@@ -65,24 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const seeMoreSection = section.querySelector('.scroll-see-more');
       section.insertBefore(productDiv, seeMoreSection);
 
-      // Create an event listener for each product to open a modal screen when clicked with details, and an add to cart button
-      // productDiv.addEventListener('click', function () {
-      //   openProductModal(element);
-
-      //   // Add an event listener to 'Add to Cart' button to add it to session data cart
-      //   document.getElementById("modal-add-to-cart-btn").addEventListener('click', function () {
-      //     if (element.quantity == '0') {
-      //       alert("That product is out of stock. Check back soon for restocks!");
-      //       document.getElementById('product-modal').style.display = 'none';
-      //       return;
-      //     }
-      //     let quantityDesired = document.getElementById('quantity-desired').value;
-      //     addItemToCart(element, quantityDesired);
-      //     const modal = document.getElementById('product-modal');
-      //     modal.style.display = 'none';
-      //   })
-      // });
-
       quickAdd.addEventListener('click', function(event) {
         event.preventDefault();
         if (element.quantity == '0') {

@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Open the modal screen on click
       item.addEventListener('click', function () {
-        openModal(product);
+        window.location.href = `/item/${slug}/${product.id}/`;
       })
 
       shopGrid.appendChild(item);

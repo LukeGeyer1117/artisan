@@ -1,25 +1,16 @@
+{% extends 'merch_base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Merchant Dashboard</title>
-  <link rel="stylesheet" href="{% static 'merchant/styles/orders.css' %}" />
-  <link rel="stylesheet" href="{% static 'merchant/styles/common.css' %}">
-  <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
-  <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Menbere:wght@100..700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- NAV -->
-    {% block nav %}
-        {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
-    {% endblock nav %}
+{% block title %}Merchant Dashboard{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'merchant/styles/orders.css' %}" />{% endblock %}
+
+{% block content %}
+  <!-- NAV -->
+  {% block nav %}
+      {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
+  {% endblock nav %}
 
   <!-- Main Content -->
 
@@ -130,11 +121,13 @@
     </div>
 
   </main>
+{% endblock %}
+
+{% block extra_scripts %}
   <script>
     const window_location = 'Orders';
     const active_URL = "/media/icons/active/orders_purple.svg"
   </script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
   <script type="module" src="{% static 'merchant/scripts/orders.js' %}"></script>
-</body>
-</html>
+{% endblock %}

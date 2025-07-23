@@ -106,6 +106,27 @@ class Category(models.Model):
     def __str__(self):
         return f"{self.name} - (Owner: {self.owner})"
     
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='product/')
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+        unique_together = ['product', 'order']
+
+    def __str__(self):
+        return f"Product Image {self.id} - Order {self.order}"
+    
+    def save(self, *args, **kwargs):
+        if not self.order:
+            # Auto assign order if not provided
+            last_image = ProductImage.objects.filter(product = self.product).order_by('-order').first()
+            self.order = (last_image.order + 1) if last_image else 0
+        super().save(*args, **kwargs)
+    
 class GalleryImage(models.Model):
     artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE, related_name='gallery_images')
     image = models.ImageField(upload_to=f'gallery/')

@@ -1,0 +1,37 @@
+.back-button:hover {
+  cursor: pointer;
+  transform: scale(1.015);
+}
+
+.item-photos-multi {
+  overflow-y: auto;
+  /* Hide scrollbar by default */
+  scrollbar-width: none;
+}
+
+.item-photos-multi img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+/* Hide scrollbar for Webkit Brosers */
+.item-photos-multi::-webkit-scrollbar {
+  width: 0;
+}
+
+/* Show scrollbar on hover */
+.item-photos-multi:hover {
+  scrollbar-width: thin;
+}
+.item-photos-multi:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.add-to-cart-button {
+  transition: all .15s ease-in-out;
+}
+
+.add-to-cart-button:hover {
+  transform: scale(1.0125);
+}
