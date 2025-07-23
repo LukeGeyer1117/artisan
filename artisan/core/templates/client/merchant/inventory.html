@@ -1,27 +1,17 @@
+{% extends 'merch_base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Merchant Dashboard</title>
-  <link rel="stylesheet" href="{% static 'merchant/styles/inventory.css' %}" />
-  <link rel="stylesheet" href="{% static 'merchant/styles/common.css' %}">
-  <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}" />
-  <link rel="stylesheet" href="{% static 'components/footer/style.css' %}" />
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Menbere:wght@100..700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- NAV -->
-    {% block nav %}
-        {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
-    {% endblock nav %}
+{% block title %}Merchant Dashboard{% endblock %}
 
-  <!-- Main Content -->
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'merchant/styles/inventory.css' %}"/>
+{% endblock %}
+
+{% block content %}
+  <!-- NAV -->
+  {% block nav %}
+    {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
+  {% endblock nav %}
 
   <main class="dashboard-main">
     <!-- Sidebar Links -->
@@ -41,7 +31,9 @@
               <span class="search-icon gradient-background"><img src="/media/icons/active/search_purple.svg" alt="search Icon"></span>
               <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
             </div>
-            <button class="main-button gradient-background box-shadowable" id="add-item-button">Add Item &plus;</button>
+            <div>
+              <button class="main-button gradient-background box-shadowable" id="add-item-button">Add Item &plus;</button>
+            </div>
           </section>
 
           <section class="dashboard-section" id="inventory-table-section">
@@ -116,11 +108,14 @@
       </div>
     </div>
   </main>
+{% endblock %}
+
+{% block extra_scripts %}
   <script>
     const window_location = 'Inventory';
     const active_URL = "/media/icons/active/inventory_purple.svg"
   </script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
   <script type="module" src="{% static 'merchant/scripts/inventory.js' %}"></script>
-</body>
-</html>
+{% endblock %}
+

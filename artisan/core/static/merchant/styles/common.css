@@ -1,3 +1,7 @@
+* {
+  font-family: 'Oswald', sans-serif;
+}
+
 .menbere-serif {
   font-optical-sizing: auto;
   font-weight: 300;
@@ -717,7 +721,7 @@ table tbody tr td {
   max-width: 400px;
   min-width: 280px;
   background-color: white;
-  height: 100vh;
+  height: 92vh;
   position: absolute;
   top: 8vh;
   right: 0;

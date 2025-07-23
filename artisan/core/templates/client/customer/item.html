@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Item{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+
+    {% block nav %}
+        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %} 
+    {% endblock nav %}
+    <main>
+    </main>
+    {% block footer %}
+        {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
+    {% endblock footer %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+{% endblock %}

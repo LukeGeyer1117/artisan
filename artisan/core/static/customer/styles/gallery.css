@@ -1,18 +1,19 @@
+* {
+    color: white;
+}
+
 body {
     margin: 0;
 }
 
 #gallery-section {
     padding: 4rem 15%;
-    background-color: #F2ECE4;
-    color: #2B303A;
     text-align: center;
 }
 
 .section-title {
     font-size: 3rem;
     font-weight: 700;
-    color: #2B303A;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -22,7 +23,6 @@ body {
 .section-description {
     font-size: 1.125rem;
     font-weight: 300;
-    color: #5A5A5A;
     max-width: 700px;
     margin: 0 auto 3rem;
     line-height: 1.6;

@@ -64,7 +64,6 @@
 #hero-cta-button, #custom-order-portal-button {
     text-decoration: none;
     background-color: #6366F1;
-    border: 2px solid #6366F1;
     color: #F2ECE4;
     font-size: 1.25rem;
     font-weight: 600;
@@ -241,8 +240,7 @@
 .price {
     font-size: 1.08rem;
     font-weight: 600;
-    color: #6366F1;
-    border-bottom: 2px solid #6366F1;
+    color: #989898;
     display: inline-block;
     padding-bottom: 0.25rem;
     margin-top: auto;

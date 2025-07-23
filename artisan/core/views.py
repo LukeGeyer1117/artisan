@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from django.db import transaction
 
 import json
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category
 
 # Create your views here.
 def splash(request):
@@ -50,6 +50,11 @@ def order_complete(request, slug):
 def custom(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
     return render(request, 'client/customer/custom.html', {'artisan': artisan})
+
+def item(request, slug, item_id):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    item = get_object_or_404(Product, id=item_id)
+    return render(request, 'client/customer/item.html', {'artisan': artisan, 'item': item})
 
 def login_view(request):
     return render(request, 'client/merchant/login.html')
@@ -490,7 +495,19 @@ def get_products_by_artisan_slug(request, slug):
     if not inventory:
         return JsonResponse({'error': 'Inventory not found'}, status=404)
 
-    products = Product.objects.filter(inventory=inventory).values()
+    products = Product.objects.filter(inventory=inventory).order_by('price').values()
+    return JsonResponse(list(products), safe=False)
+
+@csrf_exempt
+@require_GET
+def get_products_by_artisan_slug_limited(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+
+    inventory = Inventory.objects.filter(artisan=artisan).first()
+    if not inventory:
+        return JsonResponse({'error': "Inventory not found"}, status=404)
+    
+    products = Product.objects.filter(inventory=inventory).order_by('price').values()[:20]
     return JsonResponse(list(products), safe=False)
 
 @require_GET
@@ -721,6 +738,24 @@ def get_gallery_images(request):
     ]
 
     return JsonResponse({'images': images_data})
+
+@csrf_exempt
+@require_GET
+def get_gallery_images_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+
+    images = GalleryImage.objects.filter(artisan=artisan).order_by('order')
+    images_data = [
+        {
+            'id': img.id,
+            'url': img.image.url,
+            'order': img.order
+        } for img in images
+    ]
+
+    if len(images_data) > 0:
+        return JsonResponse({'images': images_data})
+    return JsonResponse({'error': 'No images found'}, status=404)
 
 @csrf_exempt
 @require_http_methods(['DELETE'])

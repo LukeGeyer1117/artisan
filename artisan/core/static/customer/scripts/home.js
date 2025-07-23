@@ -20,13 +20,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return response.json();
   })
   .then(data => {
-    console.log(data);
     const hero_image_url = data.image_url;
     const hero_section = document.getElementById('home-hero-section');
     hero_section.style.backgroundImage = `url(${hero_image_url})`;
   })
 
-  fetch(`${API_BASE_URL}/${slug}/products/`, {
+  fetch(`${API_BASE_URL}/${slug}/products-limit/`, {
     method: 'GET',
   })
   .then(response => {
@@ -35,61 +34,31 @@ document.addEventListener("DOMContentLoaded", function () {
   })
   .then(result => {
     result.forEach(element => {
-      console.log(element);
       // Select the parent section
       const section = document.getElementById('products-available');
 
       // Create the product container
       const productDiv = document.createElement('div');
       productDiv.className = 'product';
+      productDiv.innerHTML = `
+        <img src='/media/${element.image}'>
+        <div class='product-info'>
+          <div class='info-subdiv'></div>
+          <h2 class='product-name'>${element.name}</h2>
+          <div class='info-subdiv' id='price-subdiv'>
+            <h4 class='price'>$${element.price}</h4>
+          </div>
+        </div>
+      `;
 
-      // Create and append image
-      const img = document.createElement('img');
-      img.src = '/media/' + element.image;
-      productDiv.appendChild(img);
-
-      // Create a product info div
-      const productInfo = document.createElement('div');
-      productInfo.className = 'product-info';
-
-      // Create product name div
-      const productName = document.createElement('div');
-      productName.className = 'info-subdiv';
-
-      // Create and append product type
-      const type = document.createElement('p');
-      type.className = 'product-type';
-      type.textContent = element.category_id;
-      console.log(element.category_id);
-
-      // Create and append product name
-      const h2 = document.createElement('h2');
-      h2.className = 'product-name';
-      h2.textContent = element.name;
-      productName.appendChild(h2);
-
-      productInfo.append(productName);
-
-      // Create and append the price and add cart div
-      const priceDiv = document.createElement('div');
-      priceDiv.className = 'info-subdiv';
-      priceDiv.id = 'price-subdiv';
-
-      // Create and append price
-      const h4 = document.createElement('h4');
-      h4.className = 'price';
-      h4.textContent = `$${element.price}`;
-      priceDiv.appendChild(h4);
-
-      // Create and append Quick Add to Cart
+      // Create and append the Quick Add button
       const quickAdd = document.createElement('button');
       quickAdd.className = 'quick-add-button';
       quickAdd.innerHTML = '&plus;';
-      priceDiv.appendChild(quickAdd);
 
-      productInfo.appendChild(priceDiv);
-
-      productDiv.append(productInfo);
+      // Append the button to the price subdiv
+      const priceSubdiv = productDiv.querySelector('#price-subdiv');
+      priceSubdiv.appendChild(quickAdd);
 
 
       // Insert before the "See All Products" link

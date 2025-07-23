@@ -1,3 +1,4 @@
+
 let links = document.querySelectorAll('.links-group a');
 
 links.forEach(link => {

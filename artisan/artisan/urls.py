@@ -31,6 +31,7 @@ urlpatterns = [
     path('checkout/<slug:slug>/', views.checkout, name="checkout"),
     path('custom/<slug:slug>/', views.custom, name="custom"),
     path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
+    path('item/<slug:slug>/<int:item_id>/', views.item),
     path('api/logo/<slug:slug>/', views.get_logo_image),
     path('api/hero/<slug:slug>/', views.get_hero_image),
     path('login/', views.login_view, name='login'),
@@ -46,6 +47,7 @@ urlpatterns = [
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),
     path('api/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
+    path('api/<slug:slug>/products-limit/', views.get_products_by_artisan_slug_limited),
     path('api/product/', views.product),
     path('api/product/<str:product_id>/', views.get_product),
     path('api/products/', views.get_all_products),
@@ -63,6 +65,7 @@ urlpatterns = [
     path('api/gallery/upload/', views.upload_image, name='upload_image'),
     path('api/gallery/save-order/', views.save_gallery_order, name='save_gallery_order'),
     path('api/gallery/', views.get_gallery_images, name='get_gallery_images'),
+    path('api/gallery/<slug:slug>/', views.get_gallery_images_by_slug),
     path('api/gallery/delete/<int:image_id>/', views.delete_image, name='delete_image'),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
