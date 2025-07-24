@@ -51,33 +51,13 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       `;
 
-      // Create and append the Quick Add button
-      const quickAdd = document.createElement('button');
-      quickAdd.className = 'quick-add-button';
-      quickAdd.innerHTML = '&plus;';
-
-      // Append the button to the price subdiv
-      const priceSubdiv = productDiv.querySelector('#price-subdiv');
-      priceSubdiv.appendChild(quickAdd);
-
+      productDiv.addEventListener('click', function () {
+        window.location.href = `/item/${slug}/${element.id}/`;
+      })
 
       // Insert before the "See All Products" link
       const seeMoreSection = section.querySelector('.scroll-see-more');
       section.insertBefore(productDiv, seeMoreSection);
-
-      quickAdd.addEventListener('click', function(event) {
-        event.preventDefault();
-        if (element.quantity == '0') {
-          alert('That product is out of stock. Check back soon for restocks!');
-          return;
-        }
-        let quantityDesired = 1;
-        addItemToCart(element, quantityDesired);
-        quickAdd.innerHTML = '&check;';
-        quickAdd.style.color = 'white';
-        quickAdd.style.backgroundColor = '#6366F1';
-        quickAdd.style.fontSize = '13pt';
-      })
       new ProductScroller();
     });
   })

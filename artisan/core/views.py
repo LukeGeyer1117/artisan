@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from django.db import transaction
 
 import json
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category, ProductImage
 
 # Create your views here.
 def splash(request):
@@ -873,7 +873,48 @@ def create_logo_image(request):
             'logo_id': logo.id
         }, status=201)
     return JsonResponse({'error': "Method Not Allowed"}, status=405)
-        
+
+@csrf_exempt
+@require_GET
+def get_categories_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    categories = Category.objects.filter(owner=artisan)
+
+    categories_data = list(categories.values())
+
+    return JsonResponse({'message': 'found categories', 'categories': categories_data})
+
+@csrf_exempt
+@require_GET
+def get_categories(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+
+    categories = Category.objects.filter(owner=artisan).values()
+
+    return JsonResponse({'categories': list(categories)})
+
+@csrf_exempt
+@require_GET
+def get_gallery_images_by_product_id(request, product_id):
+
+    product = Product.objects.get(id=product_id)
+
+    product_images = ProductImage.objects.filter(product=product).values()
+
+    return JsonResponse({'message': 'found product_images', 'product_images': list(product_images)})
+
+@csrf_exempt
+@require_POST
+def create_new_category(request):
+    artisan = Artisan.objects.get(id=request.session.get('artisan_id'))
+
+    if not artisan:
+        return JsonResponse({'error': 'Not authenticated'}, status=400)
+    
+    data = json.loads(request.body)
+    
+    Category.objects.create(owner=artisan, name=data['name'])
+    return JsonResponse({'message': 'created category'})
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"

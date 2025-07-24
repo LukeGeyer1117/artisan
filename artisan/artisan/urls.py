@@ -67,5 +67,9 @@ urlpatterns = [
     path('api/gallery/', views.get_gallery_images, name='get_gallery_images'),
     path('api/gallery/<slug:slug>/', views.get_gallery_images_by_slug),
     path('api/gallery/delete/<int:image_id>/', views.delete_image, name='delete_image'),
+    path('api/product-image/<int:product_id>/', views.get_gallery_images_by_product_id),
+    path('api/categories/<slug:slug>/', views.get_categories_by_slug),
+    path('api/categories/', views.get_categories),
+    path('api/category/', views.create_new_category),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

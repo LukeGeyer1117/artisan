@@ -20,6 +20,10 @@ window.addEventListener('click', function (e) {
 
 // Toggle nav on small screens
 document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.querySelector('.search-input');
+  const categorySelect = document.querySelector('#categories-select');
+  const budgetLow = document.getElementById('budget-low');
+  const budgetHigh = document.getElementById('budget-high');
   const toggle = document.querySelector(".menu-toggle");
   const links = document.querySelector(".nav-links");
 
@@ -46,25 +50,58 @@ document.addEventListener("DOMContentLoaded", function () {
       shopGrid.innerHTML = '';
     }
     document.querySelector('.shop-filters h3').innerHTML = `Showing ${data.length} Products`
-    data.forEach(product => {
-      const item = document.createElement('div');
-      item.className = 'shop-item';
-      item.innerHTML = `
-        <img src='/media/${product.image}' alt='${product.name}'>
-        <div class='item-info'>
-          <h3 class='name'>${product.name}</h3>
-          <p class='price'>$${parseFloat(product.price).toFixed(2)}</p>
-        </div>
-      `;
+    filterProducts(data);
+    // data.forEach(product => {
+    //   const item = document.createElement('div');
+    //   item.className = 'shop-item';
+    //   item.innerHTML = `
+    //     <img src='/media/${product.image}' alt='${product.name}'>
+    //     <div class='item-info'>
+    //       <h3 class='name'>${product.name}</h3>
+    //       <p class='price'>$${parseFloat(product.price).toFixed(2)}</p>
+    //     </div>
+    //   `;
 
-      // Open the modal screen on click
-      item.addEventListener('click', function () {
-        window.location.href = `/item/${slug}/${product.id}/`;
-      })
+    //   // Open the modal screen on click
+    //   item.addEventListener('click', function () {
+    //     window.location.href = `/item/${slug}/${product.id}/`;
+    //   })
 
-      shopGrid.appendChild(item);
+    //   shopGrid.appendChild(item);
+    // });
+    searchInput.addEventListener('input', function () {
+      filterProducts(data);
+    });
+    categorySelect.addEventListener('change', function () {
+      filterProducts(data);
+    });
+    budgetLow.addEventListener('input', function () {
+      filterProducts(data);
+    });
+    budgetHigh.addEventListener('input', function () {
+      filterProducts(data);
     });
   });
+
+  // Get all the product categories
+  fetch(`${API_BASE_URL}/categories/${slug}/`, {
+    method: 'GET'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get categories");
+    return response.json();
+  })
+  .then(data => {
+    const categories = data.categories;
+    const categorySelect = document.querySelector('#categories-select');
+    categories.forEach(category => {
+      console.log(category);
+      const categoryOption = document.createElement('option');
+      categoryOption.value = category.id;
+      categoryOption.innerHTML = category.name;
+      categorySelect.appendChild(categoryOption);
+    })
+  })
 });
 
 function openModal(product) {
@@ -107,28 +144,53 @@ function openModal(product) {
   })
 }
 
-function addItemToCart(product, quantity) {
-  console.log(product.id)
-  fetch(`${API_BASE_URL}/cart/`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 'product_id': product.id, 'quantity': quantity })
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Failed to add item to cart');
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log('Cart updated:', data);
-    // Optionally update the cart UI here
-    alert("Product added to cart.");
-  })
-  .catch(error => {
-    console.error('Error:', error);
+function renderResults(filtered_products) {
+  const shopGrid = document.querySelector('.shop-grid');
+  if (filtered_products.length === 0) {
+    shopGrid.innerHTML = 'No Results Found';
+  } else {
+    console.log(filtered_products)
+    shopGrid.innerHTML = filtered_products.map(product => (
+      `
+      <div class='shop-item'>
+        <p id='product-id' style='display: none;'>${product.id}</p>
+        <img src='/media/${product.image}' alt='${product.name}'>
+        <div class='item-info'>
+          <h3 class='name'>${product.name}</h3>
+          <p class='price'>$${parseFloat(product.price).toFixed(2)}</p>
+        </div>
+      </div>
+      `
+    )).join('');
+    document.querySelector('.shop-filters h3').innerHTML = `Showing ${filtered_products.length} Products`
+    const shop_items = document.querySelectorAll('.shop-item');
+    shop_items.forEach(item => {
+      item.addEventListener('click', function () {
+        window.location.href = `/item/${slug}/${item.querySelector('#product-id').innerHTML}/`
+      })
+    })
+  }
+}
+
+function filterProducts(products) {
+  const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+  const selectedCategory = document.querySelector('#categories-select').value;
+  const minBudgetInput = document.getElementById('budget-low').value;
+  const maxBudgetInput = document.getElementById('budget-high').value;
+
+  // Convert inputs to numbers only if they are not blank
+  const minBudget = minBudgetInput !== '' ? parseFloat(minBudgetInput) : null;
+  const maxBudget = maxBudgetInput !== '' ? parseFloat(maxBudgetInput) : null;
+
+  const filtered = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+    const matchesCategory = selectedCategory === 'all' || product.category_id == selectedCategory;
+
+    const matchesMin = minBudget === null || product.price >= minBudget;
+    const matchesMax = maxBudget === null || product.price <= maxBudget;
+
+    return matchesSearch && matchesCategory && matchesMin && matchesMax;
   });
+
+  renderResults(filtered);
 }

@@ -71,8 +71,8 @@
 }
 
 .shop-item img {
-  width: 20rem;
-  height: 20rem;
+  width: 18rem;
+  height: 18rem;
   object-fit: cover;
   object-position: bottom;
 }

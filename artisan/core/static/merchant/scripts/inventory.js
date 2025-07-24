@@ -129,6 +129,45 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   });
 
+  // Get categories, listen for new categories
+  fetch(`${API_BASE_URL}/categories/`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get categories");
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+    const categories = data.categories;
+    const category_list = document.getElementById('category-list');
+    category_list.innerHTML = (categories.map(category => (
+      `<li class='category-li'>${category.name}</li>`
+    )).join(''))
+  })
+  document.getElementById('add-category-btn').addEventListener('click', function () {
+    const categoryInput = document.getElementById('new-category-input');
+    if (categoryInput.value) {
+      // create a new catgory
+      fetch(`${API_BASE_URL}/category/`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'name': categoryInput.value})
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Could not create a category");
+        return response.json();
+      })
+      .then(data => {
+        window.location.reload();
+      })
+    }
+  })
+
   // Function to clear active row styling
   function clearActiveRows() {
     const rows = document.querySelectorAll('#inventory-table tr');

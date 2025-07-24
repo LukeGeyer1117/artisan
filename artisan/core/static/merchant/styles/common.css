@@ -1308,3 +1308,8 @@ table tbody tr td {
     gap: 15px;
   }
 }
+
+#category-manager h3, #category-manager ul {
+  margin: 0;
+  list-style-type: none;
+}

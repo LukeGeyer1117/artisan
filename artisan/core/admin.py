@@ -11,5 +11,6 @@ admin.site.register(GalleryImage)
 admin.site.register(LogoImage)
 admin.site.register(HeroImage)
 admin.site.register(Category)
+admin.site.register(ProductImage)
 
 # Register your models here.
