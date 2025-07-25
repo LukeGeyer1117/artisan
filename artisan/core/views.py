@@ -6,9 +6,10 @@ from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_http_methods
 from django.utils.text import slugify
 from django.db import transaction
+import os
 
 import json
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category, ProductImage
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category, ProductImage, Theme, TextContent
 
 # Create your views here.
 def splash(request):
@@ -122,7 +123,9 @@ def artisan(request):
             accepting_custom_orders = data.get('accepting_custom_orders', False),
         )
 
-        inventory = Inventory.objects.create(artisan=artisan)
+        # Create the inventory and theme for the artisan
+        Inventory.objects.create(artisan=artisan)
+        Theme.objects.create(artisan=artisan)
         return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
     elif request.method == 'GET':
         artisan_id = request.session.get('artisan_id', '')
@@ -802,12 +805,13 @@ def get_hero_image(request, slug):
     if request.method == 'GET':
         artisan = get_object_or_404(Artisan, slug=slug)
         hero = get_object_or_404(HeroImage, artisan=artisan)
+        print(artisan, hero)
 
         try:
             # check if the image file exists
-            if not hero.image:
-                return JsonResponse({'error': 'Image not found'}, status=404)
-            
+            if not hero.image or not os.path.exists(hero.image.path):
+                return JsonResponse({'error': 'Image file not found'}, status=404)
+
             return JsonResponse({'message': 'Found hero image', 'image_url': hero.image.url}, status= 200)
         except Exception as e:
             return JsonResponse({'error': 'Error serving image'}, status=500)
@@ -915,6 +919,35 @@ def create_new_category(request):
     
     Category.objects.create(owner=artisan, name=data['name'])
     return JsonResponse({'message': 'created category'})
+
+@csrf_exempt
+@require_GET
+def get_theme_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    theme = get_object_or_404(Theme, artisan=artisan)
+
+    theme_data = {
+        'text_color': theme.text_color,
+        'background_color': theme.background_color,
+        'accent_color': theme.accent_color,
+        'link_hover_color': theme.link_hover_color,
+    }
+
+    return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
+
+@csrf_exempt
+@require_GET
+def get_text_content_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    text_content = get_object_or_404(TextContent, artisan=artisan)
+
+    text_content_data = {
+        'hero_sentence_draw': text_content.hero_sentence_draw,
+        'hero_header_draw': text_content.hero_header_draw
+    }
+
+    return JsonResponse({'message': 'Found Text Content', 'text_content': text_content_data})
+
 
 ### Creates a 'slug' that django uses to route. Converts "Great Scott's Doughnuts" => "great-scotts-doughnuts"
 ### Adds an integer to the end of new slugs when an equivalent slug already exists in db. i.e. "blindr" => "blindr-1"

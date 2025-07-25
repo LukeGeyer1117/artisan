@@ -1,5 +1,3 @@
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
-
 // Toggle nav on small screens
 document.addEventListener("DOMContentLoaded", function () {
   const toggle = document.querySelector(".menu-toggle");
@@ -23,6 +21,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const hero_image_url = data.image_url;
     const hero_section = document.getElementById('home-hero-section');
     hero_section.style.backgroundImage = `url(${hero_image_url})`;
+  })
+
+  // Get the text content for the page for this merchant
+  fetch(`${API_BASE_URL}/text/${slug}/`, {
+    method: 'GET'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get text content");
+    return response.json();
+  })
+  .then(data => {
+    const text_content = data.text_content;
+    document.getElementById('hero-sentence-draw').innerHTML = text_content.hero_sentence_draw;
+    document.getElementById('hero-header-draw').innerHTML = text_content.hero_header_draw;
   })
 
   fetch(`${API_BASE_URL}/${slug}/products-limit/`, {

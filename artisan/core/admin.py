@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, ProductImage, GalleryImage, LogoImage, HeroImage, Category
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, ProductImage, GalleryImage, LogoImage, HeroImage, Category, Theme, TextContent
 
 admin.site.register(Artisan)
 admin.site.register(Inventory)
@@ -12,5 +12,7 @@ admin.site.register(LogoImage)
 admin.site.register(HeroImage)
 admin.site.register(Category)
 admin.site.register(ProductImage)
+admin.site.register(Theme)
+admin.site.register(TextContent)
 
 # Register your models here.

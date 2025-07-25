@@ -165,3 +165,25 @@ class HeroImage(models.Model):
 
     def __str__(self):
         return f"Hero Image {self.id} - artisan - {self.artisan.username}"
+    
+class Theme(models.Model):
+    artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
+
+    # Basic colors
+    text_color = models.CharField(max_length=7, default="#ffffff") #default to white text
+    background_color = models.CharField(max_length=7, default="#000000") # default black background
+    accent_color = models.CharField(max_length=7, default="#007bff")
+    link_hover_color = models.CharField(max_length=7, default="#007bff")
+
+    def __str__(self):
+        return f'{self.artisan.slug}'
+    
+class TextContent(models.Model):
+    artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
+
+    # Hero Text
+    hero_sentence_draw = models.CharField(max_length=50)
+    hero_header_draw = models.CharField(max_length=25)
+
+    def __str__(self):
+        return f'{self.artisan.slug} - text content'

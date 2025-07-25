@@ -1,4 +1,3 @@
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 let paymentTotal = 0;
 
 document.addEventListener("DOMContentLoaded", function () {

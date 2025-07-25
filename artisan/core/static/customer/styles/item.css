@@ -67,13 +67,8 @@
 }
 
 .number-btn {
-  background-color: white;
   cursor: pointer;
   transition: all .15s ease-in-out;
-}
-
-.number-btn:hover {
-  background-color: aliceblue;
 }
 
 @media (max-width: 943px) {

@@ -1,6 +1,4 @@
 .site-footer {
-    background-color: #000000;
-    color: #F9FAFB;
     padding: 3rem 2rem 2rem 2rem;
     font-size: 0.95rem;
 }
@@ -23,19 +21,13 @@
 .footer-column h4 {
     font-size: 1.2rem;
     margin-bottom: 1rem;
-    color: #F9FAFB;
     font-weight: bold;
 }
 
 .footer-column a {
-    color: #F9FAFB;
     text-decoration: none;
     margin-bottom: 0.5rem;
     transition: color 0.2s ease;
-}
-
-.footer-column a:hover {
-    color: #4F46E5;
 }
 
 .footer-column p {

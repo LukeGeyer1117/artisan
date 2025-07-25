@@ -1,4 +1,3 @@
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 // Get the product information
 document.addEventListener('DOMContentLoaded', async function () {
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Double check if quantity input value is ok
   const quantityInput = document.querySelector('.number-input');
   quantityInput.addEventListener('input', function () {
-    let value = quantityInput.value;
+    let value = parseInt(quantityInput.value);
     let currentProduct = productInfo;
     if (value > currentProduct.quantity) {
       quantityInput.value = currentProduct.quantity

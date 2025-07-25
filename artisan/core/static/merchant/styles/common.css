@@ -937,7 +937,7 @@ table tbody tr td {
 }
 
 .order-product-details div p {
-  height: 15px;
+  height: fit-content;
   font-size: 10pt;
   margin: 0;
   overflow-y: hidden;

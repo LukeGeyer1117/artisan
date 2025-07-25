@@ -23,19 +23,15 @@ body {
 .cart-empty h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: white;
 }
 
 .cart-empty p {
     font-size: 1.1rem;
-    color: white;
     margin-bottom: 2rem;
 }
 
 .cart-return-link {
     display: inline-block;
-    background-color: #2f3e46;
-    color: #fff;
     padding: 0.75rem 1.5rem;
     text-decoration: none;
     border-radius: 8px;
@@ -43,15 +39,10 @@ body {
     transition: background-color 0.2s ease;
 }
 
-.cart-return-link:hover {
-    background-color: #1d2a33;
-}
-
 .cart-contents {
     max-width: 960px;
     margin: 4rem auto;
     padding: 2rem;
-    color: #2f3e46;
     display: none;
 }
 
@@ -59,7 +50,6 @@ body {
     font-size: 2rem;
     margin-bottom: 2rem;
     text-align: center;
-    color: #1f2d3d;
 }
 
 .cart-items-list {
@@ -75,7 +65,6 @@ body {
     border: 1px solid #ccc;
     border-radius: 10px;
     padding: 1rem;
-    background-color: #f9f9f7;
 }
 
 .cart-item img {
@@ -95,38 +84,23 @@ body {
 
 .cart-item-details p {
     margin: 0.25rem 0;
-    color: #5c677d;
 }
 
 .edit-btn {
     margin-top: 0.5rem;
     margin-right: 0.5rem;
-    color: #1d2a33;
     border: none;
-    border-bottom: 2px solid #1d2a33;
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
-
-.edit-btn:hover {
-    background-color: #f9a825;
-}
-
 
 .remove-btn {
     margin-top: 0.5rem;
-    color:#1d2a33;
     border: none;
-    border-bottom: 2px solid #1d2a33;
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
-}
-
-.remove-btn:hover {
-    color: white;
-    background-color: #b42b35;
 }
 
 .edit-btn, .remove-btn {
@@ -143,7 +117,6 @@ body {
     margin-top: 1rem;
     padding: 0.75rem 2rem;
     background-color: #2f3e46;
-    color: white;
     border: none;
     border-radius: 8px;
     font-size: 1rem;

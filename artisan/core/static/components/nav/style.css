@@ -23,23 +23,17 @@
   display: flex;
   gap: 3rem;
   transition: all .15s ease-in-out;
-  background-color: black;
   z-index: 100;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: rgb(253, 247, 247);
   font-weight: 500;
   padding: 0.5rem 1rem;
   transition: color 0.3s ease;
   font-size: 13pt;
   width: 130px;
   text-align: center;
-}
-
-.nav-links a:hover {
-  color: #007bff; /* Adjust hover color as needed */
 }
 
 /* Logo styling */
@@ -49,9 +43,8 @@
 
 .nav-logo-image {
   height: 100px; /* Adjust height as needed */
-  width: 100px;
+  width: fit-content;
   object-fit: cover;
-  border-radius: 50%;
   position: inherit;
   top: 10%;
   z-index: 100;

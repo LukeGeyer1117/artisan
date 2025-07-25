@@ -37,8 +37,8 @@
     max-width: 500px;
     padding: 2rem;
     padding-left: 15%;
-    color: #F2ECE4;
     margin: 5rem 0 3rem;
+    background-color: #00000050;
 }
 
 #hero-main-draw {
@@ -61,10 +61,13 @@
     margin: 0 0 2rem;
 }
 
+#hero-main-draw, #hero-sentence-draw, #hero-header-draw {
+    background-color: #00000000;
+    color: white;
+}
+
 #hero-cta-button, #custom-order-portal-button {
     text-decoration: none;
-    background-color: #ffffff;
-    color: #000000;
     font-size: 1.25rem;
     font-weight: 600;
     border-radius: 5px;
@@ -76,8 +79,6 @@
 
 #hero-cta-button:hover {
     transform: scale(1.04);
-    background-color: #F2ECE4;
-    color: #4F46E5;
 }
 
 @media (max-width: 700px) {
@@ -152,9 +153,7 @@
     height: fit-content;
     width: 60px;
     border: none;
-    color: white;
     font-size: 32pt;
-    background-color: black;
     transition: all .1s ease-in-out;
 }
 
@@ -218,7 +217,6 @@
 
 .product-type {
     margin: 0;
-    color: #afafaf;
     font-size: 10pt;
 }
 
@@ -226,7 +224,6 @@
     font-size: 1.1rem;
     font-weight: bold;
     margin: 0.5rem 0 0;
-    color: #ffffff;
 }
 
 #price-subdiv {
@@ -240,7 +237,6 @@
 .price {
     font-size: 1.08rem;
     font-weight: 600;
-    color: #989898;
     display: inline-block;
     padding-bottom: 0.25rem;
     margin-top: auto;
@@ -282,13 +278,7 @@
     transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
 } */
 
-#custom-order-portal-button:hover, #hero-cta-button:hover {
-    background-color: #FFFFFF;
-    color: #6366F1;
-}
-
 #behind-the-craft {
-    color: #2B303A;
     padding: 4rem 0rem;
     display: flex;
     justify-content: center;
@@ -307,14 +297,12 @@
 }
 
 .craft-text {
-    color: white;
     flex: 1 1 350px;
 }
 
 .craft-text h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: #6366F1;
 }
 
 .craft-text p {
@@ -351,7 +339,6 @@
 
 /* Modal Content */
 .modal-content {
-  background-color: #fff;
   margin: 5% auto;
   padding: 2rem;
   border-radius: 12px;
@@ -387,10 +374,6 @@
   margin-top: 1rem;
   cursor: pointer;
   font-size: 1rem;
-}
-
-.modal-content button:hover {
-  background-color: #163958;
 }
 
 /* Close button */

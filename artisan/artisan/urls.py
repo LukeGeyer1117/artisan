@@ -71,5 +71,7 @@ urlpatterns = [
     path('api/categories/<slug:slug>/', views.get_categories_by_slug),
     path('api/categories/', views.get_categories),
     path('api/category/', views.create_new_category),
+    path('api/theme/<slug:slug>/', views.get_theme_by_slug),
+    path('api/text/<slug:slug>/', views.get_text_content_by_slug),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
