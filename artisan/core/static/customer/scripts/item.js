@@ -122,7 +122,8 @@ function addItemToCart(product, quantity) {
   .then(data => {
     console.log('Cart updated:', data);
     // Optionally update the cart UI here
-    alert("Product added to cart.");
+    alert('Added to cart.');
+    window.location.href = `/shop/${slug}/`
   })
   .catch(error => {
     console.error('Error:', error);

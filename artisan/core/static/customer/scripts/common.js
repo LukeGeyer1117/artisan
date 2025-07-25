@@ -48,6 +48,14 @@ function applyGlobalTheme(theme) {
       color: ${theme.text_color};
       background-color: ${theme.accent_color};
     }
+
+    .checkout-btn:hover {
+      background-color: ${theme.accent_color};
+    }
+
+    .edit-btn:hover, .remove-btn:hover {
+      background-color: ${theme.accent_color};
+    }
   `;
   document.head.appendChild(globalStyle);
 }

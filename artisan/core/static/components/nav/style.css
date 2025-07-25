@@ -4,7 +4,6 @@
   justify-content: space-between;
   align-items: center;
   padding-right: 0;
-  background-color: black; /* Adjust as needed */
   position: relative;
 }
 
@@ -86,7 +85,6 @@
   cursor: pointer;
   padding: 0.5rem;
   margin-left: 1rem;
-  color: white;
   z-index: 1000;
 }
 
@@ -128,7 +126,7 @@
   .nav-links.menu-item-2.show { transform: translateY(100%); }
   
   .nav-logo-image {
-    width: 60px;
+    width: fit-content;
     height: 50px;
   }
 
