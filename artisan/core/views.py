@@ -801,7 +801,7 @@ def delete_image(request, image_id):
         return JsonResponse({'error': str(e)}, status=500)
     
 @csrf_exempt
-def get_hero_image(request, slug):
+def get_hero_image_by_slug(request, slug):
     if request.method == 'GET':
         artisan = get_object_or_404(Artisan, slug=slug)
         hero = get_object_or_404(HeroImage, artisan=artisan)
@@ -812,13 +812,24 @@ def get_hero_image(request, slug):
             if not hero.image or not os.path.exists(hero.image.path):
                 return JsonResponse({'error': 'Image file not found'}, status=404)
 
-            return JsonResponse({'message': 'Found hero image', 'image_url': hero.image.url}, status= 200)
+            return JsonResponse({'message': 'Found hero image', 'image_url': hero.image.url}, status=200)
         except Exception as e:
             return JsonResponse({'error': 'Error serving image'}, status=500)
     return JsonResponse({'error': "Method Not Allowed"}, status=405)
 
 @csrf_exempt
-def get_logo_image(request, slug):
+@require_GET
+def get_hero_image_by_session(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    hero = get_object_or_404(HeroImage, artisan=artisan)
+
+    if not hero.image or not os.path.exists(hero.image.path):
+        return JsonResponse({'error': "Image file not found"}, status=404)
+    
+    return JsonResponse({'message': "Found hero image", 'image_url': hero.image.url}, status=200)
+
+@csrf_exempt
+def get_logo_image_by_slug(request, slug):
     if request.method == 'GET':
         artisan = get_object_or_404(Artisan, slug=slug)
         logo = get_object_or_404(LogoImage, artisan=artisan)
@@ -832,6 +843,17 @@ def get_logo_image(request, slug):
         except Exception as e:
             return JsonResponse({'error': "Error serving image"}, status=500)
     return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+@csrf_exempt
+@require_GET
+def get_logo_image_by_session(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    logo = get_object_or_404(LogoImage, artisan=artisan)
+
+    if not logo.image:
+        return JsonResponse({'error': 'Image not found'})
+    
+    return JsonResponse({'message': 'Found logo image', 'image_url': logo.image.url}, status=200)
 
 @csrf_exempt
 def create_hero_image(request):
@@ -934,6 +956,46 @@ def get_theme_by_slug(request, slug):
     }
 
     return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
+
+@csrf_exempt
+@require_GET
+def get_theme_by_session(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+
+    theme = get_object_or_404(Theme, artisan=artisan)
+    theme_data = {
+        'text_color': theme.text_color,
+        'background_color': theme.background_color,
+        'accent_color': theme.accent_color,
+        'link_hover_color': theme.link_hover_color,
+    }
+
+    return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
+
+@csrf_exempt
+@require_http_methods(['PUT'])
+def update_theme(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    theme = get_object_or_404(Theme, artisan=artisan)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': "Invalid JSON"})
+    
+    # Validate fields exist
+    required_fields = ['text_color', 'background_color', 'accent_color', 'link_hover_color']
+    if not all(field in data for field in required_fields):
+        return JsonResponse({'error': "Missing required field(s)"}, status=400)
+
+    theme.text_color = data['text_color']
+    theme.background_color = data['background_color']
+    theme.accent_color = data['accent_color']
+    theme.link_hover_color = data['link_hover_color']
+
+    theme.save()
+
+    return JsonResponse({'message': "updated theme"}, status=200)
 
 @csrf_exempt
 @require_GET

@@ -32,8 +32,10 @@ urlpatterns = [
     path('custom/<slug:slug>/', views.custom, name="custom"),
     path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
     path('item/<slug:slug>/<int:item_id>/', views.item),
-    path('api/logo/<slug:slug>/', views.get_logo_image),
-    path('api/hero/<slug:slug>/', views.get_hero_image),
+    path('api/logo/<slug:slug>/', views.get_logo_image_by_slug),
+    path('api/logo/', views.get_logo_image_by_session),
+    path('api/hero/<slug:slug>/', views.get_hero_image_by_slug),
+    path('api/hero/', views.get_hero_image_by_session),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('inventory/', views.inventory_view),
@@ -72,6 +74,8 @@ urlpatterns = [
     path('api/categories/', views.get_categories),
     path('api/category/', views.create_new_category),
     path('api/theme/<slug:slug>/', views.get_theme_by_slug),
+    path('api/theme/', views.get_theme_by_session),
+    path('api/update/theme/', views.update_theme, name='update_theme'),
     path('api/text/<slug:slug>/', views.get_text_content_by_slug),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

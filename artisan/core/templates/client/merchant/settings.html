@@ -19,10 +19,54 @@
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
-    <!-- Under Construction -->
-    {% block under-construction %}
-      {% include 'client/components/construction/construction.html' with slug=artisan.slug %}
-    {% endblock under-construction %}
+  <div class="container">
+    <h1>Settings</h1>
+
+    <!-- Color Settings Section -->
+    <section class="color-settings">
+      <h2>Theme Settings</h2>
+      <div class="color-controls">
+        <div class="color-group">
+          <label for="textColor">Text Color</label>
+          <input type="color" id="textColor" name="textColor">
+        </div>
+        <div class="color-group">
+          <label for="backgroundColor">Background Color</label>
+          <input type="color" id="backgroundColor" name="backgroundColor">
+        </div>
+        <div class="color-group">
+          <label for="accentColor">Accent Color</label>
+          <input type="color" id="accentColor" name="accentColor">
+        </div>
+        <div class="color-group">
+          <label for="linkHoverColor">Link Hover Color</label>
+          <input type="color" id="linkHoverColor" name="linkHoverColor">
+        </div>
+      </div>
+    </section>
+
+    <!-- Logo Upload Section -->
+    <section class="logo-upload">
+      <h2>Logo Image</h2>
+      <img src="" alt="" class="settings-image" id="currentLogoImage">
+      <div class="upload-group">
+        <label for="logoUpload">Upload Logo</label>
+        <input type="file" id="logoUpload" name="logoUpload" accept="image/*">
+      </div>
+    </section>
+
+    <!-- Hero Image Upload Section -->
+    <section class="hero-upload">
+      <h2>Hero Image</h2>
+      <img src="" alt="" class="settings-image" id="currentHeroImage">
+      <div class="upload-group">
+        <label for="heroUpload">Upload Hero Image</label>
+        <input type="file" id="heroUpload" name="heroUpload" accept="image/*">
+      </div>
+    </section>
+
+    <button type="button" class="save-button" id="save-theme-images-btn">Save Settings</button>
+  </div>
 
   </main>
 {% endblock %}
@@ -33,4 +77,5 @@
     const active_URL = "/media/icons/active/settings_purple.svg";
   </script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
+  <script type="module" src="{% static 'merchant/scripts/settings.js' %}"></script>
 {% endblock %}
