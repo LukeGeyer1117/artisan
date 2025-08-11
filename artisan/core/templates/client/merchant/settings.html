@@ -3,7 +3,9 @@
 
 {% block title %}Merchant Dashboard{% endblock %}
 
-{% block extra_head %}{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'merchant/styles/settings.css' %}">
+{% endblock %}
 
 {% block content %}
   <!-- NAV -->
@@ -42,6 +44,7 @@
           <label for="linkHoverColor">Link Hover Color</label>
           <input type="color" id="linkHoverColor" name="linkHoverColor">
         </div>
+        <p>See <a href="https://elementor.com/blog/color-theory-web-design/">here</a> for best practices when picking your colors.</p>
       </div>
     </section>
 

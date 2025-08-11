@@ -101,14 +101,15 @@ def new_item_view(request):
     return render(request, 'client/merchant/add_item.html')
 
 @csrf_exempt
+@require_http_methods(['DELETE'])
 def session(request):
-    if request.method == 'DELETE':
-        request.session.flush()  # Clears all session data
-        return JsonResponse({'message': 'Session cleared'})
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+    request.session.flush()  # Clears all session data
+    return JsonResponse({'message': 'Session cleared'})
 
 @csrf_exempt
+@require_http_methods(['POST', 'GET'])
 def artisan(request):
+    # Create an Artisan
     if request.method == 'POST':
         data = json.loads(request.body)
         artisan = Artisan.objects.create(
@@ -122,11 +123,14 @@ def artisan(request):
             price_range_high = data.get('price_range_high', 0),
             accepting_custom_orders = data.get('accepting_custom_orders', False),
         )
-
         # Create the inventory and theme for the artisan
         Inventory.objects.create(artisan=artisan)
         Theme.objects.create(artisan=artisan)
+        LogoImage.objects.create(artisan=artisan)
+        HeroImage.objects.create(artisan=artisan)
         return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
+    
+    #Get and Artisan
     elif request.method == 'GET':
         artisan_id = request.session.get('artisan_id', '')
         # Make sure there is an artisan logged in
@@ -138,250 +142,239 @@ def artisan(request):
             return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
         except Artisan.DoesNotExist:
             return JsonResponse({'error': "No Artisan Found!"}, status=404)
-        
-    return JsonResponse({'error': 'Invalid method'}, status=405)
 
-
+# Create an Inventory
 @csrf_exempt
+@require_POST
 def create_inventory(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            artisan_id = data.get('artisan_id')
+    try:
+        data = json.loads(request.body)
+        artisan_id = data.get('artisan_id')
 
-            # Fetch the Artisan instance
-            artisan = Artisan.objects.get(id=artisan_id)
+        # Fetch the Artisan instance
+        artisan = Artisan.objects.get(id=artisan_id)
 
-            # Create the Inventory linked to that Artisan
-            inventory = Inventory.objects.create(artisan=artisan)
+        # Create the Inventory linked to that Artisan
+        inventory = Inventory.objects.create(artisan=artisan)
 
-            return JsonResponse({'message': 'Inventory created', 'id': inventory.id}, status=201)
+        return JsonResponse({'message': 'Inventory created', 'id': inventory.id}, status=201)
 
-        except Artisan.DoesNotExist:
-            return JsonResponse({'error': 'Artisan not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    return JsonResponse({'error': 'Invalid method'}, status=405)
+    except Artisan.DoesNotExist:
+        return JsonResponse({'error': 'Artisan not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 # Create a new order, and order item items
 @csrf_exempt
+@require_POST
 def order(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            fullname = data.get('full_name')
-            email = data.get('email')
-            phone = data.get('phone')
-            shipping_addr = data.get('shipping_addr')
-            city = data.get('city')
-            state = data.get('state')
-            zip_code = data.get('zip_code')
-            slug = data.get('slug')
-            total_price = data.get('total_price')
+    try:
+        data = json.loads(request.body)
+        fullname = data.get('full_name')
+        email = data.get('email')
+        phone = data.get('phone')
+        shipping_addr = data.get('shipping_addr')
+        city = data.get('city')
+        state = data.get('state')
+        zip_code = data.get('zip_code')
+        slug = data.get('slug')
+        total_price = data.get('total_price')
 
-            order = Order.objects.create(
-                customer_name=fullname,
-                customer_email=email,
-                customer_phone=phone,
-                shipping_addr=shipping_addr,
-                city=city,
-                state=state,
-                zip_code=zip_code,
-                total_price=total_price,
-                artisan=Artisan.objects.get(slug=slug)
+        order = Order.objects.create(
+            customer_name=fullname,
+            customer_email=email,
+            customer_phone=phone,
+            shipping_addr=shipping_addr,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            total_price=total_price,
+            artisan=Artisan.objects.get(slug=slug)
+        )
+
+        products = request.session.get('cart-product-ids')
+        orderItems = []
+        for p in products:
+            orderitem = OrderItems.objects.create(
+                order=order,
+                product=Product.objects.get(id=p),
+                quantity=int(products[p])
             )
+            orderItems.append(orderitem)
+        request.session['cart-product-ids'] = {}
+        return JsonResponse({'message': "Order Created", 'order': order.id, 'order-items': len(orderItems)},status=200)
+    
+    except Artisan.DoesNotExist:
+        return JsonResponse({'error': 'Artisan not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
-            products = request.session.get('cart-product-ids')
-            orderItems = []
-            for p in products:
-                orderitem = OrderItems.objects.create(
-                    order=order,
-                    product=Product.objects.get(id=p),
-                    quantity=int(products[p])
-                )
-                orderItems.append(orderitem)
-            request.session['cart-product-ids'] = {}
-            return JsonResponse({'message': "Order Created", 'order': order.id, 'order-items': len(orderItems)},status=200)
-        
-        except Artisan.DoesNotExist:
-            return JsonResponse({'error': 'Artisan not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': "Method Not Allowed"}, status=405)
-
+# UPdate an order's status
 @csrf_exempt
+@require_POST
 def update_order_status(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            order_id = data['order_id']
-            status = data['status']
+    try:
+        data = json.loads(request.body)
+        order_id = data['order_id']
+        status = data['status']
 
-            order = Order.objects.get(id=order_id)
-            order.status = status
+        order = Order.objects.get(id=order_id)
+        order.status = status
 
-            order.save()
-            return JsonResponse({'message': 'Updated order status'}, status=200)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
+        order.save()
+        return JsonResponse({'message': 'Updated order status'}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
+# Change status of custom request
 @csrf_exempt
+@require_POST
 def change_custom_status(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            request_id = data['request_id']
-            status = data['status']
-            
-            request = CustomRequest.objects.get(id=request_id)
-            request.status = status
+    try:
+        data = json.loads(request.body)
+        request_id = data['request_id']
+        status = data['status']
+        
+        request = CustomRequest.objects.get(id=request_id)
+        request.status = status
 
-            request.save()
-            return JsonResponse({'message': 'Updated order status'}, status=200)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
+        request.save()
+        return JsonResponse({'message': 'Updated order status'}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 # Get all orders under a certain merchant
 @csrf_exempt
+@require_GET
 def orders(request):
-    if request.method == 'GET':
-        try:
-            artisan_id = request.session.get('artisan_id')
-            artisan = Artisan.objects.get(id=artisan_id)
+    try:
+        artisan_id = request.session.get('artisan_id')
+        artisan = Artisan.objects.get(id=artisan_id)
 
-            orders = Order.objects.filter(artisan=artisan).order_by('created_at')
-            orders_data = [
-                {
-                    'id': order.id,
-                    'customer_name': order.customer_name,
-                    'customer_email': order.customer_email,
-                    'customer_phone': order.customer_phone,
-                    'shipping_addr': order.shipping_addr,
-                    'city': order.city,
-                    'state': order.state,
-                    'zip_code': order.zip_code,
-                    'status': order.status,
-                    'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
-                    'total_price': order.total_price,
-                }
-                for order in orders
-            ]
+        orders = Order.objects.filter(artisan=artisan).order_by('created_at')
+        orders_data = [
+            {
+                'id': order.id,
+                'customer_name': order.customer_name,
+                'customer_email': order.customer_email,
+                'customer_phone': order.customer_phone,
+                'shipping_addr': order.shipping_addr,
+                'city': order.city,
+                'state': order.state,
+                'zip_code': order.zip_code,
+                'status': order.status,
+                'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                'total_price': order.total_price,
+            }
+            for order in orders
+        ]
 
-            return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
-        except Order.DoesNotExist:
-            return JsonResponse({'message': 'No Orders Found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': f"Could not get orders: {e}"})
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+        return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
+    except Order.DoesNotExist:
+        return JsonResponse({'message': 'No Orders Found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': f"Could not get orders: {e}"})
 
 # Get only orders with a 'pending' or 'approved' status
 @csrf_exempt 
+@require_GET
 def active_orders(request):
-    if request.method == "GET":
-        try:
-            artisan_id = request.session.get('artisan_id')
-            artisan = Artisan.objects.get(id=artisan_id)
+    try:
+        artisan_id = request.session.get('artisan_id')
+        artisan = Artisan.objects.get(id=artisan_id)
 
-            orders = Order.objects.filter(artisan=artisan, status__in=['pending', 'approved', 'in_progress']).order_by('created_at')
-            orders_data = [
-                {
-                    'id': order.id,
-                    'customer_name': order.customer_name,
-                    'customer_email': order.customer_email,
-                    'customer_phone': order.customer_phone,
-                    'shipping_addr': order.shipping_addr,
-                    'city': order.city,
-                    'state': order.state,
-                    'zip_code': order.zip_code,
-                    'status': order.status,
-                    'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
-                    'total_price': order.total_price,
-                }
-                for order in orders
-            ]
+        orders = Order.objects.filter(artisan=artisan, status__in=['pending', 'approved', 'in_progress']).order_by('created_at')
+        orders_data = [
+            {
+                'id': order.id,
+                'customer_name': order.customer_name,
+                'customer_email': order.customer_email,
+                'customer_phone': order.customer_phone,
+                'shipping_addr': order.shipping_addr,
+                'city': order.city,
+                'state': order.state,
+                'zip_code': order.zip_code,
+                'status': order.status,
+                'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                'total_price': order.total_price,
+            }
+            for order in orders
+        ]
 
-            return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
+        return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
 
-        except Exception as e:
-            return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+    except Exception as e:
+        return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
 
 @csrf_exempt
+@require_GET
 def inactive_orders(request):
-    if request.method == "GET":
-        try:
-            artisan_id = request.session.get('artisan_id')
-            artisan = Artisan.objects.get(id=artisan_id)
+    try:
+        artisan_id = request.session.get('artisan_id')
+        artisan = Artisan.objects.get(id=artisan_id)
 
-            orders = Order.objects.filter(artisan=artisan, status__in=['completed', 'denied']).order_by('status')
-            orders_data = [
-                {
-                    'id': order.id,
-                    'customer_name': order.customer_name,
-                    'customer_email': order.customer_email,
-                    'customer_phone': order.customer_phone,
-                    'shipping_addr': order.shipping_addr,
-                    'city': order.city,
-                    'state': order.state,
-                    'zip_code': order.zip_code,
-                    'status': order.status,
-                    'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
-                }
-                for order in orders
-            ]
+        orders = Order.objects.filter(artisan=artisan, status__in=['completed', 'denied']).order_by('status')
+        orders_data = [
+            {
+                'id': order.id,
+                'customer_name': order.customer_name,
+                'customer_email': order.customer_email,
+                'customer_phone': order.customer_phone,
+                'shipping_addr': order.shipping_addr,
+                'city': order.city,
+                'state': order.state,
+                'zip_code': order.zip_code,
+                'status': order.status,
+                'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
+            }
+            for order in orders
+        ]
 
-            return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
+        return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
 
-        except Exception as e:
-            return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+    except Exception as e:
+        return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
 
 @csrf_exempt
+@require_POST
 def order_items(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            order_id = data['order_id']
+    try:
+        data = json.loads(request.body)
+        order_id = data['order_id']
 
-            order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id)
 
-            orderItems = OrderItems.objects.filter(order=order).values()
-            print(orderItems)
-            return JsonResponse({'message': 'Found Order Items', 'orderItems': list(orderItems)})
-        except Exception as e:
-            return JsonResponse({'error': "Error getting order items " + str(e)})
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+        orderItems = OrderItems.objects.filter(order=order).values()
+        print(orderItems)
+        return JsonResponse({'message': 'Found Order Items', 'orderItems': list(orderItems)})
+    except Exception as e:
+        return JsonResponse({'error': "Error getting order items " + str(e)})
 
 @csrf_exempt
+@require_POST
 def login_artisan(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            e = data.get('email')
-            password = data.get('password')
+    try:
+        data = json.loads(request.body)
+        e = data.get('email')
+        password = data.get('password')
 
-            try:
-                artisan = Artisan.objects.get(email=e)
-            except Artisan.DoesNotExist:
-                return JsonResponse({'error': 'No Artisan Found'}, status=404)
-            
-            if check_password(password, artisan.password):
-                request.session['artisan_id'] = artisan.id  # Django session
-                inventory = Inventory.objects.get(artisan=artisan)
-                inventory_id = inventory.id
-                request.session['inventory_id'] = inventory_id
-                print("artisan id: ", request.session.get('artisan_id'), "inventory id: ", request.session['inventory_id'])
-                return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
-            else:
-                return JsonResponse({'error': 'Invalid credentials'}, status=401)
-            
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        try:
+            artisan = Artisan.objects.get(email=e)
+        except Artisan.DoesNotExist:
+            return JsonResponse({'error': 'No Artisan Found'}, status=404)
         
-    return JsonResponse({'error': 'Invalid method'}, status=405)
+        if check_password(password, artisan.password):
+            request.session['artisan_id'] = artisan.id  # Django session
+            inventory = Inventory.objects.get(artisan=artisan)
+            inventory_id = inventory.id
+            request.session['inventory_id'] = inventory_id
+            print("artisan id: ", request.session.get('artisan_id'), "inventory id: ", request.session['inventory_id'])
+            return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=401)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 @csrf_exempt
 @require_http_methods(['POST', 'DELETE', 'GET'])
@@ -459,35 +452,40 @@ def product(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
+@require_GET
 def get_product(request, product_id):
-    if request.method == 'GET':
-        try:    
-            product = Product.objects.filter(id=product_id).values().first()
+    try:    
+        product = Product.objects.filter(id=product_id).values().first()
 
-            if not product:
-                return JsonResponse({'error': 'Product not found'}, status=404)
+        if not product:
+            return JsonResponse({'error': 'Product not found'}, status=404)
 
-            return JsonResponse({'message': 'Found proudct', 'product': product}, status=200)
-        except Exception as e:
-            return JsonResponse({'error': f'Error finding product: {e}'})
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+        return JsonResponse({'message': 'Found proudct', 'product': product}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': f'Error finding product: {e}'})
 
 @csrf_exempt
+@require_http_methods(['PUT'])
+def set_product_category(request):
+    artisan=Artisan.objects.get(id=request.session.get('artisan_id'))
+    if not artisan:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    data = json.loads(request.body)
+    print(data)
+
+@csrf_exempt
+@require_GET
 def get_inventory(request):
-    if request.method == 'GET':
-        artisan_id = request.session.get('artisan_id')
-        if not artisan_id:
-            return JsonResponse({'error': 'Not authenticated'}, status=401)
-        
-        inventory = Inventory.objects.filter(artisan_id=artisan_id).first()
-        if not inventory:
-            return JsonResponse({'error': 'Inventory not found'}, status=404)
-        
-        products = Product.objects.filter(inventory_id=inventory.id).values()
-        return JsonResponse(list(products), safe=False)
+    artisan_id = request.session.get('artisan_id')
+    if not artisan_id:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
     
-    else:
-        return JsonResponse({'error': "Method not allowed"}, status=405)
+    inventory = Inventory.objects.filter(artisan_id=artisan_id).first()
+    if not inventory:
+        return JsonResponse({'error': 'Inventory not found'}, status=404)
+    
+    products = Product.objects.filter(inventory_id=inventory.id).values()
+    return JsonResponse(list(products), safe=False)
     
 @csrf_exempt
 @require_GET
@@ -600,7 +598,6 @@ def add_product_to_cart(request):
         except Exception as e:
             return JsonResponse({'error': f'Failed to remove item: {e}'}, status=500)
 
-
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 @csrf_exempt
@@ -628,24 +625,21 @@ def api_checkout(request):
 # This is just a throwaway endpoint to simulate processing a payment.
 # This will always return a success.
 @csrf_exempt
+@require_POST
 def process_payment(request):
-    if request.method == "POST":
-        return JsonResponse({'message': 'Payment Processed Successfully', 'payment_status': "SUCCEED"}, status=200)
-    else:
-        return JsonResponse({'message': 'Payment Processed Successfully, but use the right method!!'}, status=200)
+    return JsonResponse({'message': 'Payment Processed Successfully', 'payment_status': "SUCCEED"}, status=200)
+
 
 
 @csrf_exempt
+@require_GET
 def get_custom_order(request):
-    if request.method == 'GET':
-        artisan_id = request.session.get('artisan_id')
+    artisan_id = request.session.get('artisan_id')
 
-        artisan = Artisan.objects.get(id=artisan_id)
+    artisan = Artisan.objects.get(id=artisan_id)
 
-        custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
-        return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
-
-    return JsonResponse({'error': 'method not allowed'}, status=405)
+    custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
+    return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
 
 @csrf_exempt
 @require_http_methods(['POST'])
@@ -728,10 +722,11 @@ def save_gallery_order(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 @csrf_exempt
+@require_GET
 def get_gallery_images(request):
+    artisan = Artisan.objects.get(id=request.session.get('artisan_id'))
     """Get all gallery images for the current merchant"""
-    images = GalleryImage.objects.filter(artisan=Artisan.objects.get(id=request.session.get('artisan_id'))).order_by('order')
-
+    images = GalleryImage.objects.filter(artisan=artisan).order_by('order')
     images_data = [
         {
             'id': img.id,
@@ -739,7 +734,6 @@ def get_gallery_images(request):
             'order': img.order
         } for img in images
     ]
-
     return JsonResponse({'images': images_data})
 
 @csrf_exempt
@@ -824,9 +818,10 @@ def get_hero_image_by_session(request):
     hero = get_object_or_404(HeroImage, artisan=artisan)
 
     if not hero.image or not os.path.exists(hero.image.path):
-        return JsonResponse({'error': "Image file not found"}, status=404)
+        return JsonResponse({'message': "Found hero image", 'image_url': 'undefined'}, status=200)
     
-    return JsonResponse({'message': "Found hero image", 'image_url': hero.image.url}, status=200)
+    else:
+        return JsonResponse({'message': "Found hero image", 'image_url': hero.image.url})
 
 @csrf_exempt
 def get_logo_image_by_slug(request, slug):
@@ -996,6 +991,73 @@ def update_theme(request):
     theme.save()
 
     return JsonResponse({'message': "updated theme"}, status=200)
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def update_logo(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    
+    # Check if a file was uploaded
+    if 'logo' not in request.FILES:
+        return JsonResponse({'error': "No logo file provided"}, status=400)
+    
+    uploaded_file = request.FILES['logo']
+    
+    # Optional: Validate file type
+    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
+    if uploaded_file.content_type not in allowed_types:
+        return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
+    
+    # Optional: Validate file size (e.g., max 5MB)
+    max_size = 5 * 1024 * 1024  # 5MB in bytes
+    if uploaded_file.size > max_size:
+        return JsonResponse({'error': "File too large. Maximum size is 5MB."}, status=400)
+    
+    # Get or create LogoImage for this artisan
+    logo_image, created = LogoImage.objects.get_or_create(artisan=artisan)
+
+    # Delete the old image file if it exists
+    if not created and logo_image.image:
+        logo_image.image.delete(save=False)
+    
+    # Save the new image
+    logo_image.image = uploaded_file
+    logo_image.save()
+    
+    return JsonResponse({'message': "Logo updated successfully"}, status=200)
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def update_hero(request):
+    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+
+    # Check if a file was uploaded
+    if 'hero' not in request.FILES:
+        return JsonResponse({'error': "No hero file provided"}, status=400)
+    uploaded_file = request.FILES['hero']
+
+    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
+    if uploaded_file.content_type not in allowed_types:
+        return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
+    
+    # Optional: Validate file size
+    max_size = 5 * 1024 * 1024 # 5MB
+    max_in_mb = max_size // 1024 // 1024
+    if uploaded_file.size > max_size:
+        return JsonResponse({'error': f"File too large. Max size is {max_in_mb}MB"}, status=400)
+
+    # Get or create a HeroImage for this artisan
+    hero_image, created = HeroImage.objects.get_or_create(artisan=artisan)
+
+    # Delete the old image file if it exists (only if we're updating, not creating)
+    if not created and hero_image.image:
+        hero_image.image.delete(save=False)
+
+    # Save the new image
+    hero_image.image = uploaded_file
+    hero_image.save()
+
+    return JsonResponse({'message': "Hero image updated successfully"}, status=200)
 
 @csrf_exempt
 @require_GET

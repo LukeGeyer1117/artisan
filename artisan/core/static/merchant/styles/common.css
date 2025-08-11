@@ -321,7 +321,7 @@ body {
 
 /* Component Styling */
 .main-button {
-  padding: .75rem 1.75rem;
+  padding: .4rem 1rem;
   border: none;
   border-radius: 8px;
   color: white;
@@ -354,29 +354,209 @@ body {
   border-collapse: collapse;
 }
 
-.records-table tr {
-  border-bottom: 2px solid #4F46E5;
+/* Records Table Styles */
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
-.records-table tr.active {
-  color: white;
-}
-
-.records-table tr.active .product-actions img {
-  visibility: hidden;
-}
-
-.records-table tr:hover {
-  background-color: aliceblue;
-}
-
+/* Table Header */
 .records-table th {
+  background: #f8fafc;
+  color: #374151;
+  font-weight: 600;
+  font-size: 14px;
   text-align: left;
-  padding: auto;
+  padding: 16px;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.records-table tr td {
-  padding: 1rem;
+.records-table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.records-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* Table Body */
+.records-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: all 0.1s ease;
+}
+
+.records-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.records-table td {
+  padding: 16px;
+  color: #374151;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* Row States */
+.records-table tbody tr:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.records-table tbody tr.active {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.records-table tbody tr.active td {
+  color: white;
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.records-table tbody tr.active:hover {
+  background: linear-gradient(135deg, #4338ca, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Product Actions */
+.records-table .product-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.records-table .product-actions img,
+.records-table .product-actions button {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.records-table tr:hover .product-actions img,
+.records-table tr:hover .product-actions button {
+  opacity: 1;
+}
+
+.records-table tr.active .product-actions img,
+.records-table tr.active .product-actions button {
+  opacity: 0.8;
+  filter: brightness(0) invert(1);
+}
+
+.records-table tr.active:hover .product-actions img,
+.records-table tr.active:hover .product-actions button {
+  opacity: 1;
+}
+
+/* Action Buttons Styling */
+.records-table .product-actions button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.records-table .product-actions button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.records-table tr.active .product-actions button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Zebra Striping (Optional) */
+.records-table tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+.records-table tbody tr:nth-child(even):hover {
+  background-color: #f1f5f9;
+}
+
+/* Loading/Empty States */
+.records-table tbody tr.loading td {
+  padding: 40px 16px;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.records-table tbody tr.empty td {
+  padding: 40px 16px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .records-table {
+    font-size: 12px;
+  }
+  
+  .records-table th,
+  .records-table td {
+    padding: 12px 8px;
+  }
+  
+  .records-table th {
+    font-size: 12px;
+  }
+  
+  .product-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* Sortable Headers (Optional) */
+.records-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.records-table th.sortable:hover {
+  background: #e2e8f0;
+}
+
+.records-table th.sortable::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #9ca3af;
+  opacity: 0.5;
+}
+
+.records-table th.sortable.asc::after {
+  border-bottom: 4px solid #4f46e5;
+  border-top: none;
+  opacity: 1;
+}
+
+.records-table th.sortable.desc::after {
+  border-top: 4px solid #4f46e5;
+  border-bottom: none;
+  opacity: 1;
 }
 
 #reporting-redirect-modal {
@@ -746,7 +926,6 @@ table tbody tr td {
   flex-direction: column;
   padding: 1.5rem;
   padding-top: 0.5rem;
-  gap: 0.5rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -783,6 +962,7 @@ table tbody tr td {
 
 .side-modal p {
   margin-top: 0;
+  margin-bottom: .2rem;
   max-height: 100px;
   overflow-y: scroll;
 }
@@ -1209,10 +1389,10 @@ table tbody tr td {
 }
 
 .gallery-item-order {
+  background-color: #4F46E5;
   position: absolute;
   bottom: 10px;
   left: 10px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
   border-radius: 15px;
   padding: 5px 10px;
@@ -1229,7 +1409,7 @@ table tbody tr td {
 }
 
 .save-btn {
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background-color: #4F46E5;
   color: white;
   border: none;
   padding: 15px 40px;

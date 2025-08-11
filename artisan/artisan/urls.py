@@ -76,6 +76,8 @@ urlpatterns = [
     path('api/theme/<slug:slug>/', views.get_theme_by_slug),
     path('api/theme/', views.get_theme_by_session),
     path('api/update/theme/', views.update_theme, name='update_theme'),
+    path('api/update/logo/', views.update_logo),
+    path('api/update/hero/', views.update_hero),
     path('api/text/<slug:slug>/', views.get_text_content_by_slug),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -38,10 +38,10 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script src="{% static 'merchant/scripts/dashboard.js' %}"></script>
   <script>
     const window_location = 'Dashboard';
     const active_URL = "/media/icons/active/dashboard_purple.svg"
   </script>
+  <script type="module" src="{% static 'merchant/scripts/new-item.js' %}"></script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
 {% endblock %}

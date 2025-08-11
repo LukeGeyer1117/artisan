@@ -1,0 +1,187 @@
+/* Settings Container Styles */
+.container {
+  width: 100%;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c2c2c;
+  margin: 0 0 32px 0;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+/* Section Styles */
+section {
+  margin-bottom: 40px;
+  padding: 24px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+section:last-of-type {
+  margin-bottom: 24px;
+}
+
+section h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #333333;
+  margin: 0 0 20px 0;
+}
+
+/* Color Controls */
+.color-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.color-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.color-group label {
+  font-weight: 500;
+  color: #555555;
+  font-size: 14px;
+}
+
+.color-group input[type="color"] {
+  width: 60px;
+  height: 40px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.color-group input[type="color"]:hover {
+  border-color: #999;
+}
+
+.color-controls p {
+  grid-column: 1 / -1;
+  margin: 16px 0 0 0;
+  font-size: 14px;
+  color: #666666;
+}
+
+.color-controls a {
+  color: #007acc;
+  text-decoration: underline;
+}
+
+.color-controls a:hover {
+  color: #005a99;
+}
+
+/* Upload Sections */
+.upload-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upload-group label {
+  font-weight: 500;
+  color: #555555;
+  font-size: 14px;
+}
+
+.upload-group input[type="file"] {
+  padding: 8px;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666666;
+}
+
+.upload-group input[type="file"]:hover {
+  border-color: #007acc;
+  background: #f8f9ff;
+}
+
+/* Settings Images */
+.settings-image {
+  max-width: 200px;
+  max-height: 150px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  background: #ffffff;
+}
+
+/* Save Button */
+.save-button {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  max-width: 200px;
+  display: block;
+  margin: 0 auto;
+}
+
+.save-button:hover {
+  background: #005a99;
+}
+
+.save-button:active {
+  transform: translateY(1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    margin: 16px;
+    padding: 16px;
+  }
+  
+  .color-controls {
+    grid-template-columns: 1fr;
+  }
+  
+  section {
+    padding: 16px;
+  }
+  
+  .container h1 {
+    font-size: 24px;
+  }
+  
+  section h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: 8px;
+    padding: 12px;
+  }
+  
+  .save-button {
+    width: 100%;
+    max-width: none;
+  }
+}

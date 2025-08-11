@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const logoUpload = document.getElementById('logoUpload');
     logoUpload.addEventListener('change', function () {
-      changed = true;
+      changedLogo = true;
       const file = this.files[0];
       if (file) {
         logo_img.src = URL.createObjectURL(file);
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Now, we can add an event listener to the save button that checks for changes before submitting api call
   const saveChangeBtn = document.getElementById('save-theme-images-btn');
   saveChangeBtn.addEventListener('click', function () {
+    // If colors changed
     if (changed) {
       const newTextColor = document.getElementById('textColor').value;
       const newBackgroundColor = document.getElementById('backgroundColor').value;
@@ -105,6 +106,56 @@ document.addEventListener('DOMContentLoaded', async function () {
       .then(response => {
         window.location.reload();
       })
+    }
+
+    // If logo changed
+    if (changedLogo) {
+      const fileInput = document.getElementById('logoUpload');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('logo', file);
+
+        fetch(`${API_BASE_URL}/update/logo/`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.reload();
+          }
+        })
+        .catch(error => {
+          console.error('Error uploading logo:', error);
+        });
+      }
+    }
+
+    // If hero changed
+    if (changedHero) {
+      const fileInput = document.getElementById('heroUpload');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('hero', file);
+
+        fetch(`${API_BASE_URL}/update/hero/`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.reload();
+          }
+        })
+        .catch(error => {
+          console.error('Error uploading hero:', error);
+        })
+      }
     }
   })
 })
