@@ -71,7 +71,7 @@ urlpatterns = [
     path('api/gallery/delete/<int:image_id>/', views.delete_image, name='delete_image'),
     path('api/product-image/<int:product_id>/', views.get_gallery_images_by_product_id),
     path('api/categories/<slug:slug>/', views.get_categories_by_slug),
-    path('api/categories/', views.get_categories),
+    path('api/categories/', views.get_categories_by_session),
     path('api/category/', views.create_new_category),
     path('api/theme/<slug:slug>/', views.get_theme_by_slug),
     path('api/theme/', views.get_theme_by_session),

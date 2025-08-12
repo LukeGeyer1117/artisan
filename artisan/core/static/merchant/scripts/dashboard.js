@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
     .then(data => {
       artisan = data.artisan;
-      document.querySelector('#quick-stats h1').innerHTML = 'Hello, ' + artisan.username;
     })
 
     // Handle Signout button click
@@ -30,24 +29,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         .then(result => {
             window.location.href = "/login/"
         })
-    })
-
-    document.getElementById('reporting-redirect-modal').addEventListener('click', function () {
-        window.location.href = '/reporting/'
-    })
-
-    // Get all the custom requests assigned to the artisan
-    fetch(`${API_BASE_URL}/custom/`, {
-        method: 'GET',
-        credentials: 'include'
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Could not get custom requests");
-        return response.json();
-    })
-    .then(data => {
-        let customRequests = data.customRequests;
-        document.querySelector('#custom-orders-card h1').innerHTML = customRequests.length;
     })
 
     // Get all the orders assigned to the artisan

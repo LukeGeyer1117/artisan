@@ -50,10 +50,6 @@
   border-bottom-right-radius: 6px;
 }
 
-#category-list li:hover {
-  background: #f8f9ff;
-}
-
 #category-list li span {
   font-weight: 500;
   color: #333333;

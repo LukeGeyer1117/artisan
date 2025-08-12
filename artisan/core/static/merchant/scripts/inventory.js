@@ -8,6 +8,21 @@ document.addEventListener('DOMContentLoaded', async function () {
   let searchActive = false;
   let currentProduct = null; // Track which product is being operated on
 
+  // Get the categories tied to this merchant
+  let categories;
+  await fetch(`${API_BASE_URL}/categories/`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get categories");
+    return response.json();
+  })
+  .then(data => {
+    categories = data.categories;
+  })
+
+
   // Add Item Button
   let addItemButton = document.getElementById('add-item-button');
   addItemButton.addEventListener('click', function () {
@@ -63,6 +78,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('edit-price').value = currentProduct.price;
     document.getElementById('edit-stock').value = currentProduct.quantity;
     document.getElementById('edit-description').value = currentProduct.description;
+    const selector = document.getElementById('edit-category');
+
+    // Clear existing options (if needed)
+    selector.innerHTML = '';
+
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category.id; // safer for lookups
+      option.textContent = category.name;
+      
+      if (currentProduct.category_id === category.id) {
+        option.selected = true;
+      }
+
+      selector.appendChild(option);
+    });
   });
 
   // Edit form submit handler (add once)
@@ -79,6 +110,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     formData.append('description', form.querySelector('#edit-description').value);
     formData.append('quantity', form.querySelector('#edit-stock').value);
     formData.append('image', form.querySelector('#edit-image').files[0]);
+    
+    const edit_category = form.querySelector('#edit-category').value;
+    console.log(`category: ${edit_category}`)
+    categories.forEach(category => {
+      if (category.id == edit_category) {
+        formData.append('category', category.id);
+      }
+    })
+
     formData.append('_method', 'PATCH');
 
     fetch(`${API_BASE_URL}/product/`, {
@@ -130,22 +170,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   });
 
   // Get categories, listen for new categories
-  fetch(`${API_BASE_URL}/categories/`, {
-    method: 'GET',
-    credentials: 'include'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not get categories");
-    return response.json();
-  })
-  .then(data => {
-    console.log(data);
-    const categories = data.categories;
-    const category_list = document.getElementById('category-list');
-    category_list.innerHTML = (categories.map(category => (
-      `<li class='category-li'>${category.name}</li>`
-    )).join(''))
-  })
+  const category_list = document.getElementById('category-list');
+  category_list.innerHTML = (categories.map(category => (
+    `<li class='category-li'>${category.name}</li>`
+  )).join(''))
   document.getElementById('add-category-btn').addEventListener('click', function () {
     const categoryInput = document.getElementById('new-category-input');
     if (categoryInput.value) {
@@ -195,6 +223,12 @@ document.addEventListener('DOMContentLoaded', async function () {
       document.getElementById('product-stock').innerHTML = product.quantity;
     }
     document.getElementById('product-description').innerHTML = product.description;
+
+    categories.forEach(category => {
+      if (category.id === product.category_id) {
+        document.getElementById('product-category').innerHTML = category.name;
+      }
+    })
   }
   
   try {
