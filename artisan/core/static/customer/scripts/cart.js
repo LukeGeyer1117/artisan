@@ -1,172 +1,151 @@
 
 // Toggle nav on small screens
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const slug = document.body.dataset.slug;
-    console.log(slug);
-    const toggle = document.querySelector(".menu-toggle");
     const links = document.querySelector(".nav-links");
+    const cart_data = await get_cart();
+    const container = document.getElementById("cart-items-list");
+    const totalDisplay = document.getElementById("cart-total");
+    let total = 0;
+    const products = cart_data.products;
 
+    // Listen for hemburger menu click
+    const toggle = document.querySelector(".menu-toggle");
     toggle.addEventListener("click", () => {
     links.classList.toggle("open");
     });
 
-    fetch(`${API_BASE_URL}/cart`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-    })
-    .then(response => {
-    if (!response.ok) throw new Error("Failed to retrieve cart");
-    return response.json();
-    })
-    .then(data => {
-    if (data.products.length > 0) {
-        document.querySelector(".cart-empty").style.display = 'none';
-        document.querySelector(".cart-contents").style.display = 'block';
-    }
-    const container = document.getElementById("cart-items-list");
-    const totalDisplay = document.getElementById("cart-total");
-    let total = 0;
-
-    const products = data.products;
-
+    // Build the product divs in the cart
     products.forEach(product => {
-        const product_id = product.id;
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <img src='/media/${product.image}' alt='${product.name}'>
+            <div class='cart-item-details'>
+                <h3>${product.name}</h3>
+                <p>Price: $${product.price}</p>
+                <p>Quantity: ${cart_data.raw_data[product.id]}</p>
+                <button class='edit-btn'>Edit</button>
+                <button class='remove-btn'>Remove</button>
+            </div>
+            <input type='number' max=${product.quantity} min=1 value=${cart_data.raw_data[product.id]} style='display: none;' class='change-qty'>
+            <button style='display: none;' class='confirm-change-btn'>Confirm Change</button>
+        `
 
-        // Create cart items for all product_ids in a session cart
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "cart-item";
-
-        const img = document.createElement("img");
-        img.src = '/media/' + product.image || "/static/images/default-product.png";
-        img.alt = product.name;
-
-        const detailsDiv = document.createElement("div");
-        detailsDiv.className = "cart-item-details";
-
-        const name = document.createElement("h3");
-        name.textContent = product.name;
-
-        const price = document.createElement("p");
-        price.textContent = `Price: $${product.price}`;
-
-        const quantity = document.createElement("p");
-        quantity.textContent = `Quantity: ${data.raw_data[product.id]}`;
-
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.className = "edit-btn";
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "Remove";
-        removeBtn.className = "remove-btn";
-
-        const changeQTY = document.createElement('input');
-        changeQTY.type = 'number';
-        changeQTY.max = product.quantity;
-        changeQTY.min = 1;
-        changeQTY.value = data.raw_data[product.id];
-        // changeQTY.style.display = 'none';
-
-        const confirmChangeBtn = document.createElement('button');
-        confirmChangeBtn.innerHTML = 'Confirm Change'
-
-        detailsDiv.appendChild(name);
-        detailsDiv.appendChild(price);
-        detailsDiv.appendChild(quantity);
-        detailsDiv.appendChild(editBtn);
-        detailsDiv.appendChild(removeBtn);
-
-        itemDiv.appendChild(img);
-        itemDiv.appendChild(detailsDiv);
-        itemDiv.appendChild(changeQTY);
-        itemDiv.appendChild(confirmChangeBtn);
-
-        changeQTY.style.display = 'none';
-        confirmChangeBtn.style.display = 'none';
-
-        container.appendChild(itemDiv);
-
-        total += parseFloat(product.price * data.raw_data[product.id]);
+        container.appendChild(cartItem);
+        total += parseFloat(product.price * cart_data.raw_data[product.id]);
 
         // Add event listeners to the edit and remove buttons
         // Remove
+        const removeBtn = cartItem.querySelector('.remove-btn');
         removeBtn.addEventListener('click', async function() {
-
-        await fetch(`${API_BASE_URL}/cart/`, {
-            method: "DELETE",
-            credentials: 'include',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({product_id: product_id})
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Could not remove product from cart!");
-            return response.json();
-        })
-        .then(data => {
-            window.location.reload();
-        })
+            remove_item_from_cart(product.id);
         })
 
         // Edit
+        const editBtn = cartItem.querySelector('.edit-btn');
         editBtn.addEventListener('click', async function () {
-        // Appear the mod button and field
-        changeQTY.style.display = 'block';
-        confirmChangeBtn.style.display = 'block';
-        
-        // If customer confirms, update the session cart info
-        confirmChangeBtn.addEventListener('click', function () {
-            fetch(`${API_BASE_URL}/cart/`, {
+            edit_item_in_cart(cartItem, product.id);
+        })
+    });
+
+    document.querySelector(".checkout-btn").addEventListener('click', function () {
+        checkout(total, slug);
+    })
+    totalDisplay.textContent = total.toFixed(2);
+})
+
+
+async function get_cart() {
+    return await fetch(`${API_BASE_URL}/cart/`, {
+        method: 'GET', 
+        credentials: 'include'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Could not get cart.");
+        return response.json();
+    })
+    .then(data => {
+        if (data.products.length > 0) {
+            document.querySelector(".cart-empty").style.display = 'none';
+            document.querySelector(".cart-contents").style.display = 'block';
+        }
+        return data;
+    })
+}
+
+
+// Fuction to remove an item from the cart
+async function remove_item_from_cart(product_id) {
+    await fetch(`${API_BASE_URL}/cart/`, {
+        method: "DELETE",
+        credentials: 'include',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({product_id: product_id})
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Could not remove product from cart!");
+        return response.json();
+    })
+    .then(data => {
+        window.location.reload();
+})
+}
+
+// function to handle cart item edits
+function edit_item_in_cart(cartItem, product_id) {
+    const changeQTY = cartItem.querySelector('.change-qty');
+    const confirmChangeBtn = cartItem.querySelector('.confirm-change-btn');
+
+    changeQTY.style.display = 'block';
+    confirmChangeBtn.style.display = 'block';
+
+    // Listen for customer confirmation
+    confirmChangeBtn.addEventListener('click', function () {
+        fetch(`${API_BASE_URL}/cart/`, {
             method: 'PUT',
             credentials: 'include', 
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({product_id: product_id, quantity: changeQTY.value})
-            })
-            .then(response => {
-            if (!response.ok) throw new Error("Could not change product-in-cart quantity");
-            return response.json();
-            })
-            .then(data => {
-            window.location.reload();
-            })
-            .catch (error => {
-            console.error(error);
-            alert("Could not update cart item!");
-            }) 
-        })
-        })
-    });
-
-    document.querySelector(".checkout-btn").addEventListener('click', function () {
-        // Make sure there are items in the cart to checkout.
-        if (total == 0) {
-            alert("Please add items to cart before checkout!");
-            return;
-        }
-
-        fetch(`${API_BASE_URL}/checkout/`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({'total': total})
         })
         .then(response => {
-            if (!response.ok) throw new Error("Could not create a checkout!");
+            if (!response.ok) throw new Error("Could not change product-in-cart quantity");
             return response.json();
         })
         .then(data => {
-            console.log(data);
-            window.location.href = `/checkout/${slug}/`;
+            window.location.reload();
+        })
+        .catch (error => {
+            console.error(error);
+            alert("Could not update cart item!");
         })
     })
-    totalDisplay.textContent = total.toFixed(2);
+}
+
+function checkout(total, slug) {
+    if (total == 0) {
+        alert("Please add items to cart before checkout!");
+        return;
+    }
+
+    fetch(`${API_BASE_URL}/checkout/`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'total': total})
     })
-});
+    .then(response => {
+        if (!response.ok) throw new Error("Could not create a checkout!");
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        window.location.href = `/checkout/${slug}/`;
+    })
+}
