@@ -28,9 +28,11 @@ def artisan(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         artisan = Artisan.objects.create(
+            full_name = data['name'],
             email = data['email'],
             username = data['username'],
-            password = data['password'], #Might hash this
+            phone_number = data['phone'],
+            password = data['password'],
             shop_name = data['shop_name'],
             slug = generate_unique_slug(data['shop_name']),
             product_specialty = data.get('product_specialty', ''),
@@ -115,6 +117,9 @@ def order(request):
                 product=Product.objects.get(id=p),
                 quantity=int(products[p])
             )
+            product=Product.objects.get(id=p)
+            product.quantity -= int(products[p])
+            product.save()
             orderItems.append(orderitem)
         request.session['cart-product-ids'] = {}
         return JsonResponse({'message': "Order Created", 'order': order.id, 'order-items': len(orderItems)},status=200)
@@ -140,6 +145,36 @@ def update_order_status(request):
         return JsonResponse({'message': 'Updated order status'}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+    
+@csrf_exempt
+@require_POST
+def restock(request):
+    artisan_id = request.session.get('artisan_id')
+    if not artisan_id:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+
+    artisan = Artisan.objects.get(id=artisan_id)
+
+    try:
+        data = json.loads(request.body)
+        order_id = data['order_id']
+    except (KeyError, json.JSONDecodeError):
+        return JsonResponse({'error': 'Invalid request data'}, status=400)
+
+    try:
+        order = Order.objects.get(id=order_id, artisan=artisan)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'No order found'}, status=404)
+
+    order_items = OrderItems.objects.filter(order=order)
+
+    for item in order_items:
+        item.product.quantity += item.quantity
+        item.product.save()
+
+    return JsonResponse({'message': 'Restocked items'})
+
+    
 
 # Change status of custom request
 @csrf_exempt
@@ -524,6 +559,8 @@ def api_checkout(request):
         try:
             data = json.loads(request.body)
             request.session['checkout-total'] = data['total']
+            request.session['products_and_quantities'] = data['products_and_quantities']
+            print(request.session['products_and_quantities'])
 
             return JsonResponse({'message': "Checkout Created"}, status=200)
         except Exception as e:

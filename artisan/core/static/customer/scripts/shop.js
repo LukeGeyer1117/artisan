@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Select all inventory items to populate the home screen
   const shopGrid = document.querySelector('.shop-grid');
   const slug = document.body.dataset.slug;
-  console.log(slug);
 
   fetch(`${API_BASE_URL}/${slug}/products/`, {
     method: 'GET',
@@ -93,7 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const categories = data.categories;
     const categorySelect = document.querySelector('#categories-select');
     categories.forEach(category => {
-      console.log(category);
       const categoryOption = document.createElement('option');
       categoryOption.value = category.id;
       categoryOption.innerHTML = category.name;
@@ -105,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
 function openModal(product) {
   const modal = document.getElementById("product-modal");
   modal.style.display = 'block';
-  console.log(product);
 
   document.getElementById("modal-title").innerHTML = product.name + " - Available: " + product.quantity;
   document.getElementById("modal-image").src = '/media/' + product.image;

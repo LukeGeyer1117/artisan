@@ -139,7 +139,7 @@ section h2 {
   width: 100%;
   max-width: 200px;
   display: block;
-  margin: 0 auto;
+  margin: 0 0 auto;
 }
 
 .save-button:hover {
@@ -185,3 +185,52 @@ section h2 {
     max-width: none;
   }
 }
+
+.account-settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .account-section {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid rgb(197, 197, 197);
+    padding-bottom: 1rem;
+  }
+
+  .account-value {
+    font-size: 1rem;
+    color: #333;
+    margin-top: 0.5rem;
+  }
+
+  .account-section .action-link {
+    color: #7c3aed; /* purple accent */
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+    text-decoration: underline;
+    width: fit-content;
+  }
+
+  .account-section-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+  }
+
+  .account-section-row .account-section {
+    flex: 1 1 300px; /* Grow, shrink, min width for responsive layout */
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .account-section-row {
+      flex-direction: column;
+    }
+  }

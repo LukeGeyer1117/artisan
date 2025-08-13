@@ -5,72 +5,155 @@
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'merchant/styles/settings.css' %}">
+  <style>
+    /* Basic tab styling */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #ccc;
+      margin-bottom: 1rem;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+      font-weight: bold;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn.active {
+      border-bottom-color: var(--accent-color, #6c63ff);
+      color: var(--accent-color, #6c63ff);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-  <!-- NAV -->
   {% block nav %}
       {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
   {% endblock nav %}
 
-  <!-- Main Content -->
-
   <main class="dashboard-main">
-    <!-- Sidebar Links -->
     {% block side-links %}
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
-  <div class="container">
-    <h1>Settings</h1>
+    <div class="container">
+      <h1>Settings</h1>
 
-    <!-- Color Settings Section -->
-    <section class="color-settings">
-      <h2>Theme Settings</h2>
-      <div class="color-controls">
-        <div class="color-group">
-          <label for="textColor">Text Color</label>
-          <input type="color" id="textColor" name="textColor">
-        </div>
-        <div class="color-group">
-          <label for="backgroundColor">Background Color</label>
-          <input type="color" id="backgroundColor" name="backgroundColor">
-        </div>
-        <div class="color-group">
-          <label for="accentColor">Accent Color</label>
-          <input type="color" id="accentColor" name="accentColor">
-        </div>
-        <div class="color-group">
-          <label for="linkHoverColor">Link Hover Color</label>
-          <input type="color" id="linkHoverColor" name="linkHoverColor">
-        </div>
-        <p>See <a href="https://elementor.com/blog/color-theory-web-design/">here</a> for best practices when picking your colors.</p>
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="design">Design</button>
+        <button class="tab-btn" data-tab="account">Account</button>
+        <button class="tab-btn" data-tab="text">Text Content</button>
       </div>
-    </section>
 
-    <!-- Logo Upload Section -->
-    <section class="logo-upload">
-      <h2>Logo Image</h2>
-      <img src="" alt="" class="settings-image" id="currentLogoImage">
-      <div class="upload-group">
-        <label for="logoUpload">Upload Logo</label>
-        <input type="file" id="logoUpload" name="logoUpload" accept="image/*">
+      <!-- Design Tab -->
+      <div id="design" class="tab-content active">
+        <section class="color-settings">
+          <h2>Theme Settings</h2>
+          <div class="color-controls">
+            <div class="color-group">
+              <label for="textColor">Text Color</label>
+              <input type="color" id="textColor" name="textColor">
+            </div>
+            <div class="color-group">
+              <label for="backgroundColor">Background Color</label>
+              <input type="color" id="backgroundColor" name="backgroundColor">
+            </div>
+            <div class="color-group">
+              <label for="accentColor">Accent Color</label>
+              <input type="color" id="accentColor" name="accentColor">
+            </div>
+            <div class="color-group">
+              <label for="linkHoverColor">Link Hover Color</label>
+              <input type="color" id="linkHoverColor" name="linkHoverColor">
+            </div>
+            <p>See <a href="https://elementor.com/blog/color-theory-web-design/">here</a> for best practices when picking your colors.</p>
+          </div>
+        </section>
+
+        <section class="logo-upload">
+          <h2>Logo Image</h2>
+          <img src="" alt="" class="settings-image" id="currentLogoImage">
+          <div class="upload-group">
+            <label for="logoUpload">Upload Logo</label>
+            <input type="file" id="logoUpload" name="logoUpload" accept="image/*">
+          </div>
+        </section>
+
+        <section class="hero-upload">
+          <h2>Hero Image</h2>
+          <img src="" alt="" class="settings-image" id="currentHeroImage">
+          <div class="upload-group">
+            <label for="heroUpload">Upload Hero Image</label>
+            <input type="file" id="heroUpload" name="heroUpload" accept="image/*">
+          </div>
+        </section>
+
+        <button type="button" class="save-button" id="save-theme-images-btn">Save Settings</button>
       </div>
-    </section>
 
-    <!-- Hero Image Upload Section -->
-    <section class="hero-upload">
-      <h2>Hero Image</h2>
-      <img src="" alt="" class="settings-image" id="currentHeroImage">
-      <div class="upload-group">
-        <label for="heroUpload">Upload Hero Image</label>
-        <input type="file" id="heroUpload" name="heroUpload" accept="image/*">
+      <!-- Account Settings Tab -->
+      <div id="account" class="tab-content">
+        <h2>Account Settings</h2>
+
+        <div class="account-settings-container">
+          <!-- Full Name section -->
+          <div class="account-section">
+            <h3>Full Name</h3>
+            <p class="account-value" id="merchant-name">Full Name</p>
+          </div>
+
+          <!-- Email & Phone Section (row on large screens, column on small screens) -->
+          <div class="account-section-row">
+            <!-- Email Section -->
+            <div class="account-section">
+              <h3>Primary Email Address</h3>
+              <p class="account-value" id="merchant-email">merchant@example.com</p>
+              <span class="action-link" onclick="window.location.href='/update-email/'">change email address</span>
+            </div>
+
+            <!-- Phone Section -->
+            <div class="account-section">
+              <h3>Phone Number</h3>
+              <p class="account-value" id="merchant-phone">(555) 123-4567</p>
+              <span class="action-link" onclick="window.location.href='/update-phone/'">change phone number</span>
+            </div>
+          </div>
+
+          <!-- Username & Password Section (row on large screens, column on small screens) -->
+          <div class="account-section-row">
+            <!-- Username Section -->
+            <div class="account-section">
+              <h3>Username</h3>
+              <p class="account-value" id="merchant-username">merchant_user</p>
+            </div>
+
+            <!-- Password Section -->
+            <div class="account-section">
+              <h3>Password</h3>
+              <p class="account-value" id="merchant-password">********</p>
+              <span class="action-link" onclick="window.location.href='/reset-password/'">reset password</span>
+            </div>
+          </div>
+
+        </div>
       </div>
-    </section>
 
-    <button type="button" class="save-button" id="save-theme-images-btn">Save Settings</button>
-  </div>
 
+      <!-- Text Content Tab -->
+      <div id="text" class="tab-content">
+        <h2>Text Content Settings</h2>
+        <p>Forms for editing hero text, about section, etc.</p>
+      </div>
+
+    </div>
   </main>
 {% endblock %}
 
@@ -78,7 +161,40 @@
   <script>
     const window_location = 'Settings';
     const active_URL = "/media/icons/active/settings_purple.svg";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabContents = document.querySelectorAll(".tab-content");
+
+      // Load saved tab from localStorage
+      const savedTab = localStorage.getItem("merchantSettingsTab");
+      if (savedTab) {
+        // Deactivate all
+        tabButtons.forEach(b => b.classList.remove("active"));
+        tabContents.forEach(c => c.classList.remove("active"));
+
+        // Activate saved
+        document.querySelector(`.tab-btn[data-tab="${savedTab}"]`)?.classList.add("active");
+        document.getElementById(savedTab)?.classList.add("active");
+      }
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          // Remove active classes
+          tabButtons.forEach(b => b.classList.remove("active"));
+          tabContents.forEach(c => c.classList.remove("active"));
+
+          // Activate clicked tab
+          btn.classList.add("active");
+          document.getElementById(btn.dataset.tab).classList.add("active");
+
+          // Save the selected tab
+          localStorage.setItem("merchantSettingsTab", btn.dataset.tab);
+        });
+      });
+    });
   </script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
-  <script type="module" src="{% static 'merchant/scripts/settings.js' %}"></script>
+  <script type="module" src="{% static 'merchant/scripts/theme_settings.js' %}"></script>
+  <script type="module" src="{% static 'merchant/scripts/account_settings.js' %}"></script>
 {% endblock %}

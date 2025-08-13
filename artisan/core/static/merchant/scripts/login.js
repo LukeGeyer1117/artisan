@@ -9,8 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault(); // Prevent form from reloading page
 
         const data = {
+            name: document.getElementById('name').value,
             username: document.getElementById('username').value,
             email: document.getElementById('email2').value,
+            phone: document.getElementById('phone').value,
             password: document.getElementById('password2').value,
             shop_name: document.getElementById('shop-name').value,
             product_specialty: '',

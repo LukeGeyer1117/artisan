@@ -24,9 +24,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             <div class='cart-item-details'>
                 <h3>${product.name}</h3>
                 <p>Price: $${product.price}</p>
-                <p>Quantity: ${cart_data.raw_data[product.id]}</p>
+                <p>Quantity: <span class='prod-quantity'>${cart_data.raw_data[product.id]}</span></p>
                 <button class='edit-btn'>Edit</button>
                 <button class='remove-btn'>Remove</button>
+                <p class='prod-id' style='display:none;'>${product.id}</p>
             </div>
             <input type='number' max=${product.quantity} min=1 value=${cart_data.raw_data[product.id]} style='display: none;' class='change-qty'>
             <button style='display: none;' class='confirm-change-btn'>Confirm Change</button>
@@ -50,7 +51,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     document.querySelector(".checkout-btn").addEventListener('click', function () {
-        checkout(total, slug);
+        const cart_items = container.querySelectorAll('.cart-item')
+        const products_and_quantities = []
+        cart_items.forEach(item => {
+            const prod_id = item.querySelector('.prod-id').innerHTML;
+            const quantity = item.querySelector('.prod-quantity').innerHTML;
+            products_and_quantities.push([parseInt(prod_id), parseInt(quantity)])
+        })
+        checkout(total, slug, products_and_quantities);
     })
     totalDisplay.textContent = total.toFixed(2);
 })
@@ -126,7 +134,7 @@ function edit_item_in_cart(cartItem, product_id) {
     })
 }
 
-function checkout(total, slug) {
+function checkout(total, slug, products_and_quantities) {
     if (total == 0) {
         alert("Please add items to cart before checkout!");
         return;
@@ -138,7 +146,7 @@ function checkout(total, slug) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({'total': total})
+        body: JSON.stringify({'total': total, 'products_and_quantities': products_and_quantities})
     })
     .then(response => {
         if (!response.ok) throw new Error("Could not create a checkout!");

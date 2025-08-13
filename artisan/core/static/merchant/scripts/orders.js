@@ -104,27 +104,32 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Check for order status changes
     const oldStatus = currentOrder.status;
     const statusChangeBtn = document.getElementById('order-status-change-button');
+
+    const active_statuses = ['pending', 'approved', 'in_progress']
+    const inactive_statuses = ['complete']
+    const dead_statuses = ['denied']
+
     statusChangeBtn.addEventListener('click', function (e) {
       e.preventDefault();
 
       let currentStatus = orderStatusSelect.value;
       if (currentStatus === oldStatus) {
         alert('Order status was not changed.');
-      } else {
-        fetch(`${API_BASE_URL}/order/status/`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({'order_id': currentOrder.id, 'status': currentStatus})
-        })
-        .then(response => {
-          if (!response.ok) throw new Error("Error updating order status!");
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
-          window.location.reload();
-        })
+      }
+      // Active statuses can be moved to any other status, if the new status != old status
+      else if (active_statuses.includes(oldStatus) && !(dead_statuses.includes(currentStatus))) {
+        update_status(currentOrder, currentStatus)
+      }
+      else if (active_statuses.includes(oldStatus) && dead_statuses.includes(currentStatus)) {
+        // if new status is in dead_statuses, re-add the products to inventory
+        restock(currentOrder);
+        update_status(currentOrder, currentStatus);
+      }
+      // Inactive ('complete') statuses can only be moved to active
+      else if (oldStatus in inactive_statuses && currentStatus in active_statuses) {}
+      // Dead statuses stay dead
+      else {
+        alert('Invalid status change');
       }
     })
   }
@@ -178,3 +183,36 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
   }
 })
+
+function update_status(currentOrder, currentStatus) {
+  fetch(`${API_BASE_URL}/order/status/`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({'order_id': currentOrder.id, 'status': currentStatus})
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Error updating order status!");
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+    window.location.reload();
+  })
+}
+
+function restock(currentOrder) {
+  fetch(`${API_BASE_URL}/order/restock/`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({'order_id': currentOrder.id})
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Could not restock order!');
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+  })
+}

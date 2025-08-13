@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 
-
 class Artisan(models.Model):
+    full_name = models.CharField(max_length=100, blank=True)  # New field
+    phone_number = models.CharField(max_length=20, blank=True)  # New field
+
     email = models.CharField(max_length=100)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=128)
@@ -22,6 +24,7 @@ class Artisan(models.Model):
 
     def __str__(self):
         return self.shop_name
+
     
 class Inventory(models.Model):
     artisan = models.OneToOneField(Artisan, on_delete=models.CASCADE, related_name="inventory")
