@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   // Modal close handlers (add once)
-  const closeModalButton = document.querySelector('#product-details-modal #close-modal-btn');
+  const closeModalButton = document.querySelector('#product-details-modal .close-modal-btn');
   closeModalButton.addEventListener('click', function () {
     const detailsModal = document.getElementById('product-details-modal');
     hideModal(detailsModal);
@@ -169,41 +169,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   });
 
-  // Get categories, listen for new categories
-  const category_list = document.getElementById('category-list');
-  category_list.innerHTML = (categories.map(category => (
-    `<li class='category-li'>${category.name}</li>`
-  )).join(''))
-  document.getElementById('add-category-btn').addEventListener('click', function () {
-    const categoryInput = document.getElementById('new-category-input');
-    if (categoryInput.value) {
-      // create a new catgory
-      fetch(`${API_BASE_URL}/category/`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({'name': categoryInput.value})
-      })
-      .then(response => {
-        if (!response.ok) throw new Error("Could not create a category");
-        return response.json();
-      })
-      .then(data => {
-        window.location.reload();
-      })
-    }
-  })
-
-  // Function to clear active row styling
-  function clearActiveRows() {
-    const rows = document.querySelectorAll('#inventory-table tr');
-    rows.forEach(r => {
-      r.classList.remove('active');
-      r.classList.remove('gradient-background');
-    });
-  }
+  setupCategoryList(categories, API_BASE_URL)
 
   // Function to show product details in modal
   function showProductDetails(product) {
@@ -250,3 +216,47 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.error('Error fetching inventory:', error);
   }
 });
+
+function setupCategoryList(categories, API_BASE_URL) {
+  const category_list = document.getElementById('category-list');
+
+  // Render category list
+  category_list.innerHTML = categories
+    .map(category => `<li class='category-li'>${category.name}</li>`)
+    .join('');
+
+  // Add event listener for creating a new category
+  document.getElementById('add-category-btn').addEventListener('click', function () {
+    const categoryInput = document.getElementById('new-category-input');
+
+    if (categoryInput.value) {
+      fetch(`${API_BASE_URL}/category/`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: categoryInput.value })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Could not create a category");
+        return response.json();
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+  });
+}
+
+// Function to clear active row styling
+function clearActiveRows() {
+  const rows = document.querySelectorAll('#inventory-table tr');
+  rows.forEach(r => {
+    r.classList.remove('active');
+    r.classList.remove('gradient-background');
+  });
+}

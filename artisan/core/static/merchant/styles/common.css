@@ -930,13 +930,13 @@ table tbody tr td {
   box-sizing: border-box;
 }
 
-#close-modal-btn {
+.close-modal-btn {
   width: 100%;
   text-align: right;
   font-size: 1.5rem;
 }
 
-#close-modal-btn:hover {
+.close-modal-btn:hover {
   cursor: pointer;
 }
 
