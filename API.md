@@ -449,3 +449,27 @@ Create a new Product and tie it to the merchant's Inventory object.
 ## 18. Set a Product Category
 
 ## 19. Get an Inventory
+
+## 20. Get Products by Artisan Slug
+
+## 21. Get 20 Products by Artisan Slug
+
+## 22. Get All Products
+
+## 23. Add, Edit, or Remove a Product from Customer Cart
+
+## 24. Add Checkout Data to Session
+
+## 25. Process a Payment
+
+## 26. Get CustomOrders per Merchant
+
+## 27. Upload a GalleryImage
+
+## 28. Save a Gallery Order
+
+## 29. Get GalleryImages per Artisan
+
+## 30. Get GalleryImages per Slug
+
+## 31. 
