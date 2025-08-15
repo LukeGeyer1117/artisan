@@ -97,24 +97,39 @@
     </div>
     <!-- Edit Item Modal -->
     <div id="product-edit-modal" class="side-modal">
-      <form id="edit-details">
+      <form id="edit-details" enctype="multipart/form-data">
         <h3 class="close-modal-btn">&times;</h3>
         <h3>Edit Product</h3>
+
+        <!-- Main product image -->
         <input type="file" id="edit-image" name="product-image" accept="image/*">
+
+        <!-- Extra images input -->
+        <label for="edit-extra-images">Extra Images</label>
+        <input type="file" id="edit-extra-images" name="extra_images" accept="image/*" multiple>
+        
+        <!-- Previews will appear here -->
+        <div id="extra-image-previews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;"></div>
+
         <label for="edit-title">Title</label>
         <input type="text" id="edit-title" required>
+
         <label for="edit-price">Price</label>
         <input type="number" id="edit-price" step=".01" required>
+
         <label for="edit-stock">Stock</label>
         <input type="number" id="edit-stock" required>
+
         <label for="edit-description">Description</label>
         <textarea name="description" id="edit-description" required></textarea>
+
         <label for="edit-category">Category</label>
         <select name="edit-category" id="edit-category"></select>
 
         <button type="submit" id="submit-edit-button">Complete</button>
       </form>
     </div>
+
     <!-- Confirm Delete Product Modal -->
     <div id="confirm-delete-modal" class="modal">
       <div id="confirm-delete-content" class="modal-content">

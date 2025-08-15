@@ -81,5 +81,6 @@ urlpatterns = [
     path('api/update/logo/', views.update_logo),
     path('api/update/hero/', views.update_hero),
     path('api/text/<slug:slug>/', views.get_text_content_by_slug),
+    path('api/text/', views.get_text_content_by_session),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -8,6 +8,66 @@ document.addEventListener('DOMContentLoaded', async function () {
   let searchActive = false;
   let currentProduct = null; // Track which product is being operated on
 
+  // Track extra image files for editing
+  let extraImageFiles = [];
+  const extraImagesInput = document.getElementById('edit-extra-images');
+  const previewsContainer = document.getElementById('extra-image-previews');
+
+  if (extraImagesInput) {
+    extraImagesInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      extraImageFiles = extraImageFiles.concat(files);
+      renderExtraImagePreviews();
+    });
+  }
+
+  function renderExtraImagePreviews() {
+    previewsContainer.innerHTML = ''; // Clear existing previews
+
+    extraImageFiles.forEach((file, index) => {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        wrapper.style.width = '80px';
+        wrapper.style.height = '80px';
+
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.border = '1px solid #ccc';
+        img.style.borderRadius = '4px';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '&times;';
+        removeBtn.style.position = 'absolute';
+        removeBtn.style.top = '0';
+        removeBtn.style.right = '0';
+        removeBtn.style.background = 'rgba(0,0,0,0.6)';
+        removeBtn.style.color = 'white';
+        removeBtn.style.border = 'none';
+        removeBtn.style.cursor = 'pointer';
+        removeBtn.style.width = '20px';
+        removeBtn.style.height = '20px';
+        removeBtn.style.borderRadius = '50%';
+
+        removeBtn.addEventListener('click', () => {
+          extraImageFiles.splice(index, 1);
+          renderExtraImagePreviews();
+        });
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(removeBtn);
+        previewsContainer.appendChild(wrapper);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
   // Get the categories tied to this merchant
   let categories = await get_categories();
 
@@ -20,17 +80,17 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Search Bar Expansion
   searchIcon.addEventListener('click', function () {
     expandSearchBar(searchActive, searchInput);
-  })
+  });
 
   // Listen for row clicks to open product details
   const inventoryTable = document.getElementById('inventory-table');
-  inventoryTable.addEventListener('click', function(e) {
+  inventoryTable.addEventListener('click', function (e) {
     const row = e.target.closest('tr.inventory-row');
     if (row) {
       const item = JSON.parse(row.dataset.item);
       showProductDetails(item);
     }
-  })
+  });
 
   // Modal close handlers (add once)
   const closeModalButton = document.querySelector('#product-details-modal .close-modal-btn');
@@ -48,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Edit form submit handler (add once)
   document.querySelector('#product-edit-modal form').addEventListener('submit', function (e) {
-    handle_product_edit(e, currentProduct, categories)
+    handle_product_edit(e, currentProduct, categories, extraImageFiles);
   });
 
   // Delete button handler (add once)
@@ -58,21 +118,21 @@ document.addEventListener('DOMContentLoaded', async function () {
   });
 
   // Delete confirmation handlers (add once)
-  document.getElementById('cancel-delete-button').addEventListener('click', function() {
+  document.getElementById('cancel-delete-button').addEventListener('click', function () {
     document.querySelector('#confirm-delete-modal').style.display = 'none';
   });
 
-  document.getElementById('confirm-delete-button').addEventListener('click', async function() {
+  document.getElementById('confirm-delete-button').addEventListener('click', async function () {
     if (!currentProduct) return;
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/product/?id=${currentProduct.id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
-      
+
       if (!response.ok) throw new Error("Failed to delete product");
-      
+
       const result = await response.json();
       alert("Product deleted!");
       window.location.reload();
@@ -82,15 +142,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   });
 
-  setupCategoryList(categories, API_BASE_URL)
+  setupCategoryList(categories, API_BASE_URL);
 
   // Function to show product details in modal
   function showProductDetails(product) {
     currentProduct = product; // Set the current product
-    
+
     const detailsModal = document.getElementById('product-details-modal');
     showModal(detailsModal);
-    // document.querySelector('.dashboard-sections').classList.add('compressed');
 
     // Populate modal with product data
     document.querySelector('#product-details img').src = '/media/' + product.image;
@@ -107,9 +166,9 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (category.id === product.category_id) {
         document.getElementById('product-category').innerHTML = category.name;
       }
-    })
+    });
   }
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/inventory/`, {
       method: 'GET',
@@ -117,13 +176,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     if (!response.ok) throw new Error('Failed to fetch inventory products.');
-    
+
     const products = await response.json();
     searchAndFilter(searchInput, products);
 
     searchInput.addEventListener('input', function () {
       searchAndFilter(searchInput, products);
-    })
+    });
 
   } catch (error) {
     console.error('Error fetching inventory:', error);
@@ -151,16 +210,16 @@ function setupCategoryList(categories, API_BASE_URL) {
         },
         body: JSON.stringify({ name: categoryInput.value })
       })
-      .then(response => {
-        if (!response.ok) throw new Error("Could not create a category");
-        return response.json();
-      })
-      .then(() => {
-        window.location.reload();
-      })
-      .catch(error => {
-        console.error(error);
-      });
+        .then(response => {
+          if (!response.ok) throw new Error("Could not create a category");
+          return response.json();
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch(error => {
+          console.error(error);
+        });
     }
   });
 }
@@ -180,13 +239,13 @@ async function get_categories() {
     method: 'GET',
     credentials: 'include'
   })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not get categories");
-    return response.json();
-  })
-  .then(data => {
-    return data.categories;
-  })
+    .then(response => {
+      if (!response.ok) throw new Error("Could not get categories");
+      return response.json();
+    })
+    .then(data => {
+      return data.categories;
+    });
 }
 
 // Handle edit modal
@@ -195,7 +254,7 @@ function handle_edit_modal(currentProduct, categories) {
   const close_button = document.querySelector('#edit-details .close-modal-btn');
   close_button.addEventListener('click', function () {
     hideModal(document.getElementById('product-edit-modal'));
-  })
+  });
 
   if (!currentProduct) return;
 
@@ -217,11 +276,11 @@ function handle_edit_modal(currentProduct, categories) {
 
   categories.forEach(category => {
     const option = document.createElement('option');
-    option.value = category.id; // safer for lookups
+    option.value = category.id;
     option.textContent = category.name;
 
     if (currentProduct.category_id === category.id) {
-    option.selected = true;
+      option.selected = true;
     }
 
     selector.appendChild(option);
@@ -229,34 +288,47 @@ function handle_edit_modal(currentProduct, categories) {
 }
 
 // Handle when the edit form is submitted
-function handle_product_edit(e, currentProduct, categories) {
+function handle_product_edit(e, currentProduct, categories, extraImageFiles) {
   e.preventDefault();
-    if (!currentProduct) return;
+  if (!currentProduct) return;
 
-    const form = e.target;
-    const formData = new FormData();
+  const form = e.target;
+  const formData = new FormData();
 
-    formData.append('id', currentProduct.id);
-    formData.append('name', form.querySelector('#edit-title').value);
-    formData.append('price', form.querySelector('#edit-price').value);
-    formData.append('description', form.querySelector('#edit-description').value);
-    formData.append('quantity', form.querySelector('#edit-stock').value);
-    formData.append('image', form.querySelector('#edit-image').files[0]);
-    
-    const edit_category = form.querySelector('#edit-category').value;
-    categories.forEach(category => {
-      if (category.id == edit_category) {
-        formData.append('category', category.id);
-      }
-    })
+  formData.append('id', currentProduct.id);
+  formData.append('name', form.querySelector('#edit-title').value);
+  formData.append('price', form.querySelector('#edit-price').value);
+  formData.append('description', form.querySelector('#edit-description').value);
+  formData.append('quantity', form.querySelector('#edit-stock').value);
 
-    formData.append('_method', 'PATCH');
+  const mainImageFile = form.querySelector('#edit-image').files[0];
+  if (mainImageFile) {
+    formData.append('image', mainImageFile);
+  }
 
-    fetch(`${API_BASE_URL}/product/`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include'
-    })
+  // Append extra images
+  extraImageFiles.forEach(file => {
+    formData.append('extra_images', file);
+  });
+
+  const edit_category = form.querySelector('#edit-category').value;
+  categories.forEach(category => {
+    if (category.id == edit_category) {
+      formData.append('category', category.id);
+    }
+  });
+
+  formData.append('_method', 'PATCH');
+
+  for (const [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+
+  fetch(`${API_BASE_URL}/product/`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include'
+  })
     .then(response => {
       if (!response.ok) throw new Error("Failed to Patch Product");
       return response.json();

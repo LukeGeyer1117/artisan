@@ -121,7 +121,7 @@ class ProductImage(models.Model):
         unique_together = ['product', 'order']
 
     def __str__(self):
-        return f"Product Image {self.id} - Order {self.order}"
+        return f"Product Image for {self.product.name} - Order {self.order}"
     
     def save(self, *args, **kwargs):
         if not self.order:

@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 import os
+from django.forms.models import model_to_dict
 
 import json
 from .helper import generate_unique_slug
@@ -352,6 +353,9 @@ def product(request):
 
                 product = Product.objects.get(id=product_id)
 
+                print(request.POST)
+                print(request.FILES)  # This will help debug uploaded files
+
                 # Update fields if provided
                 if 'name' in request.POST:
                     product.name = request.POST['name']
@@ -367,6 +371,12 @@ def product(request):
                     product.category_id = request.POST['category']
 
                 product.save()
+
+                # Handle extra images
+                extra_images = request.FILES.getlist('extra_images')
+                for image_file in extra_images:
+                    ProductImage.objects.create(product=product, image=image_file)
+
                 return JsonResponse({'message': 'Product updated', 'id': product.id})
 
             except Product.DoesNotExist:
@@ -1038,3 +1048,20 @@ def get_text_content_by_slug(request, slug):
     }
 
     return JsonResponse({'message': 'Found Text Content', 'text_content': text_content_data})
+
+@csrf_exempt
+@require_GET
+def get_text_content_by_session(request):
+    artisan_id = request.session.get('artisan_id')
+    if not artisan_id:
+        return JsonResponse({'error': 'Not Authenticated'}, status=401)
+
+    artisan = get_object_or_404(Artisan, id=artisan_id)
+
+    text_content = get_object_or_404(TextContent, artisan=artisan)
+
+    # Convert model instance to dict so it can be JSON serialized
+    text_content_data = model_to_dict(text_content)
+
+    return JsonResponse({'message': 'Found TextContent', 'text_content': text_content_data}, status=200)
+
