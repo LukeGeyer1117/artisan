@@ -1,4 +1,4 @@
-import { searchAndFilter, showModal, hideModal } from "./common.js";
+import { searchAndFilter, showModal, hideModal, expandSearchBar } from "./common.js";
 
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
@@ -9,19 +9,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   let currentProduct = null; // Track which product is being operated on
 
   // Get the categories tied to this merchant
-  let categories;
-  await fetch(`${API_BASE_URL}/categories/`, {
-    method: 'GET',
-    credentials: 'include'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not get categories");
-    return response.json();
-  })
-  .then(data => {
-    categories = data.categories;
-  })
-
+  let categories = await get_categories();
 
   // Add Item Button
   let addItemButton = document.getElementById('add-item-button');
@@ -31,17 +19,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Search Bar Expansion
   searchIcon.addEventListener('click', function () {
-    if (!searchActive) {
-      searchInput.style.width = '200px';
-      searchInput.style.minWidth = '50px';
-      searchInput.style.padding = '.8rem .5rem';
-      searchActive = true;
-    } else {
-      searchInput.style.width = '0px';
-      searchInput.style.minWidth = '0px';
-      searchInput.style.padding = '0';
-      searchActive = false;
-    }
+    expandSearchBar(searchActive, searchInput);
   })
 
   // Listen for row clicks to open product details
@@ -65,77 +43,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Edit button handler (add once)
   document.getElementById('edit-button').addEventListener('click', function () {
-    if (!currentProduct) return;
-    
-    const detailsModal = document.getElementById('product-details-modal');
-    const editModal = document.getElementById('product-edit-modal');
-    
-    hideModal(detailsModal);
-    showModal(editModal);
-
-    // Populate edit form with current product data
-    document.getElementById('edit-title').value = currentProduct.name;
-    document.getElementById('edit-price').value = currentProduct.price;
-    document.getElementById('edit-stock').value = currentProduct.quantity;
-    document.getElementById('edit-description').value = currentProduct.description;
-    const selector = document.getElementById('edit-category');
-
-    // Clear existing options (if needed)
-    selector.innerHTML = '';
-
-    categories.forEach(category => {
-      const option = document.createElement('option');
-      option.value = category.id; // safer for lookups
-      option.textContent = category.name;
-      
-      if (currentProduct.category_id === category.id) {
-        option.selected = true;
-      }
-
-      selector.appendChild(option);
-    });
+    handle_edit_modal(currentProduct, categories);
   });
 
   // Edit form submit handler (add once)
   document.querySelector('#product-edit-modal form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!currentProduct) return;
-
-    const form = e.target;
-    const formData = new FormData();
-
-    formData.append('id', currentProduct.id);
-    formData.append('name', form.querySelector('#edit-title').value);
-    formData.append('price', form.querySelector('#edit-price').value);
-    formData.append('description', form.querySelector('#edit-description').value);
-    formData.append('quantity', form.querySelector('#edit-stock').value);
-    formData.append('image', form.querySelector('#edit-image').files[0]);
-    
-    const edit_category = form.querySelector('#edit-category').value;
-    console.log(`category: ${edit_category}`)
-    categories.forEach(category => {
-      if (category.id == edit_category) {
-        formData.append('category', category.id);
-      }
-    })
-
-    formData.append('_method', 'PATCH');
-
-    fetch(`${API_BASE_URL}/product/`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include'
-    })
-    .then(response => {
-      if (!response.ok) throw new Error("Failed to Patch Product");
-      return response.json();
-    })
-    .then(result => {
-      window.location.reload();
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    handle_product_edit(e, currentProduct, categories)
   });
 
   // Delete button handler (add once)
@@ -259,4 +172,99 @@ function clearActiveRows() {
     r.classList.remove('active');
     r.classList.remove('gradient-background');
   });
+}
+
+// Get the merchant's categories
+async function get_categories() {
+  return await fetch(`${API_BASE_URL}/categories/`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get categories");
+    return response.json();
+  })
+  .then(data => {
+    return data.categories;
+  })
+}
+
+// Handle edit modal
+function handle_edit_modal(currentProduct, categories) {
+  // First, listen for close-modal button to be pressed
+  const close_button = document.querySelector('#edit-details .close-modal-btn');
+  close_button.addEventListener('click', function () {
+    hideModal(document.getElementById('product-edit-modal'));
+  })
+
+  if (!currentProduct) return;
+
+  const detailsModal = document.getElementById('product-details-modal');
+  const editModal = document.getElementById('product-edit-modal');
+
+  hideModal(detailsModal);
+  showModal(editModal);
+
+  // Populate edit form with current product data
+  document.getElementById('edit-title').value = currentProduct.name;
+  document.getElementById('edit-price').value = currentProduct.price;
+  document.getElementById('edit-stock').value = currentProduct.quantity;
+  document.getElementById('edit-description').value = currentProduct.description;
+  const selector = document.getElementById('edit-category');
+
+  // Clear existing options (if needed)
+  selector.innerHTML = '';
+
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category.id; // safer for lookups
+    option.textContent = category.name;
+
+    if (currentProduct.category_id === category.id) {
+    option.selected = true;
+    }
+
+    selector.appendChild(option);
+  });
+}
+
+// Handle when the edit form is submitted
+function handle_product_edit(e, currentProduct, categories) {
+  e.preventDefault();
+    if (!currentProduct) return;
+
+    const form = e.target;
+    const formData = new FormData();
+
+    formData.append('id', currentProduct.id);
+    formData.append('name', form.querySelector('#edit-title').value);
+    formData.append('price', form.querySelector('#edit-price').value);
+    formData.append('description', form.querySelector('#edit-description').value);
+    formData.append('quantity', form.querySelector('#edit-stock').value);
+    formData.append('image', form.querySelector('#edit-image').files[0]);
+    
+    const edit_category = form.querySelector('#edit-category').value;
+    categories.forEach(category => {
+      if (category.id == edit_category) {
+        formData.append('category', category.id);
+      }
+    })
+
+    formData.append('_method', 'PATCH');
+
+    fetch(`${API_BASE_URL}/product/`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Failed to Patch Product");
+      return response.json();
+    })
+    .then(result => {
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error(error);
+    });
 }

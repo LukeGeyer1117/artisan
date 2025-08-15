@@ -281,4 +281,18 @@ function formatTimestamp(timestamp) {
   return `${date.toLocaleDateString('en-US', options)}`;
 }
 
-export {searchAndFilter, showModal, hideModal, formatTimestamp};
+function expandSearchBar(searchActive, searchInput) {
+  if (!searchActive) {
+    searchInput.style.width = '200px';
+    searchInput.style.minWidth = '50px';
+    searchInput.style.padding = '.8rem .5rem';
+    searchActive = true;
+  } else {
+    searchInput.style.width = '0px';
+    searchInput.style.minWidth = '0px';
+    searchInput.style.padding = '0';
+    searchActive = false;
+  }
+}
+
+export {searchAndFilter, showModal, hideModal, formatTimestamp, expandSearchBar};
