@@ -335,6 +335,12 @@ def login_artisan(request):
 @csrf_exempt
 @require_http_methods(['POST', 'DELETE', 'GET'])
 def product(request):
+    # Make sure the user is logged in properly
+    artisan_id = request.session.get('artisan_id')
+    artisan = Artisan.objects.get(id=artisan_id)
+    if not artisan:
+        return JsonResponse({'error': "Not Authenticated"}, status=401)
+
     actual_method = request.POST.get('_method', '').upper()
     if request.method == 'POST':
         # Check to see if the acutal method tag is a 'PATCH'
