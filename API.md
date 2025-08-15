@@ -448,11 +448,49 @@ Create a new Product and tie it to the merchant's Inventory object.
 
 ## 18. Set a Product Category
 
+**Endpoint:**
+None
+
 ## 19. Get an Inventory
+
+**Endpoint:**
+`GET /inventory/`
+
+**Description:**
+Get an inventory as the logged in merchant.
+
+**Request:**
+- **Method:** `GET`
+- **Authentication:** Required
+- **Body:** None
+
+**Response:**
+```json
+  [product_items]
+```
 
 ## 20. Get Products by Artisan Slug
 
+**Endpoint:**
+`GET /<slug:slug>/products/`
+
+**Description:**
+Get the products owned by the merchant with the URL slug. Gets all products.
+
+**Request:**
+- **Method:** `GET`
+- **Authentication:** Not Required
+- **Body** None
+
+**Response:**
+```json
+{
+  [product_items]
+}
+```
+
 ## 21. Get 20 Products by Artisan Slug
+
 
 ## 22. Get All Products
 
