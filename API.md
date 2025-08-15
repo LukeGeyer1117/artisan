@@ -245,3 +245,207 @@ Updates the status of a specific custom request.
   "message": "Updated order status"
 }
 ```
+
+## 9. Get Orders per Artisan
+
+**Endpoint:**
+`GET /orders/`
+
+**Description:**
+Get all of the orders assigned to an Artisan, ordered by create_date.
+
+**Request:**
+- **Method:** `GET`
+- **Authentication:** Required
+- **Body:** None
+
+**Response:**
+```
+{
+  "message": "Retrieved Orders",
+  "orders": [
+    {
+      "id": 1,
+      "customer_name": "Jane Doe",
+      "customer_email": "example@mail.com",
+      "customer_phone": "1234567891"
+      "shipping_addr": "123 Test St.",
+      "city": "Testville",
+      "state": "TX",
+      "zip_code": "28372",
+      "status": "pending",
+      "created_at": "2024-12-17 11:14",
+      "total_price": 49.23
+    }
+  ]
+}
+```
+
+## 10. Get Active Orders per Artisan
+
+**Endpoint:**
+`GET /orders/active/`
+
+**Description:**
+Get all of the active orders assigned to an Artisan, ordered by create_date.
+
+**Request:**
+- **Method:** `GET`
+- **Authentication:** Required
+- **Body:** None
+
+**Response:**
+```
+{
+  "message": "Retrieved Orders",
+  "orders": [
+    {
+      "id": 1,
+      "customer_name": "Jane Doe",
+      "customer_email": "example@mail.com",
+      "customer_phone": "1234567891"
+      "shipping_addr": "123 Test St.",
+      "city": "Testville",
+      "state": "TX",
+      "zip_code": "28372",
+      "status": "pending",
+      "created_at": "2024-12-17 11:14",
+      "total_price": 49.23
+    }
+  ]
+}
+```
+
+## 11. Get Inactive Orders per Artisan
+
+**Endpoint:**
+`GET /orders/inactive/`
+
+**Description:**
+Get all of the inactive orders assigned to an Artisan, ordered by create_date.
+
+**Request:**
+- **Method:** `GET`
+- **Authentication:** Required
+- **Body:** None
+
+**Response:**
+```
+{
+  "message": "Retrieved Orders",
+  "orders": [
+    {
+      "id": 1,
+      "customer_name": "Jane Doe",
+      "customer_email": "example@mail.com",
+      "customer_phone": "1234567891"
+      "shipping_addr": "123 Test St.",
+      "city": "Testville",
+      "state": "TX",
+      "zip_code": "28372",
+      "status": "pending",
+      "created_at": "2024-12-17 11:14",
+      "total_price": 49.23
+    }
+  ]
+}
+```
+
+## 12. Get the items associated with an order
+
+**Endpoint:**
+`POST /orderitems/`
+
+**Description:**
+Get all the OrderItems object associated with an Order
+
+**Request:**
+- **Method:** `GET`
+- **Authentication: Not Required
+- **Body:**
+```json
+{
+  "order_id": 1
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Found Order Items",
+  "orderItems": [
+    {
+      "order": order_item,
+      "product": product_item,
+      "quantity": 5
+    }
+  ]
+}
+```
+
+## 13. Log in Artisan
+
+**Endpoint:**
+`POST /login/`
+
+**Description:**
+Uses provided email and password to verify a user before logging them in and creating session data. Checks the password against the hashed stored password.
+
+**Request:**
+- **Method:** `POST`
+- **Authentication:** Not Required
+- **Body:**
+```json
+{
+  "email": "123@mail.com",
+  "password": "secretkey"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Login successful",
+  "artisan_id": 3
+}
+```
+
+## 14. Create a Product
+
+**Endpoint:**
+`POST /product/`
+
+**Description:**
+Create a new Product and tie it to the merchant's Inventory object.
+
+**Request:**
+- **Method:** `POST`
+- **Authentication:** Required
+- **Body:**
+```json
+{
+  "name": "product_name",
+  "price": 23.23,
+  "quantity": 43,
+  "description": "amazing product description",
+  "image": image_file
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Product created",
+  "id": 3
+}
+```
+
+## 15. Update a Product
+
+## 16. Delete a Product
+
+## 17. Get a Product
+
+## 18. Set a Product Category
+
+## 19. Get an Inventory
