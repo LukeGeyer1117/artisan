@@ -133,6 +133,12 @@ def order(request):
 @csrf_exempt
 @require_POST
 def update_order_status(request):
+    artisan_id = request.session.get('artisan_id')
+    artisan = Artisan.objects.get(id=artisan_id)
+
+    if not artisan:
+        return JsonResponse({'error': "Not Authenticated"}, status=401)
+
     try:
         data = json.loads(request.body)
         order_id = data['order_id']
