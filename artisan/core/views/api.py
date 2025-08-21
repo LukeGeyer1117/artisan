@@ -10,7 +10,7 @@ from django.forms.models import model_to_dict
 
 import json
 from .helper import generate_unique_slug
-from ..models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category, ProductImage, Theme, TextContent
+from ..models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category, ProductImage, Theme, TextContent, ShopSettings
 
 ### API VIEWS
 
@@ -46,6 +46,7 @@ def artisan(request):
         Theme.objects.create(artisan=artisan)
         LogoImage.objects.create(artisan=artisan)
         HeroImage.objects.create(artisan=artisan)
+        ShopSettings.objects.create(artisan=artisan)
         return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
     
     #Get and Artisan
@@ -1064,4 +1065,39 @@ def get_text_content_by_session(request):
     text_content_data = model_to_dict(text_content)
 
     return JsonResponse({'message': 'Found TextContent', 'text_content': text_content_data}, status=200)
+
+@csrf_exempt
+@require_http_methods(['POST', 'OPTIONS'])
+def update_text_content(request):
+    artisan_id = request.session.get('artisan_id')
+    if not artisan_id:
+        return JsonResponse({'error': "Not Authenticated"}, status=401)
+    
+    artisan = get_object_or_404(Artisan, id=artisan_id)
+    text_content = get_object_or_404(TextContent, artisan=artisan)
+
+    data = json.loads(request.body)
+    new_sentence = data['sentence']
+    new_header = data['header']
+
+    text_content.hero_sentence_draw = new_sentence[:50]
+    text_content.hero_header_draw = new_header[:25]
+
+    text_content.save()
+
+    return JsonResponse({'message': "Updated Text Content"}, status=200)
+
+@csrf_exempt
+@require_GET
+def get_shop_settings_by_session(request):
+    artisan_id = request.session.get('artisan_id')
+    if not artisan_id:
+        return JsonResponse({'error': 'Not Authenticated'}, status=401)
+    
+    artisan = get_object_or_404(Artisan, id=artisan_id)
+    shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+
+    shop_settings_data = model_to_dict(shop_settings)
+
+    return JsonResponse({'message': 'found shop settings', 'shop_settings': shop_settings_data})
 

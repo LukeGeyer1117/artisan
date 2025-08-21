@@ -56,6 +56,10 @@ function applyGlobalTheme(theme) {
     .edit-btn:hover, .remove-btn:hover {
       background-color: ${theme.accent_color};
     }
+
+    svg {
+      fill: ${theme.text_color}
+    }
   `;
   document.head.appendChild(globalStyle);
 }

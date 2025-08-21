@@ -6,7 +6,6 @@ links.forEach(link => {
 
   if (window_location == link.querySelector('h3').innerHTML) {
     link.classList.add('active');
-    link.querySelector('img').src = active_URL;
   }
 })
 

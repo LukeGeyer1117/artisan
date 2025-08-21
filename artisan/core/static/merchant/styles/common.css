@@ -123,13 +123,14 @@ body {
   color: #4F46E5;
 }
 
-.links-group a.active img {
+.links-group a.active svg {
   fill: #4F46E5;
 }
 
-.links-group a img {
+.links-group a svg {
   width: 1.5rem;
   height: 1.5rem;
+  fill: white;
 }
 
 .links-group a h3 {

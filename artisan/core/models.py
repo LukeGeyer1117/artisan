@@ -190,3 +190,52 @@ class TextContent(models.Model):
 
     def __str__(self):
         return f'{self.artisan.slug} - text content'
+    
+class ShopSettings(models.Model):
+    artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
+
+    # Shop settings
+    shop_name = models.CharField(max_length=50, default="shop")
+    shop_description = models.CharField(max_length=250, default='')
+    accepting_custom_orders = models.BooleanField(default=False)
+    
+    # Changed to IntegerField for whole numbers
+    maximum_active_orders = models.IntegerField(default=1000)
+    standard_processing_days = models.IntegerField(default=10)
+    
+    # Changed default to an empty string
+    shop_location = models.CharField(max_length=100, default='')
+    
+    # Added a default value
+    currency = models.CharField(
+        max_length=3,
+        choices=[
+            ('usd', 'USD'),
+            ('cad', 'CAD')
+        ],
+        default='usd'
+    )
+    
+    # Added a default value
+    shop_status = models.CharField(
+        max_length=30,
+        choices=[
+            ('active', 'Active'),
+            ('inactive', 'Inactive'),
+            ('vacation', 'Vacation'),
+            ('construction', 'Construction')
+        ],
+        default='active'
+    )
+    
+    status_message = models.CharField(max_length=250, default='')
+    
+    # Removed max_length, set max_digits instead
+    minimum_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
+    # Policy Settings
+    shipping_policy = models.CharField(max_length=500, default='')
+    return_policy = models.CharField(max_length=500, default='')
+
+    def __str__(self):
+        return f"{self.artisan.username}'s Shop Settings"

@@ -234,3 +234,157 @@ section h2 {
       flex-direction: column;
     }
   }
+
+.text-content-input-section {
+  display: flex;
+  flex-direction: column;
+  max-width: 50%;
+  height: fit-content;
+}
+
+/* Shop Settings Styling */
+.shop-input-section {
+ margin-bottom: 20px;
+}
+
+.shop-input-section label {
+ display: block;
+ margin-bottom: 5px;
+ font-weight: 600;
+ color: #333;
+}
+
+.shop-input-section input[type="text"],
+.shop-input-section input[type="number"],
+.shop-input-section select,
+.shop-input-section textarea {
+ width: 100%;
+ padding: 10px;
+ border: 1px solid #ddd;
+ border-radius: 4px;
+ font-size: 14px;
+ box-sizing: border-box;
+ transition: border-color 0.3s ease;
+}
+
+.shop-input-section input[type="text"]:focus,
+.shop-input-section input[type="number"]:focus,
+.shop-input-section select:focus,
+.shop-input-section textarea:focus {
+ outline: none;
+ border-color: #007cba;
+ box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.1);
+}
+
+.shop-input-section textarea {
+ resize: vertical;
+ min-height: 80px;
+}
+
+.shop-input-section select {
+ background-color: white;
+ cursor: pointer;
+}
+
+/* Checkbox styling */
+.shop-input-section input[type="checkbox"] {
+ width: auto;
+ margin-right: 8px;
+ transform: scale(1.1);
+}
+
+.shop-input-section label:has(input[type="checkbox"]) {
+ display: flex;
+ align-items: center;
+ cursor: pointer;
+ font-weight: normal;
+}
+
+/* Number input styling */
+.shop-input-section input[type="number"] {
+ -moz-appearance: textfield;
+}
+
+.shop-input-section input[type="number"]::-webkit-outer-spin-button,
+.shop-input-section input[type="number"]::-webkit-inner-spin-button {
+ -webkit-appearance: none;
+ margin: 0;
+}
+
+/* Placeholder styling */
+.shop-input-section input::placeholder,
+.shop-input-section textarea::placeholder {
+ color: #999;
+ font-style: italic;
+}
+
+/* Save button */
+#submit-shop-changes {
+ background-color: #007cba;
+ color: white;
+ padding: 12px 24px;
+ border: none;
+ border-radius: 4px;
+ font-size: 16px;
+ font-weight: 600;
+ cursor: pointer;
+ margin-top: 20px;
+ transition: background-color 0.3s ease;
+}
+
+#submit-shop-changes:hover {
+ background-color: #005a87;
+}
+
+#submit-shop-changes:active {
+ transform: translateY(1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+ .shop-input-section {
+   margin-bottom: 16px;
+ }
+ 
+ .shop-input-section input[type="text"],
+ .shop-input-section input[type="number"],
+ .shop-input-section select,
+ .shop-input-section textarea {
+   padding: 8px;
+   font-size: 16px; /* Prevents zoom on iOS */
+ }
+ 
+ #submit-shop-changes {
+   width: 100%;
+   padding: 14px;
+ }
+}
+
+/* Field tip styling */
+.field-tip {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.field-tip.important {
+  font-weight: 500;
+  font-style: normal;
+  background-color: #fffdf7;
+  padding: 6px 8px;
+  border-radius: 3px;
+  border-left: 2px solid #f59e0b;
+}
+
+/* Make tips more readable on mobile */
+@media (max-width: 768px) {
+  .field-tip {
+    font-size: 13px;
+  }
+  
+  .field-tip.important {
+    padding: 8px 10px;
+  }
+}
