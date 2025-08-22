@@ -1101,3 +1101,17 @@ def get_shop_settings_by_session(request):
 
     return JsonResponse({'message': 'found shop settings', 'shop_settings': shop_settings_data})
 
+@csrf_exempt
+@require_POST
+def update_shop_settings(request):
+    artisan_id = request.session.get('artisan_id')
+    if not artisan_id:
+        return JsonResponse({'error': 'Not Authenticated'}, status=401)
+    
+    artisan = get_object_or_404(Artisan, id=artisan_id)
+    shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+
+    data = json.loads(request.body)
+    print(data)
+    return JsonResponse({'message': "Updated shop settings."}, status=200)
+

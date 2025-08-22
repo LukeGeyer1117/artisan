@@ -84,5 +84,6 @@ urlpatterns = [
     path('api/text/', views.get_text_content_by_session),
     path('api/edit/text/', views.update_text_content),
     path('api/shop-settings/', views.get_shop_settings_by_session),
+    path('api/edit/shop-settings/', views.update_shop_settings),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,8 +1,8 @@
 let paymentTotal = 0;
+const slug = document.body.dataset.slug;
 
 document.addEventListener("DOMContentLoaded", function () {
     // Get the slug from URL, used for redirect back to cart.
-    const slug = document.body.dataset.slug;
     console.log(slug);
 
     // Go back to cart if clicked

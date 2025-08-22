@@ -212,11 +212,11 @@
       <div class="shop-input-section">
         <label for="currency">Currency</label>
         <select id="currency">
-          <option value="USD">USD ($)</option>
-          <option value="EUR">EUR (€)</option>
-          <option value="GBP">GBP (£)</option>
-          <option value="CAD">CAD ($)</option>
-          <option value="AUD">AUD ($)</option>
+          <option value="USD" id="usd">USD ($)</option>
+          <option value="EUR" id="eur">EUR (€)</option>
+          <option value="GBP" id="gbp">GBP (£)</option>
+          <option value="CAD" id="cad">CAD ($)</option>
+          <option value="AUD" id="aud">AUD ($)</option>
         </select>
         <div class="field-tip">All your product prices will be displayed in this currency. Choose what's most convenient for your customers.</div>
       </div>
@@ -225,6 +225,7 @@
         <label for="shop-status">Shop Status</label>
         <select id="shop-status">
           <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
           <option value="vacation">Vacation Mode</option>
           <option value="maintenance">Maintenance</option>
         </select>

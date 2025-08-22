@@ -15,7 +15,22 @@ async function get_shop_settings() {
     return response.json();
   })
   .then(data => {
-    console.log(data);
-    return data;
+    console.log(data.shop_settings);
+    populate_fields_initial(data.shop_settings);
   })
+}
+
+function populate_fields_initial(shop_settings) {
+  document.getElementById('shop-name').value = shop_settings.shop_name;
+  document.getElementById('shop-description').value = shop_settings.shop_description;
+  document.getElementById('accepting-custom-orders').checked = shop_settings.accepting_custom_orders;
+  document.getElementById('max-active-orders').value = shop_settings.maximum_active_orders;
+  document.getElementById('processing-time').value = shop_settings.standard_processing_days;
+  document.getElementById('shop-location').value = shop_settings.shop_location;
+  document.getElementById('currency').value = shop_settings.currency.toUpperCase();
+  document.getElementById('shop-status').value = shop_settings.shop_status;
+  document.getElementById('vacation-message').value = shop_settings.status_message;
+  document.getElementById('minimum-order').value = shop_settings.minimum_order_amount;
+  document.getElementById('shipping-policy').value = shop_settings.shipping_policy;
+  document.getElementById('return-policy').value = shop_settings.return_policy;
 }
