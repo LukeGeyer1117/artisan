@@ -1104,14 +1104,48 @@ def get_shop_settings_by_session(request):
 @csrf_exempt
 @require_POST
 def update_shop_settings(request):
+    """
+    Updates the shop settings for the authenticated artisan.
+    """
     artisan_id = request.session.get('artisan_id')
     if not artisan_id:
         return JsonResponse({'error': 'Not Authenticated'}, status=401)
     
-    artisan = get_object_or_404(Artisan, id=artisan_id)
-    shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+    try:
+        # Get the JSON data from the request body
+        data = json.loads(request.body)
+        
+        # Get the artisan and their shop settings
+        artisan = get_object_or_404(Artisan, id=artisan_id)
+        shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
 
-    data = json.loads(request.body)
-    print(data)
-    return JsonResponse({'message': "Updated shop settings."}, status=200)
+        # Update the model fields with the data from the JSON
+        # It's crucial to map the JSON keys to your model fields
+        shop_settings.shop_name = data.get('shopName', shop_settings.shop_name)
+        shop_settings.shop_description = data.get('shopDescription', shop_settings.shop_description)
+        shop_settings.accepting_custom_orders = data.get('acceptingCustomOrders', shop_settings.accepting_custom_orders)
+        shop_settings.maximum_active_orders = data.get('maximumActiveOrders', shop_settings.maximum_active_orders)
+        shop_settings.standard_processing_days = data.get('standardProcessingDays', shop_settings.standard_processing_days)
+        shop_settings.shop_location = data.get('shopLocation', shop_settings.shop_location)
+        shop_settings.currency = data.get('currency', shop_settings.currency)
+        shop_settings.shop_status = data.get('shopStatus', shop_settings.shop_status)
+        shop_settings.status_message = data.get('statusMessage', shop_settings.status_message)
+        shop_settings.minimum_order_amount = data.get('minimumOrderAmount', shop_settings.minimum_order_amount)
+        shop_settings.shipping_policy = data.get('shippingPolicy', shop_settings.shipping_policy)
+        shop_settings.return_policy = data.get('returnPolicy', shop_settings.return_policy)
+
+        # Save the changes to the database
+        shop_settings.save()
+
+        return JsonResponse({'message': "Updated shop settings."}, status=200)
+
+    except json.JSONDecodeError:
+        # Handle cases where the request body is not valid JSON
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except KeyError as e:
+        # Handle cases where a required key is missing from the JSON
+        return JsonResponse({'error': f'Missing key: {e}'}, status=400)
+    except Exception as e:
+        # Catch any other unexpected errors
+        return JsonResponse({'error': str(e)}, status=500)
 

@@ -173,19 +173,19 @@
       
       <div class="shop-input-section">
         <label for="shop-name">Shop Name</label>
-        <input type="text" maxlength="50" id="shop-name">
+        <input type="text" maxlength="50" id="shop-name" class="shop-setting-input">
         <div class="field-tip">This is how your shop will appear to customers. Choose something memorable and professional.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="shop-description">Shop Description</label>
-        <textarea maxlength="500" id="shop-description" rows="4"></textarea>
+        <textarea maxlength="500" id="shop-description" rows="4" class="shop-setting-input"></textarea>
         <div class="field-tip">Tell customers what makes your shop special. This appears prominently on your shop page.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="accepting-custom-orders">
-          <input type="checkbox" id="accepting-custom-orders">
+          <input type="checkbox" id="accepting-custom-orders" class="shop-setting-input">
           Accept Custom Orders
         </label>
         <div class="field-tip important">When enabled, customers can request custom work beyond your listed products. Consider your capacity carefully.</div>
@@ -193,25 +193,25 @@
 
       <div class="shop-input-section">
         <label for="max-active-orders">Maximum Active Orders</label>
-        <input type="number" min="1" max="100" id="max-active-orders">
+        <input type="number" min="1" max="100" id="max-active-orders" class="shop-setting-input">
         <div class="field-tip important">This prevents you from getting overwhelmed. Once reached, customers won't be able to place new orders until you complete some.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="processing-time">Standard Processing Time (days)</label>
-        <input type="number" min="1" max="365" id="processing-time">
+        <input type="number" min="1" max="365" id="processing-time" class="shop-setting-input">
         <div class="field-tip">How long it typically takes you to create and ship an order. Be realistic - customers appreciate accurate timelines.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="shop-location">Shop Location</label>
-        <input type="text" maxlength="100" id="shop-location" placeholder="City, State/Country">
+        <input type="text" maxlength="100" id="shop-location" placeholder="City, State/Country" class="shop-setting-input">
         <div class="field-tip">Helps customers understand shipping times and costs. You don't need to be overly specific.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="currency">Currency</label>
-        <select id="currency">
+        <select id="currency" class="shop-setting-input">
           <option value="USD" id="usd">USD ($)</option>
           <option value="EUR" id="eur">EUR (€)</option>
           <option value="GBP" id="gbp">GBP (£)</option>
@@ -223,7 +223,7 @@
 
       <div class="shop-input-section">
         <label for="shop-status">Shop Status</label>
-        <select id="shop-status">
+        <select id="shop-status" class="shop-setting-input">
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
           <option value="vacation">Vacation Mode</option>
@@ -234,25 +234,25 @@
 
       <div class="shop-input-section">
         <label for="vacation-message">Vacation/Status Message</label>
-        <textarea maxlength="200" id="vacation-message" rows="3" placeholder="Optional message for customers when shop is not active"></textarea>
+        <textarea maxlength="200" id="vacation-message" rows="3" placeholder="Optional message for customers when shop is not active" class="shop-setting-input"></textarea>
         <div class="field-tip">Let customers know when you'll be back or why your shop is temporarily closed.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="minimum-order">Minimum Order Amount</label>
-        <input type="number" min="0" step="0.01" id="minimum-order">
+        <input type="number" min="0" step="0.01" id="minimum-order" class="shop-setting-input">
         <div class="field-tip">Leave at 0 for no minimum. Useful if you want to encourage larger orders or cover payment processing fees.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="shipping-policy">Shipping Policy</label>
-        <textarea maxlength="1000" id="shipping-policy" rows="4" placeholder="Describe your shipping methods, costs, and timelines"></textarea>
+        <textarea maxlength="1000" id="shipping-policy" rows="4" placeholder="Describe your shipping methods, costs, and timelines" class="shop-setting-input"></textarea>
         <div class="field-tip important">Be clear about shipping costs and who pays for them. This prevents confusion and disputes later.</div>
       </div>
 
       <div class="shop-input-section">
         <label for="return-policy">Return/Exchange Policy</label>
-        <textarea maxlength="1000" id="return-policy" rows="4" placeholder="Describe your return and exchange policies"></textarea>
+        <textarea maxlength="1000" id="return-policy" rows="4" placeholder="Describe your return and exchange policies" class="shop-setting-input"></textarea>
         <div class="field-tip important">A clear return policy builds customer trust. Consider what works for your type of products (especially custom items).</div>
       </div>
 
