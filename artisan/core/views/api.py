@@ -792,13 +792,15 @@ def get_hero_image_by_slug(request, slug):
 @require_GET
 def get_hero_image_by_session(request):
     artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
-    hero = get_object_or_404(HeroImage, artisan=artisan)
+    hero, created = HeroImage.objects.get_or_create(artisan=artisan)
 
-    if not hero.image or not os.path.exists(hero.image.path):
-        return JsonResponse({'message': "Found hero image", 'image_url': 'undefined'}, status=200)
+    message = 'Created hero image' if created else 'Found hero image'
+
+    # Check if logo has an image and if the image has a URL
+    if not hero.image or not hero.image.url:
+        return JsonResponse({'error': 'Image not found'})
     
-    else:
-        return JsonResponse({'message': "Found hero image", 'image_url': hero.image.url})
+    return JsonResponse({'message': message, 'image_url': hero.image.url}, status=200)
 
 @csrf_exempt
 def get_logo_image_by_slug(request, slug):
@@ -820,12 +822,15 @@ def get_logo_image_by_slug(request, slug):
 @require_GET
 def get_logo_image_by_session(request):
     artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
-    logo = get_object_or_404(LogoImage, artisan=artisan)
+    logo, created = LogoImage.objects.get_or_create(artisan=artisan)
 
-    if not logo.image:
+    message = 'Created logo image' if created else 'Found logo image'
+
+    # Check if logo has an image and if the image has a URL
+    if not logo.image or not logo.image.url:
         return JsonResponse({'error': 'Image not found'})
     
-    return JsonResponse({'message': 'Found logo image', 'image_url': logo.image.url}, status=200)
+    return JsonResponse({'message': message, 'image_url': logo.image.url}, status=200)
 
 @csrf_exempt
 def create_hero_image(request):
@@ -935,7 +940,9 @@ def get_theme_by_slug(request, slug):
 def get_theme_by_session(request):
     artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
 
-    theme = get_object_or_404(Theme, artisan=artisan)
+    
+    theme, created = Theme.objects.get_or_create(artisan=artisan)
+
     theme_data = {
         'text_color': theme.text_color,
         'background_color': theme.background_color,
@@ -943,7 +950,9 @@ def get_theme_by_session(request):
         'link_hover_color': theme.link_hover_color,
     }
 
-    return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
+    message = 'Created Theme' if created else 'found theme'
+
+    return JsonResponse({'message': message, 'theme': theme_data}, status=200)
 
 @csrf_exempt
 @require_http_methods(['PUT'])
@@ -1059,12 +1068,14 @@ def get_text_content_by_session(request):
 
     artisan = get_object_or_404(Artisan, id=artisan_id)
 
-    text_content = get_object_or_404(TextContent, artisan=artisan)
+    text_content, created = TextContent.objects.get_or_create(artisan=artisan)
+
+    message = 'created new text content' if created else 'found text content'
 
     # Convert model instance to dict so it can be JSON serialized
     text_content_data = model_to_dict(text_content)
 
-    return JsonResponse({'message': 'Found TextContent', 'text_content': text_content_data}, status=200)
+    return JsonResponse({'message': message, 'text_content': text_content_data}, status=200)
 
 @csrf_exempt
 @require_http_methods(['POST', 'OPTIONS'])
@@ -1095,11 +1106,12 @@ def get_shop_settings_by_session(request):
         return JsonResponse({'error': 'Not Authenticated'}, status=401)
     
     artisan = get_object_or_404(Artisan, id=artisan_id)
-    shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+    shop_settings, created = ShopSettings.objects.get_or_create(artisan=artisan)
 
     shop_settings_data = model_to_dict(shop_settings)
+    message = 'created new shop settings' if created else 'found shop settings'
 
-    return JsonResponse({'message': 'found shop settings', 'shop_settings': shop_settings_data})
+    return JsonResponse({'message': message, 'shop_settings': shop_settings_data})
 
 @csrf_exempt
 @require_POST

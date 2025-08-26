@@ -14,7 +14,7 @@ class Artisan(models.Model):
     price_range_low = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
     price_range_high = models.DecimalField(max_digits=10, decimal_places=2, default=100, blank=True)
     accepting_custom_orders = models.BooleanField(default=False)
-    image = models.ImageField(upload_to="images/", default='')
+    image = models.ImageField(upload_to="pfps/", default='')
 
     def save(self, *args, **kwargs):
         # Hash password if it's being set or changed

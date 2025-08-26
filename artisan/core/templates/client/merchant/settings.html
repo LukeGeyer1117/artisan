@@ -101,51 +101,71 @@
       </div>
 
       <!-- Account Settings Tab -->
-      <div id="account" class="tab-content">
+    <div id="account" class="tab-content">
         <h2>Account Settings</h2>
-
         <div class="account-settings-container">
-          <!-- Full Name section -->
-          <div class="account-section">
-            <h3>Full Name</h3>
-            <p class="account-value" id="merchant-name">Full Name</p>
-          </div>
-
-          <!-- Email & Phone Section (row on large screens, column on small screens) -->
-          <div class="account-section-row">
-            <!-- Email Section -->
-            <div class="account-section">
-              <h3>Primary Email Address</h3>
-              <p class="account-value" id="merchant-email">merchant@example.com</p>
-              <span class="action-link" onclick="window.location.href='/update-email/'">change email address</span>
+            
+            <!-- Profile Picture Section -->
+            <div class="profile-picture-section">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar" id="profile-avatar">
+                        <!-- Profile image will be loaded here, fallback shows initials -->
+                        <span id="profile-initials">FN</span>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h3 id="profile-display-name">Full Name</h3>
+                    <p class="profile-subtitle">Merchant Account</p>
+                    <div class="profile-actions">
+                        <button class="profile-action-btn" onclick="uploadProfilePicture()">
+                            Upload Photo
+                        </button>
+                        <button class="profile-action-btn" onclick="removeProfilePicture()">
+                            Remove Photo
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Phone Section -->
+            <!-- Full Name section -->
             <div class="account-section">
-              <h3>Phone Number</h3>
-              <p class="account-value" id="merchant-phone">(555) 123-4567</p>
-              <span class="action-link" onclick="window.location.href='/update-phone/'">change phone number</span>
+                <h3>Full Name</h3>
+                <p class="account-value" id="merchant-name">Full Name</p>
             </div>
-          </div>
-
-          <!-- Username & Password Section (row on large screens, column on small screens) -->
-          <div class="account-section-row">
-            <!-- Username Section -->
-            <div class="account-section">
-              <h3>Username</h3>
-              <p class="account-value" id="merchant-username">merchant_user</p>
+            
+            <!-- Email & Phone Section (row on large screens, column on small screens) -->
+            <div class="account-section-row">
+                <!-- Email Section -->
+                <div class="account-section">
+                    <h3>Primary Email Address</h3>
+                    <p class="account-value" id="merchant-email">merchant@example.com</p>
+                    <span class="action-link" onclick="window.location.href='/update-email/'">change email address</span>
+                </div>
+                <!-- Phone Section -->
+                <div class="account-section">
+                    <h3>Phone Number</h3>
+                    <p class="account-value" id="merchant-phone">(555) 123-4567</p>
+                    <span class="action-link" onclick="window.location.href='/update-phone/'">change phone number</span>
+                </div>
             </div>
-
-            <!-- Password Section -->
-            <div class="account-section">
-              <h3>Password</h3>
-              <p class="account-value" id="merchant-password">********</p>
-              <span class="action-link" onclick="window.location.href='/reset-password/'">reset password</span>
+            
+            <!-- Username & Password Section (row on large screens, column on small screens) -->
+            <div class="account-section-row">
+                <!-- Username Section -->
+                <div class="account-section">
+                    <h3>Username</h3>
+                    <p class="account-value" id="merchant-username">merchant_user</p>
+                </div>
+                <!-- Password Section -->
+                <div class="account-section">
+                    <h3>Password</h3>
+                    <p class="account-value" id="merchant-password">********</p>
+                    <span class="action-link" onclick="window.location.href='/reset-password/'">reset password</span>
+                </div>
             </div>
-          </div>
-
         </div>
-      </div>
+        <button class="save-button" id="submit-account-change" style="margin-top: 1rem;">Submit Changes</button>
+    </div>
 
 
       <!-- Text Content Tab -->
@@ -298,6 +318,45 @@
           localStorage.setItem("merchantSettingsTab", btn.dataset.tab);
         });
       });
+    });
+
+    // Profile picture functionality
+    function uploadProfilePicture() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatar = document.getElementById('profile-avatar');
+                    avatar.innerHTML = `<img src="${e.target.result}" alt="Profile Picture">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    }
+
+    function removeProfilePicture() {
+        const avatar = document.getElementById('profile-avatar');
+        const initials = document.getElementById('profile-initials');
+        avatar.innerHTML = `<span id="profile-initials">${initials.textContent}</span>`;
+    }
+
+    // Initialize profile with user data
+    function updateProfile(userData) {
+        if (userData.name) {
+            const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('profile-initials').textContent = initials;
+            document.getElementById('profile-display-name').textContent = userData.name;
+        }
+    }
+
+    // Example usage - you would call this with actual user data
+    updateProfile({
+        name: "Full Name"
     });
   </script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>

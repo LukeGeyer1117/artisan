@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .checkout-header {
+            background: #6772e5;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .checkout-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .checkout-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .checkout-form {
+            padding: 32px 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #32325d;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e6ebf1;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        input.placeholder-style {
+            color: #8898aa;
+            font-style: italic;
+        }
+
+        input.placeholder-style:focus {
+            color: #32325d;
+            font-style: normal;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6772e5;
+            box-shadow: 0 0 0 2px rgba(103, 114, 229, 0.1);
+        }
+
+        input.error {
+            border-color: #e25950;
+            box-shadow: 0 0 0 2px rgba(226, 89, 80, 0.1);
+        }
+
+        .card-input-container {
+            position: relative;
+        }
+
+        .card-icons {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 4px;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 16px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.6;
+        }
+
+        .card-icon.visa {
+            background-image: url("https://cdn-icons-png.flaticon.com/128/179/179457.png");
+        }
+
+        .card-icon.mastercard {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Ccircle cx='9' cy='8' r='6' fill='%23EB001B'/%3E%3Ccircle cx='15' cy='8' r='6' fill='%23F79E1B'/%3E%3Cpath fill='%23FF5F00' d='M12 4c1.3 1.2 2 2.9 2 4s-.7 2.8-2 4c-1.3-1.2-2-2.9-2-4s.7-2.8 2-4z'/%3E%3C/svg%3E");
+        }
+
+        .error-message {
+            color: #e25950;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .amount-input-container {
+            background: #f8f9fa;
+            border: 1px solid #e6ebf1;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .amount-input-container label {
+            color: #6772e5;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        #amount {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #6772e5;
+            color: #6772e5;
+        }
+
+        .amount-display {
+            background: #f8f9fa;
+            border: 1px solid #e6ebf1;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .amount-row:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+            font-size: 16px;
+            padding-top: 8px;
+            border-top: 1px solid #e6ebf1;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #6772e5;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #5469d4;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        .submit-btn.loading .btn-spinner {
+            display: inline-block;
+        }
+
+        .submit-btn.loading .btn-text {
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .powered-by {
+            text-align: center;
+            padding: 16px;
+            border-top: 1px solid #e6ebf1;
+            color: #8898aa;
+            font-size: 12px;
+        }
+
+        .success-message {
+            display: none;
+            background: #00d924;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .error-banner {
+            display: none;
+            background: #e25950;
+            color: white;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .error-banner.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .checkout-form {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1>Complete Your Order</h1>
+            <p>Secure checkout powered by ExpitTrans</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            Payment successful! Thank you for your purchase.
+        </div>
+
+        <div class="error-banner" id="errorBanner">
+            <span id="errorText"></span>
+        </div>
+
+        <form class="checkout-form" id="checkoutForm">
+<div class="amount-display">
+    <div class="amount-row">
+        <span>Subtotal:</span>
+        <span id="subtotal" data-amount="0.01">$0.01</span>
+    </div>
+    <div class="amount-row">
+        <span>Tax:</span>
+        <span id="tax">$0.00</span>
+    </div>
+    <div class="amount-row">
+        <span>Total:</span>
+        <span id="total">$0.01</span>
+    </div>
+</div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="john@example.com" class="placeholder-style" required>
+                <div class="error-message" id="emailError">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <div class="card-input-container">
+                    <input type="text" id="cardNumber" name="cardNumber" placeholder="4111 1111 1111 1111" value="4111 1111 1111 1111" class="placeholder-style" maxlength="19" required>
+                    <div class="card-icons">
+                        <div class="card-icon visa"></div>
+                        <div class="card-icon mastercard"></div>
+                    </div>
+                </div>
+                <div class="error-message" id="cardError">Please enter a valid card number</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="expiry">Expiry Date</label>
+                    <input type="text" id="expiry" name="expiry" placeholder="MM/YY" value="12/26" class="placeholder-style" maxlength="5" required>
+                    <div class="error-message" id="expiryError">Please enter a valid expiry date</div>
+                </div>
+                <div class="form-group">
+                    <label for="cvc">CVC</label>
+                    <input type="text" id="cvc" name="cvc" placeholder="123" value="123" class="placeholder-style" maxlength="4" required>
+                    <div class="error-message" id="cvcError">Please enter a valid CVC</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" value="John" class="placeholder-style" required>
+                    <div class="error-message" id="firstNameError">Please enter your first name</div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" value="Doe" class="placeholder-style" required>
+                    <div class="error-message" id="lastNameError">Please enter your last name</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" value="123 Main St" class="placeholder-style" required>
+                <div class="error-message" id="addressError">Please enter your address</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" value="Townsville" class="placeholder-style" required>
+                    <div class="error-message" id="cityError">Please enter your city</div>
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" value="UT" class="placeholder-style" maxlength="2" required>
+                    <div class="error-message" id="stateError">Please enter your state</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="zip">ZIP Code</label>
+                    <input type="text" id="zip" name="zip" value="84000" class="placeholder-style" maxlength="10" required>
+                    <div class="error-message" id="zipError">Please enter your ZIP code</div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" value="8015551234" class="placeholder-style" required>
+                    <div class="error-message" id="phoneError">Please enter your phone number</div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <div class="btn-spinner"></div>
+                <span class="btn-text">Complete Payment - <span id="buttonAmount">$0.01</span></span>
+            </button>
+        </form>
+
+        <div class="powered-by">
+            Secured by ExpitTrans • 256-bit SSL encryption
+        </div>
+    </div>
+
+    <script>
+        // Format currency input
+        function formatCurrency(input) {
+            let value = input.value.replace(/[^\d.]/g, '');
+
+            // Handle multiple decimal points
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Limit to 2 decimal places
+            if (parts[1] && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+
+            // Add dollar sign
+            if (value) {
+                input.value = '$' + value;
+            } else {
+                input.value = '';
+            }
+        }
+
+// Get amount from data attribute and update all displays
+function syncAmounts() {
+    const subtotalElement = document.getElementById('subtotal');
+    const amount = subtotalElement.getAttribute('data-amount');
+    const formattedAmount = '$' + parseFloat(amount).toFixed(2);
+
+    // Update all amount displays
+    document.getElementById('subtotal').textContent = formattedAmount;
+    document.getElementById('total').textContent = formattedAmount;
+    document.getElementById('buttonAmount').textContent = formattedAmount;
+}
+
+// Initialize on page load
+syncAmounts();
+
+        // Amount input formatting and updating
+        document.getElementById('amount').addEventListener('input', function(e) {
+            formatCurrency(e.target);
+            updateAllAmounts();
+        });
+
+        // Initialize amounts on page load
+        updateAllAmounts();
+
+        // Remove placeholder styling when user focuses/types
+        function removePlaceholderStyle(element) {
+            element.classList.remove('placeholder-style');
+        }
+
+        // Add placeholder styling back if field is empty on blur
+        function addPlaceholderStyleIfEmpty(element, defaultValue) {
+            if (element.value === '' || element.value === defaultValue) {
+                element.classList.add('placeholder-style');
+            }
+        }
+
+        // Setup placeholder behavior for all fields (except amount)
+        const fieldsWithDefaults = [
+            { id: 'email', default: 'john@example.com' },
+            { id: 'cardNumber', default: '4111 1111 1111 1111' },
+            { id: 'expiry', default: '12/26' },
+            { id: 'cvc', default: '123' },
+            { id: 'firstName', default: 'John' },
+            { id: 'lastName', default: 'Doe' },
+            { id: 'address', default: '123 Main St' },
+            { id: 'city', default: 'Townsville' },
+            { id: 'state', default: 'UT' },
+            { id: 'zip', default: '84000' },
+            { id: 'phone', default: '8015551234' }
+        ];
+
+        fieldsWithDefaults.forEach(field => {
+            const element = document.getElementById(field.id);
+
+            element.addEventListener('focus', () => removePlaceholderStyle(element));
+            element.addEventListener('input', () => removePlaceholderStyle(element));
+            element.addEventListener('blur', () => addPlaceholderStyleIfEmpty(element, field.default));
+        });
+
+        // Card number formatting
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Expiry date formatting
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // CVC formatting
+        document.getElementById('cvc').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Phone formatting
+        document.getElementById('phone').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // ZIP formatting
+        document.getElementById('zip').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // State formatting
+        document.getElementById('state').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+        });
+
+        // Form validation
+        function validateField(fieldId, validationFn, errorId) {
+            const field = document.getElementById(fieldId);
+            const errorEl = document.getElementById(errorId);
+
+            if (!validationFn(field.value)) {
+                field.classList.add('error');
+                errorEl.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                errorEl.classList.remove('show');
+                return true;
+            }
+        }
+
+        function validateAmount(amount) {
+            const rawValue = amount.replace(/[^\d.]/g, '');
+            const numericValue = parseFloat(rawValue);
+            return !isNaN(numericValue) && numericValue > 0;
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validateCardNumber(number) {
+            const cleanNumber = number.replace(/\s/g, '');
+            return cleanNumber.length >= 13 && cleanNumber.length <= 19 && /^\d+$/.test(cleanNumber);
+        }
+
+        function validateExpiry(expiry) {
+            const parts = expiry.split('/');
+            if (parts.length !== 2) return false;
+            const month = parseInt(parts[0]);
+            const year = parseInt('20' + parts[1]);
+            const now = new Date();
+            const expDate = new Date(year, month - 1);
+            return month >= 1 && month <= 12 && expDate > now;
+        }
+
+        function validateCVC(cvc) {
+            return cvc.length >= 3 && cvc.length <= 4 && /^\d+$/.test(cvc);
+        }
+
+        function validateRequired(value) {
+            return value.trim().length > 0;
+        }
+
+        function validatePhone(phone) {
+            return phone.replace(/\D/g, '').length >= 10;
+        }
+
+        function validateZip(zip) {
+            return zip.replace(/\D/g, '').length >= 5;
+        }
+
+        // Form submission
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Hide previous messages
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('errorBanner').classList.remove('show');
+
+            // Validate all fields
+            const validations = [
+                validateField('amount', validateAmount, 'amountError'),
+                validateField('email', validateEmail, 'emailError'),
+                validateField('cardNumber', validateCardNumber, 'cardError'),
+                validateField('expiry', validateExpiry, 'expiryError'),
+                validateField('cvc', validateCVC, 'cvcError'),
+                validateField('firstName', validateRequired, 'firstNameError'),
+                validateField('lastName', validateRequired, 'lastNameError'),
+                validateField('address', validateRequired, 'addressError'),
+                validateField('city', validateRequired, 'cityError'),
+                validateField('state', validateRequired, 'stateError'),
+                validateField('zip', validateZip, 'zipError'),
+                validateField('phone', validatePhone, 'phoneError')
+            ];
+
+            if (!validations.every(v => v)) {
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            // Get amount from input
+            const rawAmount = document.getElementById('amount').value.replace(/[^\d.]/g, '');
+
+            // Collect form data
+            const formData = new FormData();
+            formData.append('email', document.getElementById('email').value);
+            formData.append('cardNumber', document.getElementById('cardNumber').value.replace(/\s/g, ''));
+            formData.append('expiry', document.getElementById('expiry').value);
+            formData.append('cvc', document.getElementById('cvc').value);
+            formData.append('firstName', document.getElementById('firstName').value);
+            formData.append('lastName', document.getElementById('lastName').value);
+            formData.append('address', document.getElementById('address').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('state', document.getElementById('state').value);
+            formData.append('zip', document.getElementById('zip').value);
+            formData.append('phone', document.getElementById('phone').value.replace(/\D/g, ''));
+            formData.append('amount', rawAmount);
+
+            try {
+                const response = await fetch('process_payment.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('successMessage').classList.add('show');
+                    document.getElementById('checkoutForm').style.display = 'none';
+                } else {
+                    document.getElementById('errorText').textContent = result.error || 'Payment failed. Please try again.';
+                    document.getElementById('errorBanner').classList.add('show');
+                }
+            } catch (error) {
+                document.getElementById('errorText').textContent = 'Network error. Please check your connection and try again.';
+                document.getElementById('errorBanner').classList.add('show');
+            } finally {
+                // Hide loading state
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Real-time validation on input
+        const fields = ['amount', 'email', 'cardNumber', 'expiry', 'cvc', 'firstName', 'lastName', 'address', 'city', 'state', 'zip', 'phone'];
+        fields.forEach(fieldId => {
+            document.getElementById(fieldId).addEventListener('blur', function() {
+                switch(fieldId) {
+                    case 'amount':
+                        validateField(fieldId, validateAmount, fieldId + 'Error');
+                        break;
+                    case 'email':
+                        validateField(fieldId, validateEmail, fieldId + 'Error');
+                        break;
+                    case 'cardNumber':
+                        validateField(fieldId, validateCardNumber, 'cardError');
+                        break;
+                    case 'expiry':
+                        validateField(fieldId, validateExpiry, fieldId + 'Error');
+                        break;
+                    case 'cvc':
+                        validateField(fieldId, validateCVC, fieldId + 'Error');
+                        break;
+                    case 'phone':
+                        validateField(fieldId, validatePhone, fieldId + 'Error');
+                        break;
+                    case 'zip':
+                        validateField(fieldId, validateZip, fieldId + 'Error');
+                        break;
+                    default:
+                        validateField(fieldId, validateRequired, fieldId + 'Error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
