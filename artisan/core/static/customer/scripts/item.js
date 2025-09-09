@@ -19,10 +19,19 @@ document.addEventListener('DOMContentLoaded', async function () {
     return response.json();
   })
   .then(data => {
+    console.log(data.product);
     const product = data.product;
     productInfo = product;
     document.querySelector('.product-title').innerHTML = product.name;
-    document.querySelector('.product-category').innerHTML = product.category || 'Product';
+    document.querySelector('.product-category').innerHTML = "Category: " + (product.category_id || 'Product');
+    if (parseInt(product.quantity) > 0) {
+      document.querySelector('.product-stock').innerHTML = product.quantity + " In Stock"
+      document.querySelector('.product-stock').style.color = "#57ba6d";
+    } else {
+      document.querySelector('.product-stock').innerHTML = "Sold Out";
+      document.querySelector('.product-stock').style.color = "#ff7a7a";
+    }
+
     document.querySelector('.product-price').innerHTML = `$${product.price}`;
     document.querySelector('.product-description-body').innerHTML = product.description;
 

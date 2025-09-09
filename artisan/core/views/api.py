@@ -21,46 +21,146 @@ def session(request):
     request.session.flush()  # Clears all session data
     return JsonResponse({'message': 'Session cleared'})
 
-# Create an artisan, and get an
+# Artisan
 @csrf_exempt
-@require_http_methods(['POST', 'GET'])
+@require_http_methods(['POST', 'GET', 'PATCH'])
 def artisan(request):
     # Create an Artisan
     if request.method == 'POST':
-        data = json.loads(request.body)
-        artisan = Artisan.objects.create(
-            full_name = data['name'],
-            email = data['email'],
-            username = data['username'],
-            phone_number = data['phone'],
-            password = data['password'],
-            shop_name = data['shop_name'],
-            slug = generate_unique_slug(data['shop_name']),
-            product_specialty = data.get('product_specialty', ''),
-            price_range_low = data.get('price_range_low', 0),
-            price_range_high = data.get('price_range_high', 0),
-            accepting_custom_orders = data.get('accepting_custom_orders', False),
-        )
-        # Create the inventory and theme for the artisan
-        Inventory.objects.create(artisan=artisan)
-        Theme.objects.create(artisan=artisan)
-        LogoImage.objects.create(artisan=artisan)
-        HeroImage.objects.create(artisan=artisan)
-        ShopSettings.objects.create(artisan=artisan)
-        return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
+        try:
+            data = json.loads(request.body)
+            artisan = Artisan.objects.create(
+                full_name=data.get('name', ''),
+                email=data['email'],
+                username=data['username'],
+                phone_number=data.get('phone', ''),
+                password=data['password'],
+                shop_name=data['shop_name'],
+                slug=generate_unique_slug(data['shop_name']),
+                product_specialty=data.get('product_specialty', ''),
+                price_range_low=data.get('price_range_low', 0),
+                price_range_high=data.get('price_range_high', 0),
+                accepting_custom_orders=data.get('accepting_custom_orders', False),
+            )
+            # Create the inventory and theme for the artisan
+            Inventory.objects.create(artisan=artisan)
+            Theme.objects.create(artisan=artisan)
+            LogoImage.objects.create(artisan=artisan)
+            HeroImage.objects.create(artisan=artisan)
+            ShopSettings.objects.create(artisan=artisan)
+            return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
+        except KeyError as e:
+            return JsonResponse({'error': f'Missing required field: {e}'}, status=400)
     
-    #Get and Artisan
+    # Get an Artisan
     elif request.method == 'GET':
-        artisan_id = request.session.get('artisan_id', '')
-        # Make sure there is an artisan logged in
-        if artisan_id == '':
+        artisan_id = request.session.get('artisan_id', None)
+        if not artisan_id:
             return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
         
         try:
             artisan = Artisan.objects.filter(id=artisan_id).values().first()
-            return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
+            if artisan:
+                return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
+            else:
+                return JsonResponse({'error': "No Artisan Found!"}, status=404)
         except Artisan.DoesNotExist:
             return JsonResponse({'error': "No Artisan Found!"}, status=404)
+
+    # Update an Artisan
+    elif request.method == 'PATCH':
+        artisan_id = request.session.get('artisan_id', None)
+        if not artisan_id:
+            return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
+
+        try:
+            artisan_to_update = Artisan.objects.get(id=artisan_id)
+            data = json.loads(request.body)
+            
+            # Update fields dynamically
+            for key, value in data.items():
+                if hasattr(artisan_to_update, key):
+                    setattr(artisan_to_update, key, value)
+                else:
+                    return JsonResponse({'error': f'Invalid field: {key}'}, status=400)
+
+            artisan_to_update.save()
+            return JsonResponse({'message': 'Artisan updated successfully', 'artisan': Artisan.objects.filter(id=artisan_id).values().first()})
+            
+        except Artisan.DoesNotExist:
+            return JsonResponse({'error': "Artisan not found."}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        
+@csrf_exempt
+@require_http_methods(['GET'])
+def artisan_by_slug(request, slug):
+    """
+    Public view for customers to get artisan information by slug.
+    Only returns safe, customer-facing data.
+    """
+    try:
+        artisan = Artisan.objects.get(slug=slug)
+        
+        # Only return customer-safe fields
+        artisan_data = {
+            'id': artisan.id,
+            'shop_name': artisan.shop_name,
+            'slug': artisan.slug,
+            'contact_email': artisan.contact_email,
+            'product_specialty': artisan.product_specialty,
+            'price_range_low': str(artisan.price_range_low),  # Convert Decimal to string for JSON
+            'price_range_high': str(artisan.price_range_high),  # Convert Decimal to string for JSON
+            'accepting_custom_orders': artisan.accepting_custom_orders,
+            'image_url': artisan.image.url if artisan.image else None,
+            'facebook_link': artisan.facebook_link,
+            'instagram_link': artisan.instagram_link,
+            'youtube_link': artisan.youtube_link,
+        }
+        
+        return JsonResponse({
+            'message': 'Artisan found',
+            'artisan': artisan_data
+        })
+        
+    except Artisan.DoesNotExist:
+        return JsonResponse({'error': 'Artisan not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': 'An error occurred'}, status=500)
+        
+@csrf_exempt
+@require_http_methods(['POST'])
+def artisan_upload_profile_image(request):
+    artisan_id = request.session.get('artisan_id', None)
+    if not artisan_id:
+        return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
+
+    try:
+        artisan_to_update = Artisan.objects.get(id=artisan_id)
+        
+        # Check if an image file was included in the request
+        if 'image' not in request.FILES:
+            return JsonResponse({'error': 'No image file found in the request.'}, status=400)
+
+        new_image = request.FILES['image']
+        
+        # Optionally, delete the old image file if it exists
+        if artisan_to_update.image and os.path.exists(artisan_to_update.image.path):
+            os.remove(artisan_to_update.image.path)
+
+        # Update the image field with the new file
+        artisan_to_update.image = new_image
+        artisan_to_update.save()
+        
+        return JsonResponse({
+            'message': 'Profile image uploaded successfully',
+            'image_url': artisan_to_update.image.url
+        })
+
+    except Artisan.DoesNotExist:
+        return JsonResponse({'error': "Artisan not found."}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # Create an Inventory
 @csrf_exempt
@@ -1054,7 +1154,10 @@ def get_text_content_by_slug(request, slug):
 
     text_content_data = {
         'hero_sentence_draw': text_content.hero_sentence_draw,
-        'hero_header_draw': text_content.hero_header_draw
+        'hero_header_draw': text_content.hero_header_draw,
+        'gallery_subtext': text_content.gallery_subtext,
+        'custom_order_prompt': text_content.custom_order_prompt,
+        'project_description_placeholder': text_content.project_description_placeholder
     }
 
     return JsonResponse({'message': 'Found Text Content', 'text_content': text_content_data})
@@ -1090,9 +1193,15 @@ def update_text_content(request):
     data = json.loads(request.body)
     new_sentence = data['sentence']
     new_header = data['header']
+    new_gallery_subtext = data['gallery_subtext']
+    new_custom_order_prompt = data['custom_order_prompt']
+    new_project_description_placeholder = data['project_description_placeholder']
 
     text_content.hero_sentence_draw = new_sentence[:50]
     text_content.hero_header_draw = new_header[:25]
+    text_content.gallery_subtext = new_gallery_subtext
+    text_content.custom_order_prompt = new_custom_order_prompt
+    text_content.project_description_placeholder = new_project_description_placeholder
 
     text_content.save()
 

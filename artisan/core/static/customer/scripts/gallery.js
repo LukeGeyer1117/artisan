@@ -1,9 +1,21 @@
 
 // Toggle nav on small screens
 document.addEventListener("DOMContentLoaded", async function () {
-  // Get the current artisan's gallery images
   const slug = document.body.dataset.slug;
+  // Get the text content for the page for this merchant
+  fetch(`${API_BASE_URL}/text/${slug}/`, {
+    method: 'GET'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get text content");
+    return response.json();
+  })
+  .then(data => {
+    const text_content = data.text_content;
+    document.querySelector('.section-description').innerHTML = text_content.gallery_subtext;
+  })
 
+  // Get the current artisan's gallery images
   await fetch(`${API_BASE_URL}/gallery/${slug}/`, {
     method: 'GET'
   })

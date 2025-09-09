@@ -4,9 +4,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   let changed = false;
 
   const text_content = await get_text_content();
+  console.log(text_content);
   const sentence = document.getElementById('hero-sentence-draw');
   const header = document.getElementById('hero-header-draw');
-  fill_text_fields(text_content, sentence, header);
+  const gallery_subtext = document.getElementById('gallery-subtext');
+  const custom_order_prompt = document.getElementById('custom-order-prompt');
+  const project_description_placeholder = document.getElementById('project-description-placeholder');
+  fill_text_fields(text_content, sentence, header, gallery_subtext, custom_order_prompt, project_description_placeholder);
 
   // Listen for text to be input
   sentence.addEventListener('change', function () {
@@ -15,11 +19,20 @@ document.addEventListener('DOMContentLoaded', async function () {
   header.addEventListener('change', function () {
     changed = true;
   });
+  gallery_subtext.addEventListener('change', function () {
+    changed = true;
+  });
+  custom_order_prompt.addEventListener('change', function () {
+    changed = true;
+  });
+  project_description_placeholder.addEventListener('change', function () {
+    changed = true;
+  });
 
   const submit = document.getElementById('submit-text-change');
   submit.addEventListener('click', function () {
     if (changed) {
-      update_text_content(sentence, header);
+      update_text_content(sentence, header, gallery_subtext, custom_order_prompt, project_description_placeholder);
     }
   })
 });
@@ -38,7 +51,7 @@ async function get_text_content() {
   })
 }
 
-async function update_text_content(sentence, header) {
+async function update_text_content(sentence, header, gallery_subtext, custom_order_prompt, project_description_placeholder) {
   try {
     const response = await fetch(`${API_BASE_URL}/edit/text/`, {
       method: 'POST',
@@ -48,7 +61,10 @@ async function update_text_content(sentence, header) {
       },
       body: JSON.stringify({
         header: header.value,
-        sentence: sentence.value
+        sentence: sentence.value, 
+        gallery_subtext: gallery_subtext.value,
+        custom_order_prompt: custom_order_prompt.value,
+        project_description_placeholder: project_description_placeholder.value
       })
     });
 
@@ -69,7 +85,10 @@ async function update_text_content(sentence, header) {
   }
 }
 
-function fill_text_fields(text_content, sentence, header) {
+function fill_text_fields(text_content, sentence, header, gallery_subtext, custom_order_prompt, project_description_placeholder) {
   sentence.value = text_content.hero_sentence_draw;
   header.value = text_content.hero_header_draw;
+  gallery_subtext.value = text_content.gallery_subtext;
+  custom_order_prompt.value = text_content.custom_order_prompt;
+  project_description_placeholder.value = text_content.project_description_placeholder;
 }

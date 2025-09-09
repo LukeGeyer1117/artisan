@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 
-class Artisan(models.Model):
-    full_name = models.CharField(max_length=100, blank=True)  # New field
-    phone_number = models.CharField(max_length=20, blank=True)  # New field
+from django.db import models
+from django.contrib.auth.hashers import make_password
 
+class Artisan(models.Model):
+    full_name = models.CharField(max_length=100, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
     email = models.CharField(max_length=100)
+    contact_email = models.CharField(max_length=100, blank=True, null=True, default="")
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=128)
     shop_name = models.CharField(max_length=100)
@@ -15,6 +18,11 @@ class Artisan(models.Model):
     price_range_high = models.DecimalField(max_digits=10, decimal_places=2, default=100, blank=True)
     accepting_custom_orders = models.BooleanField(default=False)
     image = models.ImageField(upload_to="pfps/", default='')
+    
+    # New social media fields
+    facebook_link = models.URLField(max_length=200, blank=True, null=True)
+    instagram_link = models.URLField(max_length=200, blank=True, null=True)
+    youtube_link = models.URLField(max_length=200, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         # Hash password if it's being set or changed
@@ -188,8 +196,14 @@ class TextContent(models.Model):
     hero_sentence_draw = models.CharField(max_length=50)
     hero_header_draw = models.CharField(max_length=25)
 
+    # New Fields
+    gallery_subtext = models.CharField(max_length=100, blank=True)
+    custom_order_prompt = models.TextField(blank=True)
+    project_description_placeholder = models.CharField(max_length=150, blank=True)
+
     def __str__(self):
         return f'{self.artisan.slug} - text content'
+
     
 class ShopSettings(models.Model):
     artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
