@@ -129,7 +129,7 @@ def artisan_by_slug(request, slug):
         return JsonResponse({'error': 'An error occurred'}, status=500)
         
 @csrf_exempt
-@require_http_methods(['POST'])
+@require_POST
 def artisan_upload_profile_image(request):
     artisan_id = request.session.get('artisan_id', None)
     if not artisan_id:
@@ -143,6 +143,7 @@ def artisan_upload_profile_image(request):
             return JsonResponse({'error': 'No image file found in the request.'}, status=400)
 
         new_image = request.FILES['image']
+        print(f"New Image: {new_image}")
         
         # Optionally, delete the old image file if it exists
         if artisan_to_update.image and os.path.exists(artisan_to_update.image.path):
@@ -155,7 +156,7 @@ def artisan_upload_profile_image(request):
         return JsonResponse({
             'message': 'Profile image uploaded successfully',
             'image_url': artisan_to_update.image.url
-        })
+        }, status=200)
 
     except Artisan.DoesNotExist:
         return JsonResponse({'error': "Artisan not found."}, status=404)

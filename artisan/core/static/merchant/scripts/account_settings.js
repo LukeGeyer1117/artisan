@@ -67,7 +67,7 @@ function setup_event_listeners() {
     document.body.appendChild(fileInput);
 
     // Set up the "Upload Photo" button to trigger the hidden file input
-    const uploadButton = document.querySelector('.profile-action-btn[onclick="uploadProfilePicture()"]');
+    const uploadButton = document.getElementById('upload-pfp-btn');
     if (uploadButton) {
         uploadButton.addEventListener('click', () => {
             fileInput.click();
@@ -176,6 +176,7 @@ async function upload_profile_image(file) {
 
     const formData = new FormData();
     formData.append('image', file);
+    console.log(`FormData: ${formData}`);
 
     // Debug: Log FormData contents
     for (let [key, value] of formData.entries()) {
@@ -184,7 +185,7 @@ async function upload_profile_image(file) {
 
     try {
         console.log('Making request to:', `${API_BASE_URL}/artisan/upload_profile_image/`);
-        console.log('Request method: PATCH');
+        console.log('Request method: POST');
         console.log('Request credentials: include');
         
         const response = await fetch(`${API_BASE_URL}/artisan/upload_profile_image/`, {

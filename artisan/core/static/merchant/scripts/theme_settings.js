@@ -33,6 +33,75 @@ document.addEventListener('DOMContentLoaded', async function () {
         changed = true;
       })
     })
+
+    // Live preview updates for colors
+    const textColorInput = document.getElementById("textColor");
+    const backgroundColorInput = document.getElementById("backgroundColor");
+    const accentColorInput = document.getElementById("accentColor");
+    const linkHoverColorInput = document.getElementById("linkHoverColor");
+
+    const previewHeader = document.getElementById("previewHeader");
+    const previewText = document.getElementById("previewText");
+    const previewLink = document.getElementById("previewLink");
+
+    previewHeader.style.backgroundColor = theme.background_color;
+    previewText.style.color = theme.text_color;
+    previewLink.style.color = theme.text_color;
+    previewLink.addEventListener('mouseover', () => {
+      previewLink.style.color = theme.link_hover_color;
+    })
+    previewLink.addEventListener('mouseout', () => {
+      previewLink.style.color = theme.text_color;
+    })
+
+    textColorInput.addEventListener("input", () => {
+      previewText.style.color = textColorInput.value;
+      previewLink.style.color = textColorInput.value;
+    });
+
+    backgroundColorInput.addEventListener("input", () => {
+      previewHeader.style.backgroundColor = backgroundColorInput.value;
+    });
+
+    linkHoverColorInput.addEventListener("input", () => {
+      previewLink.addEventListener("mouseover", () => {
+        previewLink.style.color = linkHoverColorInput.value;
+      });
+      previewLink.addEventListener("mouseout", () => {
+        previewLink.style.color = textColorInput.value;
+      });
+    });
+
+    // Live preview for logo upload
+    const logoUploadInput = document.getElementById("logoUpload");
+    const previewLogo = document.getElementById("previewLogo");
+
+    logoUploadInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          previewLogo.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Live preview for hero upload
+    const heroUploadInput = document.getElementById("heroUpload");
+    const previewHeroImage = document.getElementById("previewHeroImage");
+
+    heroUploadInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          previewHeroImage.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
   })
 
   // Get the Logo Image for this merchant
@@ -48,6 +117,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const logo_url = data.image_url;
     const logo_img = document.getElementById('currentLogoImage');
     logo_img.src = logo_url;
+    document.querySelector('.preview-header img').src = logo_url;
 
     const logoUpload = document.getElementById('logoUpload');
     logoUpload.addEventListener('change', function () {
@@ -73,6 +143,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const hero_url = data.image_url;
     const hero_img = document.getElementById('currentHeroImage');
     hero_img.src = hero_url;
+    document.querySelector('.preview-hero img').src = hero_url;
 
     const heroUpload = document.getElementById('heroUpload');
     heroUpload.addEventListener('change', function () {

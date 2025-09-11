@@ -56,6 +56,25 @@
 
       <!-- Design Tab -->
       <div id="design" class="tab-content active">
+
+        <!-- Live Preview Section -->
+        <section class="theme-preview">
+          <h2>Live Preview</h2>
+          <div class="preview-container">
+            <div class="preview-header" id="previewHeader">
+              <img src="" alt="Logo Preview" id="previewLogo" class="preview-logo">
+            </div>
+            <div class="preview-hero" id="previewHero">
+              <img src="" alt="Hero Preview" id="previewHeroImage" class="preview-hero-image">
+            </div>
+            <div class="preview-content">
+              <p id="previewText">This is some sample text to show text color and accent color.</p>
+              <a href="#" id="previewLink">This is a link</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Theme Color Settings -->
         <section class="color-settings">
           <h2>Theme Settings</h2>
           <div class="color-controls">
@@ -79,6 +98,7 @@
           </div>
         </section>
 
+        <!-- Logo Upload -->
         <section class="logo-upload">
           <h2>Logo Image</h2>
           <img src="" alt="" class="settings-image" id="currentLogoImage">
@@ -88,6 +108,7 @@
           </div>
         </section>
 
+        <!-- Hero Upload -->
         <section class="hero-upload">
           <h2>Hero Image</h2>
           <img src="" alt="" class="settings-image" id="currentHeroImage">
@@ -100,6 +121,7 @@
         <button type="button" class="save-button" id="save-theme-images-btn">Save Settings</button>
       </div>
 
+      <!-- Account Tab -->
       <div id="account" class="tab-content">
       <h2>Account Settings</h2>
       <div class="account-settings-container">
@@ -114,10 +136,10 @@
                   <h3 id="profile-display-name">Full Name</h3>
                   <p class="profile-subtitle">Merchant Account</p>
                   <div class="profile-actions">
-                      <button class="profile-action-btn" onclick="uploadProfilePicture()">
+                      <button class="profile-action-btn" id="upload-pfp-btn">
                           Upload Photo
                       </button>
-                      <button class="profile-action-btn" onclick="removeProfilePicture()">
+                      <button class="profile-action-btn" id="remove-pfp-btn">
                           Remove Photo
                       </button>
                   </div>
@@ -125,32 +147,29 @@
           </div>
 
           <div class="account-section">
-              <h3>Full Name</h3>
-              <p class="account-value" id="merchant-name">Full Name</p>
+            <h3>Full Name</h3>
+            <p class="account-value" id="merchant-name">Full Name</p>
           </div>
-          
+            
           <div class="account-section-row">
-              <div class="account-section">
-                  <h3>Primary Email Address</h3>
-                  <p class="account-value" id="merchant-email">merchant@example.com</p>
-                  <span class="action-link" onclick="window.location.href='/update-email/'">change email address</span>
-              </div>
-              <div class="account-section">
+            <div class="account-section">
+                <h3>Primary Email Address</h3>
+                <input type="email" class="account-input" id="merchant-email" value="merchant@example.com">
+            </div>
+            <div class="account-section">
                 <h3>Contact Email Address</h3>
-                <p class="account-value" id="merchant-contact-email">merchant@example.com</p>
-                <span class="action-link" onclick="window.location.href='/update-contact-email/'">change contact email address</span>
-              </div>
-              <div class="account-section">
-                  <h3>Phone Number</h3>
-                  <p class="account-value" id="merchant-phone">(555) 123-4567</p>
-                  <span class="action-link" onclick="window.location.href='/update-phone/'">change phone number</span>
-              </div>
+                <input type="email" class="account-input" id="merchant-contact-email" value="merchant@example.com">
+            </div>
+            <div class="account-section">
+                <h3>Phone Number</h3>
+                <input type="tel" class="account-input" id="merchant-phone" value="(555) 123-4567">
+            </div>
           </div>
-          
+
           <div class="account-section-row">
               <div class="account-section">
                   <h3>Username</h3>
-                  <p class="account-value" id="merchant-username">merchant_user</p>
+                  <input type="text" class="account-input" id="merchant-username" value="merchant_user">
               </div>
               <div class="account-section">
                   <h3>Password</h3>
@@ -158,6 +177,7 @@
                   <span class="action-link" onclick="window.location.href='/reset-password/'">reset password</span>
               </div>
           </div>
+
 
           <div class="account-section">
               <h3>Social Media Links</h3>
