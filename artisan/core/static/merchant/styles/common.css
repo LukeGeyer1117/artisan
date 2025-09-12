@@ -198,14 +198,7 @@ body {
   width: 80%;
 }
 
-.dashboard-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: auto;
-  padding: 0 inherit;
-  /* margin: 2rem 2rem 1rem 2rem; */
-}
+
 
 .dashboard-card {
   background-color: white;
@@ -223,53 +216,6 @@ body {
 
 .dashboard-card:hover {
   transform: scale(1);
-}
-
-.search-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  background-color: white;
-  border-radius: 24px;
-  height: fit-content;
-}
-
-.search-container input {
-  border-radius: 24px;
-  border: none;
-  width: 0px;
-  padding: 0;
-  transition: all .2s ease-in-out;
-}
-
-
-.search-container input:focus {
-  border: none;
-}
-
-.search-container span {
-  padding: .25rem;
-  width: fit-content;
-  border-radius: 50%;
-  transition: all .15s ease-in-out;
-  user-select: none;
-}
-
-.search-container span:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 1px 2px black;
-}
-
-.search-container span:active {
-  transform: scale(.95);
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
-}
-
-.search-container span img {
-  width: 2rem;
-  height: 2rem;
 }
 
 .dashboard-card-modal {
@@ -828,15 +774,6 @@ table tbody tr td {
   overflow-y: scroll;
 }
 
-#inventory-main-section, #orders-main-section {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  padding-top: 0;
-  overflow-y: scroll;
-  width: 100%;
-  box-sizing: border-box;
-}
 
 #top-buttons-section {
   display: flex;
@@ -959,13 +896,6 @@ table tbody tr td {
   color: black;
   font-weight: bold;
   font-size: 10pt;
-}
-
-.side-modal p {
-  margin-top: 0;
-  margin-bottom: .2rem;
-  max-height: 100px;
-  overflow-y: scroll;
 }
 
 .side-modal img {
@@ -1115,6 +1045,7 @@ table tbody tr td {
 .order-product-details div h4 {
   margin: 0;
   font-size: 10pt;
+  width: 4rem;
 }
 
 .order-product-details div p {

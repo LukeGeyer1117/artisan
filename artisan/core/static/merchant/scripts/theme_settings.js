@@ -43,10 +43,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     const previewHeader = document.getElementById("previewHeader");
     const previewText = document.getElementById("previewText");
     const previewLink = document.getElementById("previewLink");
+    const previewAccentText = document.getElementById('inline-accent-color-text');
 
     previewHeader.style.backgroundColor = theme.background_color;
     previewText.style.color = theme.text_color;
     previewLink.style.color = theme.text_color;
+    previewAccentText.style.color = theme.accent_color;
+
     previewLink.addEventListener('mouseover', () => {
       previewLink.style.color = theme.link_hover_color;
     })
@@ -71,6 +74,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         previewLink.style.color = textColorInput.value;
       });
     });
+
+    accentColorInput.addEventListener('input', () => {
+      previewAccentText.style.color = accentColorInput.value;
+    })
 
     // Live preview for logo upload
     const logoUploadInput = document.getElementById("logoUpload");

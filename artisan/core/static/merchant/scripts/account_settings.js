@@ -11,13 +11,15 @@ async function setup_account_settings() {
         const merchant_information = await get_merchant_information();
 
         if (merchant_information) {
+            console.log(merchant_information);
             // Update all static fields with fetched data
             document.getElementById('profile-display-name').textContent = merchant_information.full_name;
             document.getElementById('merchant-name').textContent = merchant_information.full_name;
-            document.getElementById('merchant-email').textContent = merchant_information.email;
-            document.getElementById('merchant-contact-email').textContent = merchant_information.contact_email;
-            document.getElementById('merchant-username').textContent = merchant_information.username;
-            document.getElementById('merchant-phone').textContent = merchant_information.phone_number;
+            document.getElementById('merchant-email').value = merchant_information.email;
+            document.getElementById('merchant-contact-email').value = merchant_information.contact_email;
+            document.getElementById('merchant-username').value = merchant_information.username;
+            document.getElementById('merchant-phone').value = merchant_information.phone_number;
+            document.getElementById('merchant-contact-phone').value = merchant_information.contact_phone;
 
             // Update social media fields if they exist
             if (document.getElementById('facebook-link')) {
@@ -117,6 +119,17 @@ async function submit_account_changes() {
     // Image changes are handled by the separate upload/remove functions.
     const changes = {};
     const originalInfo = await get_merchant_information();
+
+    // Check for changes to account info
+    const newContactEmail = document.getElementById("merchant-contact-email").value;
+    if (newContactEmail !== (originalInfo.contact_email || '')) {
+        changes.contact_email = newContactEmail;
+    }
+
+    const newContactPhone = document.getElementById('merchant-contact-phone').value;
+    if (newContactEmail !== (originalInfo.contact_phone || '')) {
+        changes.contact_phone = newContactPhone;
+    }
 
     // Check for changes in social media links
     const newFacebookLink = document.getElementById('facebook-link').value;

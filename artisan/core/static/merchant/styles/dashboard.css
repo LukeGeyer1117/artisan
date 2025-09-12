@@ -1,287 +1,222 @@
-#reporting-redirect-modal {
-  color: white;
+/* =================================== */
+/* General & Base Styles */
+/* =================================== */
+
+:root {
+  --primary-font: 'Helvetica Neue', Arial, sans-serif;
+  --main-bg-color: #f4f7f9;
+  --container-bg-color: #ffffff;
+  --text-color-primary: #333333;
+  --text-color-secondary: #666666;
+  --border-color: #e0e0e0;
+  --accent-color: #6c63ff;
+  --accent-color-hover: #574cff;
+  --button-color: #6c63ff;
+  --button-hover-color: #574cff;
+  --save-button-bg: #4caf50;
+  --save-button-hover-bg: #45a049;
+  --error-color: #d9534f;
+  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 6px 10px rgba(0, 0, 0, 0.1);
 }
 
-#custom-redirect-modal {
-  background-color: white;
-  color: #4F46E5;
+body {
+  font-family: var(--primary-font);
+  background-color: var(--main-bg-color);
+  color: var(--text-color-primary);
+  line-height: 1.6;
 }
 
-.dashboard-card-modal:hover {
-  cursor: pointer;
+/* =================================== */
+/* Layout & Sections */
+/* =================================== */
+
+.dashboard-main {
+  display: flex;
+  min-height: 100vh;
+  gap: 1.5rem;
 }
 
-#quick-stats {
-  justify-content: flex-end;
-  align-items: center;
-}
-
-#quick-stats h1 {
-  margin: auto;
-  font-size: 24pt;
-}
-
-#sales-orders-card, #custom-orders-card {
+.dashboard-sections {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  width: 33%;
-  box-sizing: border-box;
-  min-height: 150px;
+  gap: 1.5rem;
 }
 
-#custom-orders-card {
+.dashboard-section {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-card {
+  background-color: var(--container-bg-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  color: white;
+  min-width: 300px;
 }
 
-#custom-orders-card p {
-  font-size: 18pt;
-  text-align: center;
-  margin: auto;
+/* Specific Section Layouts */
+#orders-section {
+  align-items: flex-start;
 }
 
-#custom-orders-card h1 {
-  font-size: 28pt;
-  text-align: center;
-  margin: 0;
-}
-
-#sales-and-orders-section {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  margin: auto;
-}
-
-#sales, #orders {
-  height: 100%;
-  margin: auto;
-  padding: auto;
-  display: flex; flex-direction: column; align-items: center;
-}
-#sales p, #orders p {font-size: 18pt; margin: 0;}
-#sales h1, #orders h1 {
-  color: #4F46E5;
-  margin: 0;
-  font-size: 36pt;
-}
-
-#time-frame-section {
-  display: flex;
-  flex-direction: row;
-  width: auto;
-  min-width: 100px;
-  margin: auto;
-}
-
-#time-frame-section h3 {
-  font-size: 12pt;
-  padding: .5rem .3rem;
-  margin: .3rem auto;
-  border-radius: 32px;
-  transition: all 0.15s ease-in-out;
-}
-
-#time-frame-section h3:hover {
-  background-color: #d0d0d1;
-  transform: scale(1.025);
-  cursor: pointer;
-}
-
-#time-frame-section h3.active {
-  color: #4F46E5;
-}
-
-@media (max-width: 900px) {
-  #sales-and-orders-section {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 1000px) {
-  #quick-stats {
-    flex-direction: column;
-  }
-
-  #sales-orders-card, #custom-orders-card {
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-
-#orders-card {
-  width: 100%;
-  box-sizing: border-box;
-  height: fit-content;
-  max-height: 400px;
-  overflow-y: scroll;
-}
-
-table {
-  width: 100%;
-  box-sizing: border-box;
-  border-collapse: collapse;
-  text-align: left;
-  border-radius: inherit;
-}
-
-table thead{
-  height: 3rem;
-}
-
-.dashboard-table-modal {
-  display: hidden;
-  transition: transform .15s ease-out, opacity 0.15s ease-in-out;
-  position: absolute;
-  font-size: 14pt;
-  top: 0;
-  right: 0;
-  transform:  translateX(100%);
-  width: fit-content;
-  padding: 1rem;
-  font-weight: bold;
-  color: white;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-.dashboard-card:hover .dashboard-table-modal {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-}
-
-.dashboard-table-modal:hover {
-  cursor: pointer;
-}
-
-table thead th {
-  color: rgb(73, 73, 73);
-  padding: 1rem;
-  font-weight: bold;
-  font-size: 12pt;
-  background-color: #eeeeee;
-}
-
-table tbody {
-  max-height: 200px;
-  overflow-y: scroll;
-}
-
-table tbody tr {
-  border-bottom: 2px solid #e5e5e7;
-  background: white;
-  transition: all 0.15s ease-in-out;
-}
-
-#orders-table tbody tr.active {
-  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
-  color: white;
-  transform: scale(1.025);
-}
-
-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-table tbody tr:last-child {
-  border-radius: 32px;
-}
-
-table tbody tr td {
-  padding: 1rem;
-  width: 25%;
+#orders-card,
+#inventory-card,
+#bottom-links-card {
+  min-height: 300px;
 }
 
 #chosen-order-card {
-  display: none;
+  background-color: var(--container-bg-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  min-width: 300px;
+  max-width: 400px;
+  display: none; /* Initially hidden, to be shown via JS */
   flex-direction: column;
   justify-content: space-between;
-  width: 50%;
-  height: fit-content;
-  max-height: 400px;
-  overflow-y: scroll;
+  border: 1px solid var(--border-color);
+}
+
+#chosen-order-card.active {
+  display: flex;
+}
+
+#embedded-inventory-table {
+  flex: 1;
+}
+
+/* =================================== */
+/* Typography & Theming */
+/* =================================== */
+
+h1 {
+  font-size: 2rem;
+  color: #1e1e1e;
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+  color: #444;
+}
+
+/* =================================== */
+/* Tables */
+/* =================================== */
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.records-table th {
+  text-align: left;
+  padding: 1rem 0.5rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.records-table td {
+  padding: 1rem 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.records-table tbody.scrollable {
+  max-height: 250px;
+  overflow-y: auto;
+  display: block;
+}
+
+.records-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.records-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.records-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =================================== */
+/* Order Details Card */
+/* =================================== */
+
+#close-chosen-order {
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: transform 0.2s ease-in-out;
 }
 
 #close-chosen-order:hover {
-  cursor: pointer;
+  transform: scale(1.1);
 }
 
-#order-details {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1rem 1rem 2rem;
-  color: white;
-}
-
-#order-details h3 {
-  width: fit-content;
-  margin: 0;
-}
-
-.item-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  margin: 1rem 0;
-  border-bottom: 2px solid #e5e5e7;
-}
-
-.item-row div {
-  width: 33%;
-  padding: auto;
+#order-items {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 #order-total {
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  box-sizing: border-box;
   justify-content: space-between;
-  padding: 2rem;
-  border-top: 2px solid #e5e5e7;
+  font-weight: bold;
+  padding-top: 1rem;
 }
 
-@media (max-width: 1200px) {
-  #orders-section {
+/* =================================== */
+/* Bottom Links Section */
+/* =================================== */
+
+#bottom-links-section {
+  margin-top: auto; /* Pushes to the bottom */
+}
+
+#bottom-links-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+#bottom-links-card .link {
+  text-decoration: none;
+  font-weight: bold;
+  transition: opacity 0.2s ease-in-out;
+}
+
+#bottom-links-card .link:hover {
+  opacity: 0.8;
+}
+
+/* =================================== */
+/* Responsive Design */
+/* =================================== */
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .dashboard-section {
     flex-direction: column;
   }
-
-  #orders-card {
-    width: 100%;
+  .dashboard-card {
+    min-width: auto;
   }
-  #chosen-order-card {
-    width: 100%;
-  }
-}
-
-#inventory-card {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 2rem;
-}
-
-#inventory-stats-section {
-  width: 25%;
-}
-
-#embedded-inventory-table {
-  width: 100%;
-  max-height: 350px;
-  overflow-y: scroll;
 }

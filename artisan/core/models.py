@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 class Artisan(models.Model):
     full_name = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
+    contact_phone = models.CharField(max_length=20, blank=True)
     email = models.CharField(max_length=100)
     contact_email = models.CharField(max_length=100, blank=True, null=True, default="")
     username = models.CharField(max_length=50)
