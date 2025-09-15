@@ -211,7 +211,7 @@ class ShopSettings(models.Model):
 
     # Shop settings
     shop_name = models.CharField(max_length=50, default="shop")
-    shop_description = models.CharField(max_length=250, default='')
+    shop_description = models.CharField(max_length=1000, default='')
     accepting_custom_orders = models.BooleanField(default=False)
     
     # Changed to IntegerField for whole numbers
@@ -249,6 +249,7 @@ class ShopSettings(models.Model):
     minimum_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     # Policy Settings
+    terms_and_conditions = models.CharField(max_length=1000, default='')
     shipping_policy = models.CharField(max_length=500, default='')
     return_policy = models.CharField(max_length=500, default='')
 

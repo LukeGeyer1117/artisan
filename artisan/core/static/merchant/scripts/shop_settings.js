@@ -48,6 +48,7 @@ async function save_shop_changes() {
   const shop_status = document.getElementById('shop-status').value;
   const status_message = document.getElementById('vacation-message').value;
   const minimum_order_amount = document.getElementById('minimum-order').value;
+  const terms_and_conditions = document.getElementById('terms-and-conditions').value;
   const shipping_policy = document.getElementById('shipping-policy').value;
   const return_policy = document.getElementById('return-policy').value;
 
@@ -63,6 +64,7 @@ async function save_shop_changes() {
     shopStatus: shop_status,
     statusMessage: status_message,
     minimumOrderAmount: minimum_order_amount,
+    termsAndConditions: terms_and_conditions,
     shippingPolicy: shipping_policy,
     returnPolicy: return_policy
   };
@@ -102,6 +104,7 @@ function populate_fields_initial(shop_settings) {
   document.getElementById('shop-status').value = shop_settings.shop_status;
   document.getElementById('vacation-message').value = shop_settings.status_message;
   document.getElementById('minimum-order').value = shop_settings.minimum_order_amount;
+  document.getElementById('terms-and-conditions').value = shop_settings.terms_and_conditions;
   document.getElementById('shipping-policy').value = shop_settings.shipping_policy;
   document.getElementById('return-policy').value = shop_settings.return_policy;
 }

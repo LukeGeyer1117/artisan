@@ -32,6 +32,7 @@ urlpatterns = [
     path('custom/<slug:slug>/', views.custom, name="custom"),
     path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
     path('item/<slug:slug>/<int:item_id>/', views.item),
+    path('about/<slug:slug>/', views.about, name='about'),
     path('api/logo/<slug:slug>/', views.get_logo_image_by_slug),
     path('api/logo/', views.get_logo_image_by_session),
     path('api/hero/<slug:slug>/', views.get_hero_image_by_slug),

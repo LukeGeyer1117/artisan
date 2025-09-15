@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About{% endblock %}
+
+{% block extra_head %}
+	<link rel="stylesheet" href="{% static 'customer/styles/about.css' %}">
+{% endblock %}
+
+{% block content %}
+	<!-- NAV -->
+	{% block nav %}
+		{% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %}
+	{% endblock %}
+	
+	<main>
+		<section class="about-section">
+			<h2>About the Merchant</h3>
+			<p id="about-merchant">This is test text to represent the about me section of the merchant
+				account. There is nothing substantial needing said here, this is just here to make seeing the 
+				merchant's page layout in all its beauty.
+			</p>
+		</section>
+		<section class="about-section">
+			<h3>Terms & Conditions</h3>
+			<p id="terms-and-conditions">This is test text to represent the merchant's terms/conditions of services. 
+				For example, a merchant could specifically reserve the right to reserve service to certain countries
+				or jurisdictions, as long as that rule is present in their terms and conditions text.
+			</p>
+		</section>
+		<section class="about-section">
+			<h3>Shipping Policy</h3>
+			<p id="shipping-policy">This is test text to represent the merchant's shipping policy. This is based
+				entirely on the merchant's wants. As of yet, there are no limits built in to the platform. The merchant should
+				specify average time for shipping to be processed, and show in which cases shipping will be covered
+				by the cost of the ordered item.
+			</p>
+		</section>
+	</main>
+
+	{% block footer %}
+		{% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
+	{% endblock %}
+{% endblock %}
+
+{% block extra_scripts %}
+{% endblock %}

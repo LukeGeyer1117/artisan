@@ -1253,6 +1253,7 @@ def update_shop_settings(request):
         shop_settings.shop_status = data.get('shopStatus', shop_settings.shop_status)
         shop_settings.status_message = data.get('statusMessage', shop_settings.status_message)
         shop_settings.minimum_order_amount = data.get('minimumOrderAmount', shop_settings.minimum_order_amount)
+        shop_settings.terms_and_conditions = data.get('termsAndConditions', shop_settings.terms_and_conditions)
         shop_settings.shipping_policy = data.get('shippingPolicy', shop_settings.shipping_policy)
         shop_settings.return_policy = data.get('returnPolicy', shop_settings.return_policy)
 

@@ -48,6 +48,10 @@ def item(request, slug, item_id):
     item = get_object_or_404(Product, id=item_id)
     return render(request, 'client/customer/item.html', {'artisan': artisan, 'item': item})
 
+def about(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/about.html', {'artisan': artisan})
+
 def login_view(request):
     return render(request, 'client/merchant/login.html')
 
