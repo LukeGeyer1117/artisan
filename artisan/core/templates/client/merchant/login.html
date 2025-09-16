@@ -1,27 +1,17 @@
+{% extends 'merch_base.html' %}
 {% load static %}
 
-<!-- merchant-auth.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Merchant Dashboard - Login / Sign Up</title>
-  <link rel="stylesheet" href="{% static 'merchant/styles/login.css' %}">
-  <link rel="stylesheet" href="{% static 'components/merch-nav/style.css' %}">
-  <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <!-- NAV -->
-  {% block nav %}
-      {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
-  {% endblock nav %}
+{% block title %}Merchant Login{% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'merchant/styles/login.css' %}">
+{% endblock %}
+
+{% block content %}
   <main class="auth-container">
     <div class="auth-card">
-      <h2>Welcome, Artisan</h2>
-      <p class="auth-subtitle">Log in or create your dashboard account to begin managing your custom orders.</p>
+      <h2>Welcome, Merchant</h2>
+      <p class="auth-subtitle">Log in or sign up to start managing your online shop.</p>
 
       <form class="auth-form" id="login-form">
         <input type="email" placeholder="Email" required id="email1">
@@ -42,18 +32,14 @@
       </form>
     </div>
   </main>
+{% endblock %}
 
-  <footer class="site-footer">
-    <!-- existing footer here -->
-  </footer>
-
+{% block extra_scripts %}
   <script>
     function toggleForm(form) {
       document.getElementById('login-form').classList.toggle('hidden', form === 'signup');
       document.getElementById('signup-form').classList.toggle('hidden', form === 'login');
     }
   </script>
-
   <script src="{% static 'merchant/scripts/login.js' %}"></script>
-</body>
-</html>
+{% endblock %}

@@ -3,7 +3,7 @@
   box-sizing: border-box;
   height: 8vh;
   display: flex;
-  background: linear-gradient(135deg, #6366F1 0%, #60A5FA 100%);
+  background: var(--accent-color);
   flex-direction: row;
   align-items: center;
   justify-content: right;
@@ -25,7 +25,7 @@
 }
 
 .navbar div:hover {
-  background: #6366F1;
+  background: var(--accent-color-hover);
   cursor: pointer;
 }
 

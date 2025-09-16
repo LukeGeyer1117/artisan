@@ -4,11 +4,11 @@
   --text-color-primary: #333333;
   --text-color-secondary: #666666;
   --border-color: #e0e0e0;
-  --accent-color: #6c63ff; /* Default accent, will be overridden by JS */
+  --accent-color: #3b82f6; /* Default accent, will be overridden by JS */
   --accent-color-hover: #574cff;
-  --button-color: #6c63ff;
+  --button-color: #3b82f6;
   --button-hover-color: #574cff;
-  --save-button-bg: #574cff;
+  --save-button-bg: #3b82f6;
   --save-button-hover-bg: #45a049;
   --error-color: #d9534f;
   --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -184,11 +184,12 @@ body {
   font-size: 12pt;
   font-weight: bold;
   transition: all .15s ease-in-out;
+  background-color: var(--accent-color);
 }
 
 .main-button:hover {
   cursor: pointer;
-  box-shadow: 1px 1px 3px #000000;
+  background-color: var(--accent-color-hover);
 }
 
 

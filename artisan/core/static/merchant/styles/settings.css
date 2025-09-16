@@ -2,22 +2,6 @@
 /* General & Base Styles */
 /* =================================== */
 
-:root {
-  --main-bg-color: #f4f7f9;
-  --container-bg-color: #ffffff;
-  --text-color-primary: #333333;
-  --text-color-secondary: #666666;
-  --border-color: #e0e0e0;
-  --accent-color: #6c63ff; /* Default accent, will be overridden by JS */
-  --accent-color-hover: #574cff;
-  --button-color: #6c63ff;
-  --button-hover-color: #574cff;
-  --save-button-bg: #574cff;
-  --save-button-hover-bg: #45a049;
-  --error-color: #d9534f;
-  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 6px 10px rgba(0, 0, 0, 0.1);
-}
 
 .container {
   flex-grow: 1;
@@ -155,7 +139,7 @@ input[type="file"] {
 }
 
 .save-button:hover {
-  background-color: var(--save-button-hover-bg);
+  background-color: var(--accent-color-hover);
 }
 
 .profile-action-btn {
@@ -197,8 +181,8 @@ input[type="file"] {
 }
 
 .tab-btn.active {
-  border-bottom-color: var(--accent-color, #6c63ff);
-  color: var(--accent-color, #6c63ff);
+  border-bottom-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 .tab-content {

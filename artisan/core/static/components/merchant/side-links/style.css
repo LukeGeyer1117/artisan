@@ -9,6 +9,7 @@
   left: 0;
   top: 8vh;
   transition: all .15s ease-in-out;
+  background-color: var(--accent-color);
 }
 
 .links-group {
@@ -36,7 +37,7 @@
 }
 
 .links-group a:hover {
-  background: #675ff8;
+  background: var(--accent-color-hover);
 }
 
 .links-group a.active:hover {
