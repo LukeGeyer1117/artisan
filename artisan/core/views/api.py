@@ -1022,6 +1022,26 @@ def create_new_category(request):
     return JsonResponse({'message': 'created category'})
 
 @csrf_exempt
+@require_http_methods({'DELETE'})
+def alter_category(request, id):
+    if request.method == 'DELETE':
+        artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+
+        if not artisan:
+            return JsonResponse({'error': "Not Authenticated"}, status=401)
+                
+        category_id = id
+
+        if not category_id:
+            return JsonResponse({'error': "No category id provided"}, status=400)
+        
+
+        category = get_object_or_404(Category, id=category_id)
+
+        category.delete()
+        return JsonResponse({'message': 'Category deleted successfully.'}, status=200)
+
+@csrf_exempt
 @require_GET
 def get_theme_by_slug(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)

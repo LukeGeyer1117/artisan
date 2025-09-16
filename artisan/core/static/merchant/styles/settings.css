@@ -3,7 +3,6 @@
 /* =================================== */
 
 :root {
-  --primary-font: 'Helvetica Neue', Arial, sans-serif;
   --main-bg-color: #f4f7f9;
   --container-bg-color: #ffffff;
   --text-color-primary: #333333;
@@ -20,27 +19,12 @@
   --shadow-medium: 0 6px 10px rgba(0, 0, 0, 0.1);
 }
 
-body {
-  font-family: var(--primary-font);
-  background-color: var(--main-bg-color);
-  color: var(--text-color-primary);
-  line-height: 1.6;
-}
-
-.dashboard-main {
-  display: flex;
-  min-height: 100vh;
-  gap: 1.5rem;
-}
-
 .container {
   flex-grow: 1;
   background-color: var(--container-bg-color);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: var(--shadow-light);
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 h1 {

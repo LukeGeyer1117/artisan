@@ -8,21 +8,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   let searchActive = false;
   let currentOrder = null; // Track which order is being operated on
 
-  // Search Bar Expansion 
-  searchIcon.addEventListener('click', function () {
-    if (!searchActive) {
-      searchInput.style.width = '200px';
-      searchInput.style.minWidth = '50px';
-      searchInput.style.padding = '.8rem .5rem';
-      searchActive = true;
-    } else {
-      searchInput.style.width = '0px';
-      searchInput.style.minWidth = '0px';
-      searchInput.style.padding = '0';
-      searchActive = false;
-    }
-  });
-
   // Listen for row clicks to open order details
   const tables = document.querySelectorAll('.records-table');
   tables.forEach(table => {

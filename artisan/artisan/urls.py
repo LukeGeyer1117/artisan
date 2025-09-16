@@ -78,6 +78,7 @@ urlpatterns = [
     path('api/categories/<slug:slug>/', views.get_categories_by_slug),
     path('api/categories/', views.get_categories_by_session),
     path('api/category/', views.create_new_category),
+    path('api/category/<int:id>/', views.alter_category), 
     path('api/theme/<slug:slug>/', views.get_theme_by_slug),
     path('api/theme/', views.get_theme_by_session),
     path('api/update/theme/', views.update_theme, name='update_theme'),

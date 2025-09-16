@@ -12,34 +12,24 @@
   position: sticky;
   top: 0;
   left: 0;
-  padding: 0 1rem;
 }
 
-.navbar a {
+.navbar div {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 1rem 2rem;
-  gap: 1.5rem;
-  text-decoration: none;
-  color: white;
-  font-size: 12pt;
-  transition: all 0.15s ease-in-out;
-  border-radius: 64pt;
+  justify-content: right;
+  transition: all .15s ease-in-out;
+  height: 100%;
+  padding: 0 1rem;
 }
 
-.navbar a:hover {
-  transform: scale(1.025);
-  background-color: #3b34c7;
+.navbar div:hover {
+  background: #6366F1;
   cursor: pointer;
 }
 
-.navbar img {
-  transition: all .15s ease-in-out;
-  border-radius: 32rem;
-  padding: .5rem;
-  width: 4rem;
-  height: 4rem;
-  object-fit: cover;
+.navbar div a {
+  color: white;
 }
 

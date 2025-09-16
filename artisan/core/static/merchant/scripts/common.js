@@ -160,7 +160,6 @@ function renderResults(filteredData, searchTerm = '') {
           <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
             <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
-            <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
             <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
             <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
             <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
@@ -178,7 +177,6 @@ function renderResults(filteredData, searchTerm = '') {
           <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
             <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
-            <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
             <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
             <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
             <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>

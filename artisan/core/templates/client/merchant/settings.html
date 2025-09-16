@@ -75,9 +75,9 @@
         </section>
 
         <!-- Theme Color Settings -->
-        <section class="color-settings">
+        <section class="color-settings" style="border-bottom: 1px solid var(--border-color);">
           <h2>Theme Settings</h2>
-          <div class="color-controls">
+          <div class="color-controls" style="display: flex; flex-direction: row; flex-wrap: wrap;">
             <div class="color-group">
               <label for="textColor">Text Color</label>
               <input type="color" id="textColor" name="textColor">
@@ -94,30 +94,33 @@
               <label for="linkHoverColor">Link Hover Color</label>
               <input type="color" id="linkHoverColor" name="linkHoverColor">
             </div>
-            <p>See <a href="https://elementor.com/blog/color-theory-web-design/">here</a> for best practices when picking your colors.</p>
           </div>
+          <p>See <a href="https://elementor.com/blog/color-theory-web-design/">here</a> for best practices when picking your colors.</p>
         </section>
 
         <!-- Logo Upload -->
-        <section class="logo-upload">
-          <h2>Logo Image</h2>
-          <img src="" alt="" class="settings-image" id="currentLogoImage">
-          <div class="upload-group">
-            <label for="logoUpload">Upload Logo</label>
-            <input type="file" id="logoUpload" name="logoUpload" accept="image/*">
-          </div>
-        </section>
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 1rem;">
+          <section class="logo-upload">
+            <h2>Logo Image</h2>
+            <div>
+              <img src="" alt="" class="settings-image" id="currentLogoImage">
+            </div>
+            <div class="upload-group">
+              <label for="logoUpload">Upload Logo</label>
+              <input type="file" id="logoUpload" name="logoUpload" accept="image/*">
+            </div>
+          </section>
 
-        <!-- Hero Upload -->
-        <section class="hero-upload">
-          <h2>Hero Image</h2>
-          <img src="" alt="" class="settings-image" id="currentHeroImage">
-          <div class="upload-group">
-            <label for="heroUpload">Upload Hero Image</label>
-            <input type="file" id="heroUpload" name="heroUpload" accept="image/*">
-          </div>
-        </section>
-
+          <!-- Hero Upload -->
+          <section class="hero-upload" style="border-bottom: 1px solid var(--border-color);">
+            <h2>Hero Image</h2>
+            <img src="" alt="" class="settings-image" id="currentHeroImage">
+            <div class="upload-group">
+              <label for="heroUpload">Upload Hero Image</label>
+              <input type="file" id="heroUpload" name="heroUpload" accept="image/*">
+            </div>
+          </section>
+        </div>
         <button type="button" class="save-button" id="save-theme-images-btn">Save Settings</button>
       </div>
 

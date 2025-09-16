@@ -4,8 +4,6 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
 
 document.addEventListener('DOMContentLoaded', async function () {
   const searchInput = document.querySelector('.search-container input');
-  const searchIcon = document.querySelector('.search-container span img');
-  let searchActive = false;
   let currentProduct = null; // Track which product is being operated on
 
   // Track extra image files for editing
@@ -75,11 +73,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   let addItemButton = document.getElementById('add-item-button');
   addItemButton.addEventListener('click', function () {
     window.location.href = '/add-item/';
-  });
-
-  // Search Bar Expansion
-  searchIcon.addEventListener('click', function () {
-    expandSearchBar(searchActive, searchInput);
   });
 
   // Listen for row clicks to open product details
@@ -190,12 +183,50 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 function setupCategoryList(categories, API_BASE_URL) {
-  const category_list = document.getElementById('category-list');
+  const category_table = document.getElementById('categories-table');
 
-  // Render category list
-  category_list.innerHTML = categories
-    .map(category => `<li class='category-li'>${category.name}</li>`)
-    .join('');
+  // render the categories
+  categories.forEach(category => {
+    let category_row = document.createElement('tr');
+    category_row.className = "category-record";
+    category_row.innerHTML = `
+      <td style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+        ${category.name}
+        <button class="delete-category-button" style="color: red; border: none; background-color: #00000000;">Delete</button>
+      </td>`;
+
+    category_row.querySelector('button').addEventListener('click', function () {
+    // Ask for confirmation
+    const confirmed = window.confirm(`Are you sure you want to permanently delete the category "${category.name}"?`);
+    
+    if (!confirmed) {
+      return; // stop here if user canceled
+    }
+
+    // Proceed with API call
+    fetch(`${API_BASE_URL}/category/${category.id}/`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Could not delete category!");
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      category_row.remove(); // remove from DOM on success
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Something went wrong while deleting the category.");
+    });
+  });
+
+
+    // Append the actual element
+    category_table.appendChild(category_row);
+  });
+
 
   // Add event listener for creating a new category
   document.getElementById('add-category-btn').addEventListener('click', function () {

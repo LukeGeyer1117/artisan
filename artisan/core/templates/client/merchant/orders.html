@@ -28,20 +28,18 @@
 
         <div>
           <section class="dashboard-section" id="top-buttons-section">
-            <div class="search-container box-shadowable">
-              <span class="search-icon gradient-background"><img src="/media/icons/active/search_purple.svg" alt="search Icon"></span>
+            <div class="search-container">
               <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
             </div>
           </section>
 
-          <section class="dashboard-section" id="orders-table-section">
-            <h1>Active Orders</h1>
-            <div class="table-holder">
+          <section class="dashboard-section">
+            <h3 style="border-bottom: 1px solid var(--border-color);">Active Orders</h3>
+            <section class="dashboard-section">
               <table id="orders-table" class="records-table">
                 <thead>
                   <th id="id-header">ID</th>
                   <th id="customer-header">Customer</th>
-                  <th id="contact-header">Contact</th>
                   <th id="placed-header">Placed</th>
                   <th id="total-header">Total</th>
                   <th id="status-header">Status</th>
@@ -49,14 +47,13 @@
                 <tbody>
                 </tbody>
               </table>
-            </div>
-            <h1>Inactive Orders</h1>
-            <div class="table-holder">
+            </section>
+            <h3 style="border-bottom: 1px solid var(--border-color);">Inactive Orders</h3>
+            <section class="dashboard-section">
               <table id="inactive-orders-table" class="records-table">
                 <thead>
                   <th id="id-header">ID</th>
                   <th id="customer-header">Customer</th>
-                  <th id="contact-header">Contact</th>
                   <th id="placed-header">Placed</th>
                   <th id="total-header">Total</th>
                   <th id="status-header">Status</th>
@@ -64,9 +61,9 @@
                 <tbody>
                 </tbody>
               </table>
-            </div> 
-            <h1>Completed Orders</h1>
-            <div class="table-holder">
+            </section>
+            <h3 style="border-bottom: 1px solid var(--border-color);">Completed Orders</h3>
+            <section class="dashboard-section">
               <table id="completed-orders-table" class="records-table">
                 <thead>
                   <th id="id-header">ID</th>
@@ -79,7 +76,7 @@
                 <tbody>
                 </tbody>
               </table>
-            </div>
+            </section>
           </section>
         </div>
 
