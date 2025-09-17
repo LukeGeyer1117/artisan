@@ -73,6 +73,9 @@ TEMPLATES = [
     },
 ]
 
+# Auth user model
+AUTH_USER_MODEL = 'core.Artisan'
+
 # Static files config
 STATIC_URL = '/static/'
 

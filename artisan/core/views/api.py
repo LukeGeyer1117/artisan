@@ -1,16 +1,39 @@
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
-from django.contrib.auth.hashers import check_password
-from django.views.decorators.http import require_http_methods
-from django.db import transaction
 import os
+import json
+
+from django.db import transaction
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
 
-import json
+# CSRF and HTTP methods
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
+
+# Auth
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
+
+from ..models import (
+    Artisan,
+    Inventory,
+    Product,
+    Order,
+    OrderItems,
+    CustomRequest,
+    GalleryImage,
+    LogoImage,
+    HeroImage,
+    Category,
+    ProductImage,
+    Theme,
+    TextContent,
+    ShopSettings,
+)
+
 from .helper import generate_unique_slug
-from ..models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, GalleryImage, LogoImage, HeroImage, Category, ProductImage, Theme, TextContent, ShopSettings
+
 
 ### API VIEWS
 
@@ -21,76 +44,100 @@ def session(request):
     request.session.flush()  # Clears all session data
     return JsonResponse({'message': 'Session cleared'})
 
-# Artisan
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+from django.contrib.auth import login
+from django.db import transaction
+import json
+
+from ..models import Artisan, Inventory, Theme, LogoImage, HeroImage, ShopSettings
+from .helper import generate_unique_slug
+
+
 @csrf_exempt
 @require_http_methods(['POST', 'GET', 'PATCH'])
+@transaction.atomic
 def artisan(request):
-    # Create an Artisan
+    # Create an Artisan (Sign Up)
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            artisan = Artisan.objects.create(
+            print(f"incoming data: {data}")
+            email = data['email']
+            username = data['username']
+            shop_name = data['shop_name']
+            password = data['password']
+
+            # Use the custom manager to handle password hashing
+            artisan = Artisan.objects.create_user(
+                email=email,
+                username=username,
+                shop_name=shop_name,
+                password=password,
                 full_name=data.get('name', ''),
-                email=data['email'],
-                username=data['username'],
                 phone_number=data.get('phone', ''),
-                password=data['password'],
-                shop_name=data['shop_name'],
-                slug=generate_unique_slug(data['shop_name']),
-                product_specialty=data.get('product_specialty', ''),
-                price_range_low=data.get('price_range_low', 0),
-                price_range_high=data.get('price_range_high', 0),
+                slug=generate_unique_slug(shop_name),
                 accepting_custom_orders=data.get('accepting_custom_orders', False),
             )
-            # Create the inventory and theme for the artisan
+
+            print(artisan)
+
+            # Related setup
             Inventory.objects.create(artisan=artisan)
             Theme.objects.create(artisan=artisan)
             LogoImage.objects.create(artisan=artisan)
             HeroImage.objects.create(artisan=artisan)
             ShopSettings.objects.create(artisan=artisan)
+
+            # Auto-login after signup
+            login(request, artisan)
+
             return JsonResponse({'message': 'Artisan created', 'id': artisan.id}, status=201)
+
         except KeyError as e:
             return JsonResponse({'error': f'Missing required field: {e}'}, status=400)
-    
-    # Get an Artisan
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    # Get the current Artisan
     elif request.method == 'GET':
-        artisan_id = request.session.get('artisan_id', None)
-        if not artisan_id:
-            return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
-        
-        try:
-            artisan = Artisan.objects.filter(id=artisan_id).values().first()
-            if artisan:
-                return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
-            else:
-                return JsonResponse({'error': "No Artisan Found!"}, status=404)
-        except Artisan.DoesNotExist:
-            return JsonResponse({'error': "No Artisan Found!"}, status=404)
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'No Artisan logged in!'}, status=401)
 
-    # Update an Artisan
+        artisan = Artisan.objects.filter(id=request.user.id).values().first()
+        if artisan:
+            return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
+        return JsonResponse({'error': "No Artisan Found!"}, status=404)
+
+    # Update the current Artisan
     elif request.method == 'PATCH':
-        artisan_id = request.session.get('artisan_id', None)
-        if not artisan_id:
-            return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'No Artisan logged in!'}, status=401)
 
         try:
-            artisan_to_update = Artisan.objects.get(id=artisan_id)
+            artisan_to_update = Artisan.objects.get(id=request.user.id)
             data = json.loads(request.body)
-            
-            # Update fields dynamically
+
             for key, value in data.items():
-                if hasattr(artisan_to_update, key):
+                if key == "password":
+                    artisan_to_update.set_password(value)
+                elif hasattr(artisan_to_update, key):
                     setattr(artisan_to_update, key, value)
                 else:
                     return JsonResponse({'error': f'Invalid field: {key}'}, status=400)
 
             artisan_to_update.save()
-            return JsonResponse({'message': 'Artisan updated successfully', 'artisan': Artisan.objects.filter(id=artisan_id).values().first()})
-            
+            return JsonResponse({
+                'message': 'Artisan updated successfully',
+                'artisan': Artisan.objects.filter(id=request.user.id).values().first()
+            })
+
         except Artisan.DoesNotExist:
             return JsonResponse({'error': "Artisan not found."}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
         
 @csrf_exempt
 @require_http_methods(['GET'])
@@ -409,7 +456,7 @@ def order_items(request):
     except Exception as e:
         return JsonResponse({'error': "Error getting order items " + str(e)})
 
-@csrf_exempt
+@csrf_protect
 @require_POST
 def login_artisan(request):
     try:
@@ -417,25 +464,19 @@ def login_artisan(request):
         e = data.get('email')
         password = data.get('password')
 
-        try:
-            artisan = Artisan.objects.get(email=e)
-        except Artisan.DoesNotExist:
-            return JsonResponse({'error': 'No Artisan Found'}, status=404)
+        artisan = authenticate(request, username=e, password=password)
+        if artisan is None:
+            return JsonResponse({'error': "Invalid credentials"}, status=401)
         
-        if check_password(password, artisan.password):
-            request.session['artisan_id'] = artisan.id  # Django session
-            inventory = Inventory.objects.get(artisan=artisan)
-            inventory_id = inventory.id
-            request.session['inventory_id'] = inventory_id
-            print("artisan id: ", request.session.get('artisan_id'), "inventory id: ", request.session['inventory_id'])
-            return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
-        else:
-            return JsonResponse({'error': 'Invalid credentials'}, status=401)
-        
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        login(request, artisan)
 
-@csrf_exempt
+        return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)  
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
 @require_http_methods(['POST', 'DELETE', 'GET'])
 def product(request):
     # Make sure the user is logged in properly

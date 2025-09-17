@@ -1,35 +1,50 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 
-from django.db import models
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, AbstractUser
 
-class Artisan(models.Model):
+class ArtisanManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        return self.create_user(email, password, **extra_fields)
+
+
+class Artisan(AbstractUser):
+
     full_name = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
-    email = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)   # make email unique for login
+    username = models.CharField(max_length=50, blank=True)  
     contact_email = models.CharField(max_length=100, blank=True, null=True, default="")
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=128)
     shop_name = models.CharField(max_length=100)
     slug = models.CharField(max_length=100, default=False)
     product_specialty = models.CharField(max_length=50, blank=True)
     price_range_low = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
     price_range_high = models.DecimalField(max_digits=10, decimal_places=2, default=100, blank=True)
     accepting_custom_orders = models.BooleanField(default=False)
-    image = models.ImageField(upload_to="pfps/", default='')
-    
-    # New social media fields
+    image = models.ImageField(upload_to="pfps/", default="")
+
     facebook_link = models.URLField(max_length=200, blank=True, null=True)
     instagram_link = models.URLField(max_length=200, blank=True, null=True)
     youtube_link = models.URLField(max_length=200, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        # Hash password if it's being set or changed
-        if not self.pk or Artisan.objects.get(pk=self.pk).password != self.password:
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    # Required for custom user model
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["shop_name"]  
+
+    objects = ArtisanManager()
 
     def __str__(self):
         return self.shop_name
@@ -48,7 +63,7 @@ class Product(models.Model):
     order_type = models.CharField(max_length=20, blank=True)
     category = models.ForeignKey('Category', null=True, blank=True, default=None, on_delete=models.SET_NULL)
     quantity = models.DecimalField(max_digits=7, decimal_places=0, default=0, blank=True)
-    description = models.CharField(max_length=500, default='', blank=True)
+    description = models.CharField(max_length=1000, default='', blank=True)
     image = models.ImageField(upload_to="images/", default='')
     created_at = models.DateTimeField(auto_now_add=True)
 

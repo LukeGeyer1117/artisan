@@ -4,7 +4,7 @@
 {% block title %}Merchant Dashboard{% endblock %}
 
 {% block extra_head %}
-  <link rel="stylesheet" href="{% static 'merchant/styles/new-item.css' %}">
+  <link rel="stylesheet" href="{% static 'merchant/styles/add-item.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -30,8 +30,10 @@
           <input type="number" id="product-price" name="product-price" step="0.01" min="0" placeholder="Price" required>
           <input type="number" id="product-quantity" name="product-quantity" min="0" placeholder="Stock" required>
           <textarea id="product-description" name="product-description" rows="4" cols="50" placeholder="Description"></textarea>
-          <button class="gradient-background" type="submit">Create Product</button>
-          <button class="gradient-background" type="reset">Reset Form</button>
+          <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap; gap: .5rem;">
+            <button class="form-button" type="submit">Create Product</button>
+            <button class="form-button" type="reset">Reset Form</button>
+          </div>
       </form>
     </div>
   </main>

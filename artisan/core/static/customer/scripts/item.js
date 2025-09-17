@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     document.querySelector('.product-price').innerHTML = `$${product.price}`;
-    document.querySelector('.product-description-body').innerHTML = product.description;
+    document.querySelector('.product-description-body').textContent = product.description;
 
     document.querySelector('.item-photos-main').src = `/media/${product.image}`;
     const miniImg = document.createElement('img');
