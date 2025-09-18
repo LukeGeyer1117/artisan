@@ -1,3 +1,6 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 import { searchAndFilter, showModal, hideModal } from "./common.js";
 
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
@@ -206,7 +209,10 @@ function setupCategoryList(categories, API_BASE_URL) {
     // Proceed with API call
     fetch(`${API_BASE_URL}/category/${category.id}/`, {
       method: 'DELETE',
-      credentials: 'include'
+      credentials: 'include',
+      headers: {
+        'X-CSRFToken': csrftoken
+      }
     })
     .then(response => {
       if (!response.ok) throw new Error("Could not delete category!");
@@ -237,7 +243,8 @@ function setupCategoryList(categories, API_BASE_URL) {
         method: 'POST',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
         },
         body: JSON.stringify({ name: categoryInput.value })
       })
@@ -358,7 +365,10 @@ function handle_product_edit(e, currentProduct, categories, extraImageFiles) {
   fetch(`${API_BASE_URL}/product/`, {
     method: 'POST',
     body: formData,
-    credentials: 'include'
+    credentials: 'include',
+    headers: {
+      'X-CSRFToken': csrftoken
+    }
   })
     .then(response => {
       if (!response.ok) throw new Error("Failed to Patch Product");

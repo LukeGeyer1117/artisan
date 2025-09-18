@@ -1,3 +1,7 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
+
 
 let links = document.querySelectorAll('.links-group a');
 

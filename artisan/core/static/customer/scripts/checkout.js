@@ -1,3 +1,7 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
+
 let paymentTotal = 0;
 const slug = document.body.dataset.slug;
 
@@ -51,7 +55,8 @@ async function process_payment() {
         method: "POST",
         credentials: "include",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
         },
         body: JSON.stringify({"total": paymentTotal})
     })
@@ -66,7 +71,8 @@ async function process_payment() {
                 method: "POST",
                 credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
                 },
                 body: JSON.stringify(
                     {

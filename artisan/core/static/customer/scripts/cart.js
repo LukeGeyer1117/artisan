@@ -1,4 +1,8 @@
 
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
+
 // Toggle nav on small screens
 document.addEventListener("DOMContentLoaded", async function () {
     const slug = document.body.dataset.slug;
@@ -144,7 +148,8 @@ function checkout(total, slug, products_and_quantities) {
         method: 'POST',
         credentials: 'include',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
         },
         body: JSON.stringify({'total': total, 'products_and_quantities': products_and_quantities})
     })

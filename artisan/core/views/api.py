@@ -278,21 +278,20 @@ def order(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 # UPdate an order's status
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_POST
 def update_order_status(request):
-    artisan_id = request.session.get('artisan_id')
-    artisan = Artisan.objects.get(id=artisan_id)
+    artisan = request.user
 
-    if not artisan:
-        return JsonResponse({'error': "Not Authenticated"}, status=401)
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
 
     try:
         data = json.loads(request.body)
         order_id = data['order_id']
         status = data['status']
 
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id, artisan=artisan)
         order.status = status
 
         order.save()
@@ -348,12 +347,14 @@ def change_custom_status(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 # Get all orders under a certain merchant
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def orders(request):
     try:
-        artisan_id = request.session.get('artisan_id')
-        artisan = Artisan.objects.get(id=artisan_id)
+        artisan = request.user
+
+        if not artisan.is_authenticated:
+            return JsonResponse({'error': "Not authenticated"}, status=401)
 
         orders = Order.objects.filter(artisan=artisan).order_by('created_at')
         orders_data = [
@@ -721,7 +722,7 @@ def add_product_to_cart(request):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-@csrf_exempt
+@csrf_protect
 def api_checkout(request):
     # Create the session checkout data
     if request.method == "POST":
@@ -747,19 +748,20 @@ def api_checkout(request):
 
 # This is just a throwaway endpoint to simulate processing a payment.
 # This will always return a success.
-@csrf_exempt
+@csrf_protect
 @require_POST
 def process_payment(request):
     return JsonResponse({'message': 'Payment Processed Successfully', 'payment_status': "SUCCEED"}, status=200)
 
 
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_custom_order(request):
-    artisan_id = request.session.get('artisan_id')
+    artisan = request.user
 
-    artisan = Artisan.objects.get(id=artisan_id)
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
 
     custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
     return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
@@ -881,18 +883,15 @@ def get_gallery_images_by_slug(request, slug):
         return JsonResponse({'images': images_data})
     return JsonResponse({'error': 'No images found'}, status=404)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_http_methods(['DELETE'])
 def delete_image(request, image_id):
     """Delete a gallery image and reorder remaining images"""
     try:
         # Get the artisan_id from session
-        artisan_id = request.session.get('artisan_id')
-        if not artisan_id:
-            return JsonResponse({'error': 'No artisan session found'}, status=400)
-        
-        # Get the specific artisan object
-        artisan = Artisan.objects.get(id=artisan_id)
+        artisan = request.user
+        if not artisan.is_authenticated:
+            return JsonResponse({'error': "Not authenticated"}, status=401)
         
         # Get the image to delete
         image = get_object_or_404(GalleryImage, id=image_id, artisan=artisan)
@@ -914,9 +913,7 @@ def delete_image(request, image_id):
                 img.save()
         
         return JsonResponse({'success': True})
-    
-    except Artisan.DoesNotExist:
-        return JsonResponse({'error': 'Artisan not found'}, status=404)
+
     except Exception as e:
         print(f"Delete error: {e}")
         return JsonResponse({'error': str(e)}, status=500)
@@ -999,46 +996,37 @@ def get_logo_image_by_session(request):
 def create_hero_image(request):
     pass
 
-@csrf_exempt
+@login_required(login_url='/login/')
+@require_POST
 def create_logo_image(request):
-    if request.method == 'POST':
-        artisan_id = request.session.get('artisan_id')
+    # Authenicate the artisan
+    artisan = request.user
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=403)
 
-        if not artisan_id:
-            return JsonResponse({'error': 'Not authenticated'})
-        artisan = get_object_or_404(Artisan, id=artisan_id)
-        
-        if 'image' not in request.FILES:
-            return JsonResponse({'error': 'no image file provided'}, status=400)
-        
-        image_file = request.FILES['image']
-        
-        # validate file types
-        allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-        if image_file.content_type not in allowed_types:
-            return JsonResponse({'error': 'Invalid file type. Only JPEG, PNG, GIF, and WebP allowed'}, status=400)
-        
-        # validate file size (max 5mb)
-        max_size = 5 * 1024**2
-        if image_file.size > max_size:
-            return JsonResponse({'error': 'File too large, maximum size is 5MB'}, status=400)
-        
-        # Check if the artisan already has a logo image. Create new if not, update if so.
-        try:
-            logo = LogoImage.objects.get(artisan=artisan)
-            logo.image = image_file
-            logo.save()
-            message = "Logo image updated successfully"
-        except LogoImage.DoesNotExist:
-            logo = LogoImage.objects.create(artisan=artisan, image=image_file)
-            message = "Logo image created successfully"
+    if 'image' not in request.FILES:
+        return JsonResponse({'error': 'no image file provided'}, status=400)
+    
+    image_file = request.FILES['image']
+    
+    # validate file types
+    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if image_file.content_type not in allowed_types:
+        return JsonResponse({'error': 'Invalid file type. Only JPEG, PNG, GIF, and WebP allowed'}, status=400)
+    
+    # validate file size (max 5mb)
+    max_size = 5 * 1024**2
+    if image_file.size > max_size:
+        return JsonResponse({'error': 'File too large, maximum size is 5MB'}, status=400)
+    
+    # Check if the artisan already has a logo image. Create new if not, update if so.
+    logo, created = LogoImage.objects.get_or_create(artisan=artisan)
 
-        return JsonResponse({
-            'message': message,
-            'image_url': logo.image_url,
-            'logo_id': logo.id
-        }, status=201)
-    return JsonResponse({'error': "Method Not Allowed"}, status=405)
+    logo.image = image_file
+
+    if created:
+        return JsonResponse({'message': "Logo image created successfully", 'image_url': logo.image_url, 'logo_id': logo.id}, status=200)
+    return JsonResponse({'message': "Logo image updated", 'image_url': logo.image_url, 'logo_id': logo.id}, status=201)
 
 @csrf_exempt
 @require_GET
@@ -1095,12 +1083,13 @@ def alter_category(request, id):
             return JsonResponse({'error': "Not authenticated"}, status=401)
                 
         category_id = id
+        print(f'Category ID: {category_id}')
 
         if not category_id:
             return JsonResponse({'error': "No category id provided"}, status=400)
         
 
-        category = get_object_or_404(Category, id=category_id, artisan=artisan)
+        category = get_object_or_404(Category, id=category_id, owner=artisan)
 
         category.delete()
         return JsonResponse({'message': 'Category deleted successfully.'}, status=200)

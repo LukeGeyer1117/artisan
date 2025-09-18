@@ -1,11 +1,12 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 import { searchAndFilter, showModal, hideModal, formatTimestamp } from "./common.js";
 
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
   const searchInput = document.querySelector('.search-container input');
-  const searchIcon = document.querySelector('.search-container span img');
-  let searchActive = false;
   let currentOrder = null; // Track which order is being operated on
 
   // Listen for row clicks to open order details
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const data = await response.json();
     const orders = data.orders;
+    console.log(orders);
 
     searchAndFilter(searchInput, orders);
 
@@ -173,7 +175,10 @@ function update_status(currentOrder, currentStatus) {
   fetch(`${API_BASE_URL}/order/status/`, {
     method: 'POST',
     credentials: 'include',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken
+    },
     body: JSON.stringify({'order_id': currentOrder.id, 'status': currentStatus})
   })
   .then(response => {
