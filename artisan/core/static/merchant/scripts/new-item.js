@@ -1,3 +1,6 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -18,7 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`${API_BASE_URL}/product/`, {
             method: 'POST',
             body: formData,
-            credentials: 'include' // to send session cookie
+            credentials: 'include', // to send session cookie
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
         })
         .then(response => {
             if (!response.ok) throw new Error("Failed to create product");

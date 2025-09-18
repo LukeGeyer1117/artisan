@@ -1,3 +1,6 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -204,7 +207,10 @@ async function upload_profile_image(file) {
         const response = await fetch(`${API_BASE_URL}/artisan/upload_profile_image/`, {
             method: 'POST',
             body: formData,
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
         });
 
         console.log('Response status:', response.status);
@@ -238,7 +244,10 @@ async function remove_profile_picture() {
     try {
         const response = await fetch(`${API_BASE_URL}/artisan/remove_profile_image/`, {
             method: 'PATCH',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
         });
 
         if (!response.ok) {

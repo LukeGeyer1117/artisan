@@ -1,3 +1,6 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -58,6 +61,7 @@ async function update_text_content(sentence, header, gallery_subtext, custom_ord
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
       },
       body: JSON.stringify({
         header: header.value,

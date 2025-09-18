@@ -1,4 +1,7 @@
+import { getCookie } from "./csrf.js";
+
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+const csrftoken = getCookie('csrftoken');
 
 document.addEventListener('DOMContentLoaded', function () {
     
@@ -28,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            credentials: 'include'
         })
         .then(response => {
             if (!response.ok) throw new Error("Failed to sign up");
@@ -56,7 +60,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         fetch(`${API_BASE_URL}/login/`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
             body: JSON.stringify(data),
             credentials: 'include'  // Important to include session cookies
         })

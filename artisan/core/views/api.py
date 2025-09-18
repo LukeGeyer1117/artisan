@@ -175,15 +175,15 @@ def artisan_by_slug(request, slug):
     except Exception as e:
         return JsonResponse({'error': 'An error occurred'}, status=500)
         
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_POST
 def artisan_upload_profile_image(request):
-    artisan_id = request.session.get('artisan_id', None)
-    if not artisan_id:
-        return JsonResponse({'error': 'No Artisan logged in!'}, status=400)
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
 
     try:
-        artisan_to_update = Artisan.objects.get(id=artisan_id)
         
         # Check if an image file was included in the request
         if 'image' not in request.FILES:
@@ -193,20 +193,18 @@ def artisan_upload_profile_image(request):
         print(f"New Image: {new_image}")
         
         # Optionally, delete the old image file if it exists
-        if artisan_to_update.image and os.path.exists(artisan_to_update.image.path):
-            os.remove(artisan_to_update.image.path)
+        if artisan.image and os.path.exists(artisan.image.path):
+            os.remove(artisan.image.path)
 
         # Update the image field with the new file
-        artisan_to_update.image = new_image
-        artisan_to_update.save()
+        artisan.image = new_image
+        artisan.save()
         
         return JsonResponse({
             'message': 'Profile image uploaded successfully',
-            'image_url': artisan_to_update.image.url
+            'image_url': artisan.image.url
         }, status=200)
 
-    except Artisan.DoesNotExist:
-        return JsonResponse({'error': "Artisan not found."}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -382,14 +380,20 @@ def orders(request):
         return JsonResponse({'error': f"Could not get orders: {e}"})
 
 # Get only orders with a 'pending' or 'approved' status
-@csrf_exempt 
+@login_required(login_url='/login/')
 @require_GET
 def active_orders(request):
     try:
-        artisan_id = request.session.get('artisan_id')
-        artisan = Artisan.objects.get(id=artisan_id)
+        artisan = request.user
+        
+        if not artisan.is_authenticated:
+            return JsonResponse({'error': 'Not authenticated'}, status=401)
 
-        orders = Order.objects.filter(artisan=artisan, status__in=['pending', 'approved', 'in_progress']).order_by('created_at')
+        orders = Order.objects.filter(
+            artisan=artisan, 
+            status__in=['pending', 'approved', 'in_progress']
+        ).order_by('created_at')
+
         orders_data = [
             {
                 'id': order.id,
@@ -480,10 +484,10 @@ def login_artisan(request):
 @require_http_methods(['POST', 'DELETE', 'GET'])
 def product(request):
     # Make sure the user is logged in properly
-    artisan_id = request.session.get('artisan_id')
-    artisan = Artisan.objects.get(id=artisan_id)
-    if not artisan:
-        return JsonResponse({'error': "Not Authenticated"}, status=401)
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
 
     actual_method = request.POST.get('_method', '').upper()
     if request.method == 'POST':
@@ -528,11 +532,10 @@ def product(request):
                 return JsonResponse({'error': str(e)}, status=400)
             
         try:
-            inventory_id = request.session.get('inventory_id')
-            print(inventory_id)
+            inventory = Inventory.objects.get(artisan=artisan)
 
-            # Fetch the Inventory record
-            inventory = Inventory.objects.get(id=inventory_id)
+            if not inventory:
+                return JsonResponse({'error': "No associated inventory found!"}, status=404)
 
             # Create the product linked to that inventory
             product = Product.objects.create(
@@ -590,14 +593,15 @@ def set_product_category(request):
     data = json.loads(request.body)
     print(data)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_inventory(request):
-    artisan_id = request.session.get('artisan_id')
-    if not artisan_id:
+    artisan = request.user
+
+    if not artisan.is_authenticated:
         return JsonResponse({'error': 'Not authenticated'}, status=401)
     
-    inventory = Inventory.objects.filter(artisan_id=artisan_id).first()
+    inventory = Inventory.objects.filter(artisan=artisan).first()
     if not inventory:
         return JsonResponse({'error': 'Inventory not found'}, status=404)
     
@@ -760,9 +764,14 @@ def get_custom_order(request):
     custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
     return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_http_methods(['POST'])
 def upload_image(request):
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=201)
+
     """Handle image upload"""
     if 'image' not in request.FILES:
         return JsonResponse({'error': 'No image provided'}, status=400)
@@ -775,7 +784,7 @@ def upload_image(request):
     
     # Create gallery image instance
     gallery_image = GalleryImage(
-        artisan=Artisan.objects.get(id=request.session.get('artisan_id')), 
+        artisan=artisan,
         image=image
     )
     gallery_image.save()
@@ -786,19 +795,16 @@ def upload_image(request):
         'order': gallery_image.order
     })
 
-@csrf_exempt
-@require_http_methods(['POST'])
+@login_required(login_url='/login/')
+@require_POST
 def save_gallery_order(request):
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+
     """Save the new order of gallery images"""
     try:
-        # Get the artisan_id from session
-        artisan_id = request.session.get('artisan_id')
-        if not artisan_id:
-            return JsonResponse({'error': 'No artisan session found'}, status=400)
-        
-        # Get the specific artisan object
-        artisan = Artisan.objects.get(id=artisan_id)
-        
         # Parse JSON data
         data = json.loads(request.body)
         images_data = data.get('images', [])
@@ -825,13 +831,11 @@ def save_gallery_order(request):
                     image.order = new_order
                     image.save()
                 except GalleryImage.DoesNotExist:
-                    print(f"Warning: Image {image_id} not found for artisan {artisan_id}")
+                    print(f"Warning: Image {image_id} not found for artisan {artisan.id}")
                     continue
         
         return JsonResponse({'success': True})
     
-    except Artisan.DoesNotExist:
-        return JsonResponse({'error': 'Artisan not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
@@ -840,10 +844,14 @@ def save_gallery_order(request):
         traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
     
-@csrf_exempt
+@login_required
 @require_GET
 def get_gallery_images(request):
-    artisan = Artisan.objects.get(id=request.session.get('artisan_id'))
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+    
     """Get all gallery images for the current merchant"""
     images = GalleryImage.objects.filter(artisan=artisan).order_by('order')
     images_data = [
@@ -930,10 +938,14 @@ def get_hero_image_by_slug(request, slug):
             return JsonResponse({'error': 'Error serving image'}, status=500)
     return JsonResponse({'error': "Method Not Allowed"}, status=405)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_hero_image_by_session(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'}, stauts=401)
+
     hero, created = HeroImage.objects.get_or_create(artisan=artisan)
 
     message = 'Created hero image' if created else 'Found hero image'
@@ -960,10 +972,19 @@ def get_logo_image_by_slug(request, slug):
             return JsonResponse({'error': "Error serving image"}, status=500)
     return JsonResponse({'error': 'Method Not Allowed'}, status=405)
 
-@csrf_exempt
+
+'''
+API URL: '/api/logo/'
+REQUIRES LOGIN
+'''
+@login_required(login_url='/login/')
 @require_GET
 def get_logo_image_by_session(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'})
+
     logo, created = LogoImage.objects.get_or_create(artisan=artisan)
 
     message = 'Created logo image' if created else 'Found logo image'
@@ -1029,10 +1050,13 @@ def get_categories_by_slug(request, slug):
 
     return JsonResponse({'message': 'found categories', 'categories': categories_data})
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_categories_by_session(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
 
     categories = Category.objects.filter(owner=artisan).values()
     print(categories)
@@ -1042,34 +1066,33 @@ def get_categories_by_session(request):
 @csrf_exempt
 @require_GET
 def get_gallery_images_by_product_id(request, product_id):
-
     product = Product.objects.get(id=product_id)
 
     product_images = ProductImage.objects.filter(product=product).values()
 
     return JsonResponse({'message': 'found product_images', 'product_images': list(product_images)})
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_POST
 def create_new_category(request):
-    artisan = Artisan.objects.get(id=request.session.get('artisan_id'))
+    artisan = request.user
 
-    if not artisan:
-        return JsonResponse({'error': 'Not authenticated'}, status=400)
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
     
     data = json.loads(request.body)
     
     Category.objects.create(owner=artisan, name=data['name'])
     return JsonResponse({'message': 'created category'})
 
-@csrf_exempt
-@require_http_methods({'DELETE'})
+@login_required(login_url='/login/')
+@require_http_methods(['DELETE'])
 def alter_category(request, id):
     if request.method == 'DELETE':
-        artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+        artisan = request.user
 
-        if not artisan:
-            return JsonResponse({'error': "Not Authenticated"}, status=401)
+        if not artisan.is_authenticated:
+            return JsonResponse({'error': "Not authenticated"}, status=401)
                 
         category_id = id
 
@@ -1077,7 +1100,7 @@ def alter_category(request, id):
             return JsonResponse({'error': "No category id provided"}, status=400)
         
 
-        category = get_object_or_404(Category, id=category_id)
+        category = get_object_or_404(Category, id=category_id, artisan=artisan)
 
         category.delete()
         return JsonResponse({'message': 'Category deleted successfully.'}, status=200)
@@ -1097,12 +1120,14 @@ def get_theme_by_slug(request, slug):
 
     return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_theme_by_session(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    artisan = request.user
 
-    
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+
     theme, created = Theme.objects.get_or_create(artisan=artisan)
 
     theme_data = {
@@ -1116,11 +1141,16 @@ def get_theme_by_session(request):
 
     return JsonResponse({'message': message, 'theme': theme_data}, status=200)
 
-@csrf_exempt
-@require_http_methods(['PUT'])
+@login_required(login_url='/login/')
+@csrf_protect
+@require_POST
 def update_theme(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
-    theme = get_object_or_404(Theme, artisan=artisan)
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+
+    theme, created = Theme.objects.get_or_create(artisan=artisan)
 
     try:
         data = json.loads(request.body)
@@ -1139,12 +1169,17 @@ def update_theme(request):
 
     theme.save()
 
+    if created:
+        return JsonResponse({'message': 'Created theme'}, status=200)
     return JsonResponse({'message': "updated theme"}, status=200)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_http_methods(['POST'])
 def update_logo(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
     
     # Check if a file was uploaded
     if 'logo' not in request.FILES:
@@ -1175,10 +1210,13 @@ def update_logo(request):
     
     return JsonResponse({'message': "Logo updated successfully"}, status=200)
 
-@csrf_exempt
-@require_http_methods(['POST'])
+@login_required(login_url='/login/')
+@require_POST
 def update_hero(request):
-    artisan = get_object_or_404(Artisan, id=request.session.get('artisan_id'))
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
 
     # Check if a file was uploaded
     if 'hero' not in request.FILES:
@@ -1224,14 +1262,13 @@ def get_text_content_by_slug(request, slug):
 
     return JsonResponse({'message': 'Found Text Content', 'text_content': text_content_data})
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_text_content_by_session(request):
-    artisan_id = request.session.get('artisan_id')
-    if not artisan_id:
-        return JsonResponse({'error': 'Not Authenticated'}, status=401)
+    artisan = request.user
 
-    artisan = get_object_or_404(Artisan, id=artisan_id)
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
 
     text_content, created = TextContent.objects.get_or_create(artisan=artisan)
 
@@ -1242,14 +1279,14 @@ def get_text_content_by_session(request):
 
     return JsonResponse({'message': message, 'text_content': text_content_data}, status=200)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_http_methods(['POST', 'OPTIONS'])
 def update_text_content(request):
-    artisan_id = request.session.get('artisan_id')
-    if not artisan_id:
-        return JsonResponse({'error': "Not Authenticated"}, status=401)
-    
-    artisan = get_object_or_404(Artisan, id=artisan_id)
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+
     text_content = get_object_or_404(TextContent, artisan=artisan)
 
     data = json.loads(request.body)
@@ -1269,14 +1306,14 @@ def update_text_content(request):
 
     return JsonResponse({'message': "Updated Text Content"}, status=200)
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_GET
 def get_shop_settings_by_session(request):
-    artisan_id = request.session.get('artisan_id')
-    if not artisan_id:
-        return JsonResponse({'error': 'Not Authenticated'}, status=401)
-    
-    artisan = get_object_or_404(Artisan, id=artisan_id)
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+
     shop_settings, created = ShopSettings.objects.get_or_create(artisan=artisan)
 
     shop_settings_data = model_to_dict(shop_settings)
@@ -1284,22 +1321,22 @@ def get_shop_settings_by_session(request):
 
     return JsonResponse({'message': message, 'shop_settings': shop_settings_data})
 
-@csrf_exempt
+@login_required(login_url='/login/')
 @require_POST
 def update_shop_settings(request):
     """
     Updates the shop settings for the authenticated artisan.
     """
-    artisan_id = request.session.get('artisan_id')
-    if not artisan_id:
-        return JsonResponse({'error': 'Not Authenticated'}, status=401)
-    
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+
     try:
         # Get the JSON data from the request body
         data = json.loads(request.body)
         
         # Get the artisan and their shop settings
-        artisan = get_object_or_404(Artisan, id=artisan_id)
         shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
 
         # Update the model fields with the data from the JSON

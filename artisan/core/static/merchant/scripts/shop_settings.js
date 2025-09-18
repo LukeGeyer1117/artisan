@@ -1,3 +1,6 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -73,7 +76,8 @@ async function save_shop_changes() {
     method: 'POST',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken
     },
     body: JSON.stringify(shopData) // Corrected line
   })

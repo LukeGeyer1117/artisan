@@ -1,3 +1,6 @@
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -174,11 +177,16 @@ document.addEventListener('DOMContentLoaded', async function () {
       const newLinkHoverColor = document.getElementById('linkHoverColor').value;
 
       fetch(`${API_BASE_URL}/update/theme/`, {
-        method: 'PUT',
+        method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({'text_color': newTextColor, 'background_color': newBackgroundColor, 'accent_color': newAccentColor, 'link_hover_color': newLinkHoverColor}),
+        body: JSON.stringify({
+          'text_color': newTextColor, 
+          'background_color': newBackgroundColor, 
+          'accent_color': newAccentColor, 
+          'link_hover_color': newLinkHoverColor}),
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
         }
       })
       .then(response => {
@@ -198,7 +206,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         fetch(`${API_BASE_URL}/update/logo/`, {
           method: 'POST',
           credentials: 'include',
-          body: formData
+          body: formData, 
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
         })
         .then(response => {
           if (response.ok) {
@@ -223,7 +234,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         fetch(`${API_BASE_URL}/update/hero/`, {
           method: 'POST',
           credentials: 'include',
-          body: formData
+          body: formData, 
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
         })
         .then(response => {
           if (response.ok) {
