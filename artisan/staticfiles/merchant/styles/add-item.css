@@ -1,0 +1,71 @@
+/* Main form section */
+#new-product-form-section {
+  flex: 1;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Back button */
+#back-button-div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+}
+#back-button-div img {
+  width: 20px;
+  height: 20px;
+}
+#back-button-div h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #000000;
+}
+
+/* Form fields */
+#new-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+}
+#new-product-form input,
+#new-product-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+#new-product-form textarea {
+  resize: vertical;
+}
+
+/* Buttons */
+.form-button {
+  padding: 0.75rem 1rem;
+  border: none;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  background-color: var(--accent-color);
+  transition: background .15s ease-in-out;
+}
+
+.form-button:hover {
+  background-color: var(--accent-color-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #new-product-form-section {
+    margin-top: 1rem;
+  }
+}

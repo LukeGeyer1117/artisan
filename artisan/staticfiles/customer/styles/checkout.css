@@ -1,0 +1,110 @@
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .checkout-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #checkout-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #checkout-back-to-cart {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-radius: .5rem;
+      padding: .5rem .8rem;
+      padding-left: .2rem;
+      transition: all 0.2s ease-in-out;
+    }
+
+    #checkout-back-to-cart img {
+      width: 2rem;
+      height: auto;
+    }
+
+    #checkout-back-to-cart p {
+      margin: 0;
+      padding-left: .5rem;
+    }
+
+    #checkout-back-to-cart:hover {
+      background-color: rgb(218, 216, 216);
+      cursor: pointer;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-row > div {
+      flex: 1;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }

@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-vw5z(!az*8rlsa3%11!*njhjba-oowucm93#b78&aa8n--z_sg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['HiveMade-env.eba-we3wnpdx.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = [
+        'HiveMade-env.eba-we3wnpdx.us-west-2.elasticbeanstalk.com',
+        '44.251.204.187'
+                 ]
 
 
 # Application definition
@@ -90,10 +93,10 @@ WSGI_APPLICATION = 'artisan.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'artisan',
-        'USER': 'lukeg',
-        'PASSWORD': 'secret_key',
-        'HOST': 'localhost',
+        'NAME': 'hivemade-db',
+        'USER': 'postgres',
+        'PASSWORD': 'SkyWalk3r10!!!',
+        'HOST': 'hivemade-db.cv84gaem83aw.us-west-2.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -157,3 +160,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Enable secure proxy SSL header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Optional securty headers
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
