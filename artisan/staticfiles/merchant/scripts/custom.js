@@ -1,6 +1,6 @@
 import { searchAndFilter, showModal, hideModal, formatTimestamp } from "./common.js";
 
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
   const searchInput = document.querySelector('.search-container input');

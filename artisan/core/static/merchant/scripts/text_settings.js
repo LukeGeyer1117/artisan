@@ -1,7 +1,7 @@
 import { getCookie } from "./csrf.js";
 
 const csrftoken = getCookie('csrftoken');
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;
 
 document.addEventListener('DOMContentLoaded', async function () {
   let changed = false;
