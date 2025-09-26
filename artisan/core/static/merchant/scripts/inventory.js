@@ -124,10 +124,16 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!currentProduct) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/product/${currentProduct.id}`, {
+      const response = await fetch(`${API_BASE_URL}/product/`, {
         method: 'DELETE',
-        credentials: 'include'
-      });
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({id: currentProduct.id})
+      }
+    );
 
       if (!response.ok) throw new Error("Failed to delete product");
 

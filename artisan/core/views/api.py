@@ -556,7 +556,9 @@ def product(request):
             return JsonResponse({'error': str(e)}, status=400)
     elif request.method == 'DELETE':
         try:
-            product_id = request.GET.get('id')
+            data = json.loads(request.body)
+            product_id = data.get('id')
+            print(product_id)
             if not product_id:
                 return JsonResponse({'error': 'Missing product ID'}, status=400)
 
@@ -567,7 +569,7 @@ def product(request):
         except Product.DoesNotExist:
             return JsonResponse({'error': 'Product not found'}, status=404)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            return JsonResponse({'error': str(e)}, status=500)
         
 
     return JsonResponse({'error': 'Invalid method'}, status=405)

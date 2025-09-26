@@ -4,9 +4,11 @@ if (window.location.hostname == 'localhost' || window.location.hostname == '127.
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 let artisan;
 
+console.log(API_BASE_URL);
+
 document.addEventListener('DOMContentLoaded', async function () {
     // Get the Artisan information at page load
-    await fetch(`${API_BASE_URL}/artisan`, {
+    await fetch(`${API_BASE_URL}/artisan/`, {
       method: 'GET',
       credentials: 'include',
     })
