@@ -3,7 +3,9 @@ import { getCookie } from "./csrf.js";
 const csrftoken = getCookie('csrftoken');
 import { searchAndFilter, showModal, hideModal } from "./common.js";
 
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;
+let API_BASE_URL;
+if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
+else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
 document.addEventListener('DOMContentLoaded', async function () {
   const searchInput = document.querySelector('.search-container input');
@@ -122,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!currentProduct) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/product/?id=${currentProduct.id}`, {
+      const response = await fetch(`${API_BASE_URL}/product/${currentProduct.id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
