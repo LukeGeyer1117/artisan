@@ -13,6 +13,7 @@ __pychache__/
 env/
 venv/
 venv*/
+*media/
 
 node_modules/
 .env
