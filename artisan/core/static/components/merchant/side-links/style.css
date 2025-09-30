@@ -4,7 +4,7 @@
   justify-content: space-between;
   width: 200px;
   height: 92vh;
-  box-shadow: 1px 0 .1em black;
+  box-shadow: var(--shadow-light);
   position: sticky;
   left: 0;
   top: 8vh;
@@ -47,11 +47,11 @@
 
 .links-group a.active, .links-group a.active h3 {
   background-color: white;
-  color: #4F46E5;
+  color: var(--text-color-primary);
 }
 
 .links-group a.active svg {
-  fill: #4F46E5;
+  fill: var(--accent-color);
 }
 
 .links-group a svg {
@@ -81,7 +81,7 @@
   top: 1rem;
   left: 1rem;
   z-index: 1001;
-  background: #4F46E5;
+  background: var(--button-color);
   color: white;
   border: none;
   font-size: 1.5rem;

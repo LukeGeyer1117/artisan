@@ -1,19 +1,25 @@
 :root {
-  --main-bg-color: #f4f7f9;
-  --container-bg-color: #ffffff;
-  --text-color-primary: #333333;
-  --text-color-secondary: #666666;
-  --border-color: #e0e0e0;
-  --accent-color: #3b82f6; /* Default accent, will be overridden by JS */
-  --accent-color-hover: #574cff;
-  --button-color: #3b82f6;
-  --button-hover-color: #574cff;
-  --save-button-bg: #3b82f6;
-  --save-button-hover-bg: #45a049;
-  --error-color: #d9534f;
-  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 6px 10px rgba(0, 0, 0, 0.1);
+  --main-bg-color: #fdfcf8;          /* soft cream background, like wax */
+  --container-bg-color: #ffffff;     /* clean white for contrast */
+  --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
+  --text-color-secondary: #6b5e3c;   /* muted honey-brown for secondary text */
+  --border-color: #e5d9b6;           /* pale golden border */
+  
+  --accent-color: #f4b400;           /* rich honey yellow (main hive accent) */
+  --accent-color-hover: #d79500;     /* deeper golden amber on hover */
+  
+  --button-color: #f4b400;           /* honey yellow buttons */
+  --button-hover-color: #d79500;     /* amber hover */
+  
+  --save-button-bg: #f4b400;         /* save button in honey yellow */
+  --save-button-hover-bg: #c47f00;   /* darker amber for hover */
+  
+  --error-color: #d9534f;            /* leave errors red for clarity */
+  
+  --shadow-light: 0 4px 6px rgba(50, 40, 10, 0.05);   /* warmer toned shadow */
+  --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
 }
+
 
 * {
   font-family: 'Oswald', sans-serif;
@@ -37,6 +43,7 @@ body {
   display: flex;
   min-height: 100vh;
   gap: 1.5rem;
+  background-color: var(--main-bg-color);
 }
 
 /* Apply to a scrollable container or globally with `body` or `*` */

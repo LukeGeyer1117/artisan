@@ -1,18 +1,23 @@
 :root {
-  --main-bg-color: #f4f7f9;
-  --container-bg-color: #ffffff;
-  --text-color-primary: #333333;
-  --text-color-secondary: #666666;
-  --border-color: #e0e0e0;
-  --accent-color: #3b82f6; /* Default accent, will be overridden by JS */
-  --accent-color-hover: #574cff;
-  --button-color: #3b82f6;
-  --button-hover-color: #574cff;
-  --save-button-bg: #3b82f6;
-  --save-button-hover-bg: #45a049;
-  --error-color: #d9534f;
-  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 6px 10px rgba(0, 0, 0, 0.1);
+  --main-bg-color: #fdfcf8;          /* soft cream background, like wax */
+  --container-bg-color: #ffffff;     /* clean white for contrast */
+  --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
+  --text-color-secondary: #6b5e3c;   /* muted honey-brown for secondary text */
+  --border-color: #e5d9b6;           /* pale golden border */
+  
+  --accent-color: #f4b400;           /* rich honey yellow (main hive accent) */
+  --accent-color-hover: #d79500;     /* deeper golden amber on hover */
+  
+  --button-color: #f4b400;           /* honey yellow buttons */
+  --button-hover-color: #d79500;     /* amber hover */
+  
+  --save-button-bg: #f4b400;         /* save button in honey yellow */
+  --save-button-hover-bg: #c47f00;   /* darker amber for hover */
+  
+  --error-color: #d9534f;            /* leave errors red for clarity */
+  
+  --shadow-light: 0 4px 6px rgba(50, 40, 10, 0.05);   /* warmer toned shadow */
+  --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
 }
 
 * {
@@ -1085,7 +1090,7 @@ table tbody tr td {
 
 .gallery-header h1 {
   font-size: 2.5rem;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: var(--accent-color);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1093,7 +1098,7 @@ table tbody tr td {
 }
 
 .gallery-header p {
-  color: #666;
+  color: var(--text-color-secondary);
   font-size: 1.1rem;
 }
 
@@ -1102,11 +1107,11 @@ table tbody tr td {
 }
 
 .upload-area {
-  border: 3px dashed #667eea;
+  border: 3px dashed var(--accent-color);
   border-radius: 20px;
   padding: 60px 40px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: var(--container-bg-color);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
@@ -1114,8 +1119,7 @@ table tbody tr td {
 }
 
 .upload-area:hover {
-  border-color: #764ba2;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  border-color: var(--accent-color-hover);
   transform: translateY(-2px);
 }
 
@@ -1145,7 +1149,7 @@ table tbody tr td {
 .upload-icon {
   font-size: 4rem;
   margin-bottom: 20px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: var(--accent-color);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1153,7 +1157,7 @@ table tbody tr td {
 
 .upload-text {
   font-size: 1.3rem;
-  color: #667eea;
+  color: var(--accent-color);
   margin-bottom: 10px;
   font-weight: 700;
 }
@@ -1188,7 +1192,7 @@ table tbody tr td {
 .gallery-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  border-color: #667eea;
+  border-color: var(--accent-color);
 }
 
 .gallery-item.dragging {
@@ -1232,17 +1236,21 @@ table tbody tr td {
   backdrop-filter: blur(10px);
 }
 
+.gallery-item:hover .control-btn {
+  background: var(--accent-color);
+}
+
 .control-btn:hover {
   background: rgba(255, 255, 255, 1);
   transform: scale(1.1);
 }
 
 .delete-btn {
-  color: #e74c3c;
+  color: var(--main-bg-color);
 }
 
 .gallery-item-order {
-  background-color: #4F46E5;
+  background-color: var(--accent-color);
   position: absolute;
   bottom: 10px;
   left: 10px;
