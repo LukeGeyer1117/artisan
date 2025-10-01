@@ -154,7 +154,7 @@ STATICFILES_DIRS = [
     # os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'client'),
 ]
 
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'core/static')
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'artisan/core/static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
