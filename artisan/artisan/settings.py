@@ -85,7 +85,7 @@ AUTH_USER_MODEL = 'core.Artisan'
 # Static files config
 STATIC_URL = '/static/'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'static'
 
 WSGI_APPLICATION = 'artisan.wsgi.application'
 
@@ -148,13 +148,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'core/static/'
 STATICFILES_DIRS = [
     # This path points to the 'client' folder at your project's root.
     # os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'client'),
 ]
 
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'staticfiles')
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'core/static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
