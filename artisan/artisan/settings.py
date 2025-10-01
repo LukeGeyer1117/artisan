@@ -82,11 +82,6 @@ TEMPLATES = [
 # Auth user model
 AUTH_USER_MODEL = 'core.Artisan'
 
-# Static files config
-STATIC_URL = '/static/'
-
-STATIC_ROOT = BASE_DIR / 'static'
-
 WSGI_APPLICATION = 'artisan.wsgi.application'
 
 
@@ -150,11 +145,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    # This path points to the 'client' folder at your project's root.
-    # os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'client'),
+    BASE_DIR / "artisan" / "core" / "static",
 ]
 
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'artisan/static/')
+STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

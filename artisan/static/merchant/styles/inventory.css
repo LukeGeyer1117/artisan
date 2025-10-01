@@ -1,0 +1,9 @@
+.category-record td {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.delete-category-button:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
