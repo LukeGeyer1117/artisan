@@ -1,0 +1,115 @@
+body {
+    margin: 0;
+}
+
+.custom-order-section {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.custom-order-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.custom-order-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.custom-order-form input[type="text"],
+.custom-order-form input[type="email"],
+.custom-order-form input[type="number"],
+.custom-order-form textarea,
+.custom-order-form input[type="file"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.custom-order-form input[type="file"] {
+  padding: 0.5rem 0;
+}
+
+.custom-order-form textarea {
+  resize: vertical;
+}
+
+.custom-order-form .budget-range {
+  display: flex;
+  gap: 1rem;
+}
+
+.custom-order-form .budget-range > div {
+  flex: 1;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+  cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-top: 0.2rem;
+  transform: scale(1.2);
+}
+
+
+.submit-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Success Page */
+
+.success-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6rem 2rem;
+}
+
+.success-message {
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.success-message h1 {
+  color: #2f3e46;
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+.success-message p {
+  color: #4f5d75;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.back-home-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}

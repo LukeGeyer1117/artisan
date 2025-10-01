@@ -1,0 +1,155 @@
+/* Navigation Bar Styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 0;
+  position: relative;
+}
+
+/* Main navigation content container */
+.navbar > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 2rem;
+}
+
+/* Navigation links styling */
+.nav-links {
+    position: inherit;
+  display: flex;
+  gap: 3rem;
+  transition: all .15s ease-in-out;
+  z-index: 100;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+  font-size: 13pt;
+  width: 130px;
+  text-align: center;
+}
+
+/* Logo styling */
+.nav-header {
+  margin: 0 2rem;
+}
+
+.nav-logo-image {
+  height: 100px; /* Adjust height as needed */
+  width: fit-content;
+  object-fit: cover;
+  position: inherit;
+  top: 10%;
+  z-index: 100;
+  transition: all .1s ease-in-out;
+}
+
+.nav-logo-image:hover {
+  transform: scale(1.025);
+}
+
+/* Cart link styling - positioned on far right */
+.navbar > a {
+  margin-left: auto;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 25px;
+  right: 30px;
+}
+
+.navbar > a img {
+  height: 24px;
+  width: 24px;
+  padding-right: 1rem;
+  transition: all .1s ease-in-out;
+}
+
+.navbar > a img:hover {
+  transform: scale(1.075);
+}
+
+/* Menu toggle button (for mobile) */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  z-index: 1000;
+}
+
+/* Responsive design */
+@media (max-width: 1000px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
+  
+  .navbar > div:first-child {
+    order: 2;
+    width: 100%;
+    margin-top: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #central-navbar-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    margin-top: 0;
+  }  
+  
+  .nav-links {
+    position: absolute;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+    transform: translateY(-200%);
+    width: 175px;
+    transition: transform 0.3s ease; /* Add smooth animation */
+  }
+  
+  /* Add these classes for mobile menu states */
+  .nav-links.menu-item-1.show { transform: translateY(0%); }
+  .nav-links.menu-item-2.show { transform: translateY(100%); }
+  
+  .nav-logo-image {
+    width: fit-content;
+    height: 50px;
+  }
+
+  .nav-header {
+    margin: 0;
+    order: 1;
+  }
+  
+  .navbar > a {
+    order: 3;
+    margin-left: 0;
+  }
+  
+  .menu-toggle {
+    display: block;
+    order: 4;
+  }
+}
+
+/* Reset transforms for desktop */
+@media (min-width: 1000px) {
+  .nav-links {
+    transform: none !important;
+    position: static !important;
+  }
+}
