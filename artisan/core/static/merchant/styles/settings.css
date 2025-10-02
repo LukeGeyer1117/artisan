@@ -100,7 +100,7 @@ input[type="file"] {
 }
 
 .field-tip.important {
-  color: #d9534f;
+  color: var(--error-color);
   font-weight: bold;
 }
 

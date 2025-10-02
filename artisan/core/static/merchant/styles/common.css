@@ -14,7 +14,7 @@
   --save-button-bg: #f4b400;         /* save button in honey yellow */
   --save-button-hover-bg: #c47f00;   /* darker amber for hover */
   
-  --error-color: #d9534f;            /* leave errors red for clarity */
+  --error-color: #f0706c;            /* leave errors red for clarity */
   
   --shadow-light: 0 4px 6px rgba(50, 40, 10, 0.05);   /* warmer toned shadow */
   --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
