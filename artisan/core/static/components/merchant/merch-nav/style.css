@@ -6,7 +6,7 @@
   background: var(--accent-color);
   flex-direction: row;
   align-items: center;
-  justify-content: right;
+  justify-content: space-between;
   box-shadow: var(--shadow-light);
   z-index: 1000;
   position: sticky;

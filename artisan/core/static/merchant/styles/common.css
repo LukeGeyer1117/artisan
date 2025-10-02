@@ -4,9 +4,11 @@
   --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
   --text-color-secondary: #6b5e3c;   /* muted honey-brown for secondary text */
   --border-color: #e5d9b6;           /* pale golden border */
+  --softened-accent-color: #ffeec0;
+  --active-row-color: #fff8e4;
   
   --accent-color: #f4b400;           /* rich honey yellow (main hive accent) */
-  --accent-color-hover: #d79500;     /* deeper golden amber on hover */
+  --accent-color-hover: #d79500;     /* deeper golden on hover */
   
   --button-color: #f4b400;           /* honey yellow buttons */
   --button-hover-color: #d79500;     /* amber hover */
@@ -221,22 +223,21 @@ body {
 .records-table {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
+  background: var(--container-bg-color);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-light);
 }
 
 /* Table Header */
 .records-table th {
-  background: #f8fafc;
-  color: #374151;
+  background: var(--softened-accent-color);
+  color: var(--text-color-primary);
   font-weight: 600;
   font-size: 14px;
   text-align: left;
   padding: 16px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -269,7 +270,7 @@ body {
 
 /* Row States */
 .records-table tbody tr:hover {
-  background-color: #f1f5f9;
+  background-color: var(--active-row-color);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
