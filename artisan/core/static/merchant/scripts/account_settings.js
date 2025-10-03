@@ -1,4 +1,5 @@
 import { getCookie } from "./csrf.js";
+import { get_merchant_information } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
 let API_BASE_URL;
@@ -47,9 +48,8 @@ async function setup_account_settings() {
 }
 
 function updateProfilePictureDisplay(imagePath, fullName) {
-    const avatarContainer = document.getElementById('profile-avatar');
+    const avatarContainer = document.querySelector('.profile-avatar');
     if (imagePath) {
-        // If an image exists, display it
         avatarContainer.innerHTML = `<img src="/media/${imagePath}" alt="${fullName}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
     } else {
         // If no image, display initials
@@ -103,20 +103,6 @@ function setup_event_listeners() {
     if (removeButton) {
         removeButton.addEventListener('click', remove_profile_picture);
     }
-}
-
-async function get_merchant_information() {
-    const response = await fetch(`${API_BASE_URL}/artisan/`, {
-        method: 'GET',
-        credentials: 'include'
-    });
-
-    if (!response.ok) {
-        throw new Error('Could not get merchant info');
-    }
-
-    const data = await response.json();
-    return data.artisan;
 }
 
 async function submit_account_changes() {

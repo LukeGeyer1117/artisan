@@ -842,7 +842,7 @@ table tbody tr td {
 }
 
 #delete-button {
-  background: linear-gradient(90deg, #FF6E6E, #FF5555, #FF6E6E);
+  background: var(--error-color);
 }
 
 .modal {
@@ -885,7 +885,6 @@ table tbody tr td {
   padding: 1rem;
   border-radius: 16px;
   width: 49%;
-  color: white;
   transition: all 0.15s ease-in-out;
 }
 
@@ -894,7 +893,8 @@ table tbody tr td {
 }
 
 #confirm-delete-button {
-  background: linear-gradient(90deg, #FF6E6E, #FF5555, #FF6E6E);
+  background: var(--error-color);
+  color: var(--main-bg-color);
 }
 
 @media (max-width: 550px) {
