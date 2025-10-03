@@ -105,21 +105,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (currentStatus === oldStatus) {
         alert('Order status was not changed.');
       }
-      // Active statuses can be moved to any other status, if the new status != old status
-      else if (active_statuses.includes(oldStatus) && !(dead_statuses.includes(currentStatus))) {
-        update_status(currentOrder, currentStatus)
-      }
-      else if (active_statuses.includes(oldStatus) && dead_statuses.includes(currentStatus)) {
-        // if new status is in dead_statuses, re-add the products to inventory
-        restock(currentOrder);
-        update_status(currentOrder, currentStatus);
-      }
-      // Inactive ('complete') statuses can only be moved to active
-      else if (oldStatus in inactive_statuses && currentStatus in active_statuses) {}
-      // Dead statuses stay dead
-      else {
-        alert('Invalid status change');
-      }
+      update_status(currentOrder, currentStatus);
     })
   }
 

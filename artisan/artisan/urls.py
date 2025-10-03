@@ -48,6 +48,7 @@ urlpatterns = [
     path('add-item/', views.new_item_view),
     path('api/artisan/', views.artisan),
     path('api/artisan/upload_profile_image/', views.artisan_upload_profile_image),
+    path('api/artisan/remove_profile_image/', views.artisan_remove_profile_image),
     path('api/artisan/<slug:slug>/', views.artisan_by_slug),
     path('api/inventories/', views.create_inventory),
     path('api/inventory/', views.get_inventory),

@@ -99,7 +99,7 @@ function setup_event_listeners() {
     });
 
     // Set up the "Remove Photo" button
-    const removeButton = document.querySelector('.profile-action-btn[onclick="removeProfilePicture()"]');
+    const removeButton = document.querySelector('#remove-pfp-btn');
     if (removeButton) {
         removeButton.addEventListener('click', remove_profile_picture);
     }
@@ -245,7 +245,7 @@ async function upload_profile_image(file) {
 async function remove_profile_picture() {
     try {
         const response = await fetch(`${API_BASE_URL}/artisan/remove_profile_image/`, {
-            method: 'PATCH',
+            method: 'DELETE',
             credentials: 'include',
             headers: {
                 'X-CSRFToken': csrftoken

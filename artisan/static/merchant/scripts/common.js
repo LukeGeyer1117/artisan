@@ -283,4 +283,5 @@ function formatTimestamp(timestamp) {
   return `${date.toLocaleDateString('en-US', options)}`;
 }
 
+
 export {searchAndFilter, showModal, hideModal, formatTimestamp};

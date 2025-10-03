@@ -203,6 +203,34 @@ def artisan_upload_profile_image(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+@login_required(login_url='/login/')
+@require_http_methods(['DELETE'])
+def artisan_remove_profile_image(request):
+    artisan = request.user
+
+    if not artisan.is_authenticated:
+        return JsonResponse({'error1': "Not authenticated"}, status=401)
+    
+    try:
+        if artisan.image:
+            # Delete the file from the filepath if it exists
+            if os.path.exists(artisan.image.path):
+                os.remove(artisan.image.path)
+        
+            # Clear the image field
+            artisan.image.delete(save=False) # Remove file from storage
+            artisan.image = None
+            artisan.save()
+
+            return JsonResponse({
+                'message': "Profile image removed successfully"
+            }, status=200)
+    
+        else:
+            return JsonResponse({'error': 'No profile image to remove'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # Create an Inventory
 @csrf_exempt
