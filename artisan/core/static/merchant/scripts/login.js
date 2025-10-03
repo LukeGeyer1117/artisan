@@ -21,10 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
             phone: document.getElementById('phone').value,
             password: document.getElementById('password2').value,
             shop_name: document.getElementById('shop-name').value,
-            product_specialty: '',
-            price_range_low: 0,
-            price_range_high: 100,
-            accepting_custom_orders: true
         };
 
         console.log(data);

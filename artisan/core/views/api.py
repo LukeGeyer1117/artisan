@@ -78,7 +78,7 @@ def artisan(request):
                 full_name=data.get('name', ''),
                 phone_number=data.get('phone', ''),
                 slug=generate_unique_slug(shop_name),
-                accepting_custom_orders=data.get('accepting_custom_orders', False),
+                accepting_custom_orders=False,
             )
 
             print(artisan)
@@ -151,13 +151,9 @@ def artisan_by_slug(request, slug):
         
         # Only return customer-safe fields
         artisan_data = {
-            'id': artisan.id,
             'shop_name': artisan.shop_name,
             'slug': artisan.slug,
             'contact_email': artisan.contact_email,
-            'product_specialty': artisan.product_specialty,
-            'price_range_low': str(artisan.price_range_low),  # Convert Decimal to string for JSON
-            'price_range_high': str(artisan.price_range_high),  # Convert Decimal to string for JSON
             'accepting_custom_orders': artisan.accepting_custom_orders,
             'image_url': artisan.image.url if artisan.image else None,
             'facebook_link': artisan.facebook_link,
@@ -958,7 +954,9 @@ def get_hero_image_by_session(request):
 @csrf_exempt
 def get_logo_image_by_slug(request, slug):
     if request.method == 'GET':
+        print(slug)
         artisan = get_object_or_404(Artisan, slug=slug)
+        print(artisan)
         logo = get_object_or_404(LogoImage, artisan=artisan)
 
         try:

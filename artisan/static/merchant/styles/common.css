@@ -4,9 +4,11 @@
   --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
   --text-color-secondary: #6b5e3c;   /* muted honey-brown for secondary text */
   --border-color: #e5d9b6;           /* pale golden border */
+  --softened-accent-color: #ffeec0;
+  --active-row-color: #fff8e4;
   
   --accent-color: #f4b400;           /* rich honey yellow (main hive accent) */
-  --accent-color-hover: #d79500;     /* deeper golden amber on hover */
+  --accent-color-hover: #d79500;     /* deeper golden on hover */
   
   --button-color: #f4b400;           /* honey yellow buttons */
   --button-hover-color: #d79500;     /* amber hover */
@@ -14,14 +16,15 @@
   --save-button-bg: #f4b400;         /* save button in honey yellow */
   --save-button-hover-bg: #c47f00;   /* darker amber for hover */
   
-  --error-color: #d9534f;            /* leave errors red for clarity */
+  --error-color: #f0706c;            /* leave errors red for clarity */
   
   --shadow-light: 0 4px 6px rgba(50, 40, 10, 0.05);   /* warmer toned shadow */
   --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
 }
 
 * {
-  font-family: 'Oswald', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300; /* Light weight, often suitable for body text */
 }
 
 .menbere-serif {
@@ -220,22 +223,21 @@ body {
 .records-table {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
+  background: var(--container-bg-color);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-light);
 }
 
 /* Table Header */
 .records-table th {
-  background: #f8fafc;
-  color: #374151;
+  background: var(--softened-accent-color);
+  color: var(--text-color-primary);
   font-weight: 600;
   font-size: 14px;
   text-align: left;
   padding: 16px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -268,7 +270,7 @@ body {
 
 /* Row States */
 .records-table tbody tr:hover {
-  background-color: #f1f5f9;
+  background-color: var(--active-row-color);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -1090,7 +1092,7 @@ table tbody tr td {
 
 .gallery-header h1 {
   font-size: 2.5rem;
-  background: var(--accent-color);
+  background: var(--text-color-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1107,7 +1109,7 @@ table tbody tr td {
 }
 
 .upload-area {
-  border: 3px dashed var(--accent-color);
+  border: 3px dashed var(--text-color-secondary);
   border-radius: 20px;
   padding: 60px 40px;
   text-align: center;
@@ -1149,7 +1151,7 @@ table tbody tr td {
 .upload-icon {
   font-size: 4rem;
   margin-bottom: 20px;
-  background: var(--accent-color);
+  fill: var(--accent-color);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1157,7 +1159,7 @@ table tbody tr td {
 
 .upload-text {
   font-size: 1.3rem;
-  color: var(--accent-color);
+  color: var(--text-color-secondary);
   margin-bottom: 10px;
   font-weight: 700;
 }
@@ -1264,13 +1266,13 @@ table tbody tr td {
 .save-section {
   text-align: center;
   padding: 30px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: var(--container-bg-color);
   border-radius: 20px;
   margin-top: 40px;
 }
 
 .save-btn {
-  background-color: #4F46E5;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 15px 40px;
@@ -1279,7 +1281,7 @@ table tbody tr td {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 700;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-light);
 }
 
 .save-btn:hover {
