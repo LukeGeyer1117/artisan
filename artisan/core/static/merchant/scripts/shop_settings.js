@@ -37,7 +37,7 @@ async function get_shop_settings() {
     return response.json();
   })
   .then(data => {
-    populate_fields_initial(data.shop_settings);
+    populate_fields_initial(data.shop_settings, data.slug);
     return data;
   })
 }
@@ -99,7 +99,7 @@ async function save_shop_changes() {
   });
 }
 
-function populate_fields_initial(shop_settings) {
+function populate_fields_initial(shop_settings, slug) {
   document.getElementById('shop-name').value = shop_settings.shop_name;
   document.getElementById('shop-description').value = shop_settings.shop_description;
   document.getElementById('accepting-custom-orders').checked = shop_settings.accepting_custom_orders;
@@ -113,4 +113,16 @@ function populate_fields_initial(shop_settings) {
   document.getElementById('terms-and-conditions').value = shop_settings.terms_and_conditions;
   document.getElementById('shipping-policy').value = shop_settings.shipping_policy;
   document.getElementById('return-policy').value = shop_settings.return_policy;
+
+  // Build the base URL depending on environment
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const BASE_URL = `${window.location.protocol}//${window.location.hostname}${isLocal ? ':8000' : ''}/home/`;
+
+  // Update the shop URL element
+  const shopUrl = document.getElementById('shop-url');
+  const fullUrl = `${BASE_URL}${slug}`;
+
+  shopUrl.textContent = fullUrl;
+  shopUrl.href = fullUrl;
+  shopUrl.target = '_blank';  
 }

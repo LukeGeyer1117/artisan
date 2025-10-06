@@ -1336,7 +1336,7 @@ def get_shop_settings_by_session(request):
     shop_settings_data = model_to_dict(shop_settings)
     message = 'created new shop settings' if created else 'found shop settings'
 
-    return JsonResponse({'message': message, 'shop_settings': shop_settings_data})
+    return JsonResponse({'message': message, 'shop_settings': shop_settings_data, 'slug': artisan.slug})
 
 @login_required(login_url='/login/')
 @require_POST
@@ -1355,6 +1355,14 @@ def update_shop_settings(request):
         
         # Get the artisan and their shop settings
         shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+
+        # Check if the shop name has changed
+        old_shop_name = shop_settings.shop_name
+        if (old_shop_name != data.get('shopName')):
+            new_slug = generate_unique_slug(data.get('shopName'))
+            artisan.slug = new_slug
+            artisan.save()
+            
 
         # Update the model fields with the data from the JSON
         # It's crucial to map the JSON keys to your model fields
