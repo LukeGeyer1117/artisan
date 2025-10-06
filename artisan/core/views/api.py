@@ -15,6 +15,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 
+# For PHP
+import requests
+
 from ..models import (
     Artisan,
     Inventory,
@@ -561,6 +564,13 @@ def product(request):
 
             if not inventory:
                 return JsonResponse({'error': "No associated inventory found!"}, status=404)
+            
+            response_from_php = call_php_create_product(
+                request.POST.get('name'),
+                request.POST.get('description'),
+                request.POST.get('price'),
+            )
+            print("PHP response:", response_from_php)
 
             # Create the product linked to that inventory
             product = Product.objects.create(
@@ -1395,3 +1405,13 @@ def update_shop_settings(request):
         # Catch any other unexpected errors
         return JsonResponse({'error': str(e)}, status=500)
 
+############### Not Django Views, Just Helper funcs!!!!! ################################
+def call_php_create_product(name, description, price):
+    url = "http://127.0.0.1:8001/createproduct.php"
+    data = {
+        "x_product_name": name,
+        "x_product_description": description,
+        "x_product_price": price,
+    }
+    resp = requests.post(url, data=data)
+    return resp.text
