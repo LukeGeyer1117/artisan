@@ -21,7 +21,7 @@ class ArtisanManager(BaseUserManager):
 
 
 class Artisan(AbstractUser):
-
+    # Core info for HiveMade
     full_name = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
@@ -36,6 +36,11 @@ class Artisan(AbstractUser):
     accepting_custom_orders = models.BooleanField(default=False)
     image = models.ImageField(upload_to="pfps/", default="")
 
+    #Troute Info
+    troute_login = models.CharField(max_length=100, blank=True, null=True)
+    troute_key = models.CharField(max_length=200, blank=True, null=True)
+
+    # Social Media Links
     facebook_link = models.URLField(max_length=200, blank=True, null=True)
     instagram_link = models.URLField(max_length=200, blank=True, null=True)
     youtube_link = models.URLField(max_length=200, blank=True, null=True)
@@ -66,6 +71,9 @@ class Product(models.Model):
     description = models.CharField(max_length=1000, default='', blank=True)
     image = models.ImageField(upload_to="images/", default='')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Troute Unique Identifier
+    troute_unique_id = models.PositiveIntegerField(null=True, blank=True, unique=True)
 
     def __str__(self):
         return f'{self.inventory.artisan} - {self.name} - {self.price}'

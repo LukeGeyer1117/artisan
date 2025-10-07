@@ -1,31 +1,28 @@
 <?php
 // URL of your query endpoint
-$url = "https://develop.expitrans.com/query"; // adjust if needed
+$url = "https://develop.expitrans.com/query?action=expiproduct"; // adjust if needed
 
 // Your merchant credentials
-$merchantName = "TWINOAKSPLACE";
-$merchantKey  = "9860d2d9b6480116363d2cba5fa96b3625bdeff8";
+$merchantName = $_POST['x_login'];
+$merchantKey  = $_POST['x_merchant_key'];
 
 // Product details from POST request (fallback to defaults if missing)
 $productName        = $_POST['x_product_name'] ?? "My New Product";
 $productDescription = $_POST['x_product_description'] ?? "Description of my new product";
 $productPrice       = $_POST['x_product_price'] ?? "29.99";
 
-// Log to terminal (stderr, so it shows in PHP server console)
-error_log("Product Name: " . $productName);
-error_log("Product Description: " . $productDescription);
-error_log("Product Price: " . $productPrice);
-
 
 // Build POST data for creating a product
 $postData = [
-    'action'               => 'create_product',  // correct action for creating a product
-    'x_login'              => $merchantName,
-    'x_tran_key'           => $merchantKey,
-    'x_product_name'       => $productName,
-    'x_product_description'=> $productDescription,
-    'x_product_price'      => $productPrice
-];
+    "x_login" => $merchantName,
+    "x_tran_key" => $merchantKey,
+    "product" => [
+        "uniqueID" => null,
+        "name" => $productName,
+        "description" => $productDescription,
+        "price" => $productPrice
+    ]
+    ];
 
 // Initialize cURL
 $ch = curl_init($url);

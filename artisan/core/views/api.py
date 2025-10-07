@@ -516,7 +516,7 @@ def product(request):
 
     if not artisan.is_authenticated:
         return JsonResponse({'error': "Not authenticated"}, status=401)
-
+    
     actual_method = request.POST.get('_method', '').upper()
     if request.method == 'POST':
         # Check to see if the acutal method tag is a 'PATCH'
@@ -564,13 +564,23 @@ def product(request):
 
             if not inventory:
                 return JsonResponse({'error': "No associated inventory found!"}, status=404)
-            
+
+            # Attempt to make the product through php script
             response_from_php = call_php_create_product(
+                artisan.troute_login,
+                artisan.troute_key,
                 request.POST.get('name'),
                 request.POST.get('description'),
                 request.POST.get('price'),
             )
-            print("PHP response:", response_from_php)
+
+            # Sanitize the output
+            parsed = sanitize_troute_resp(response_from_php)
+            print(parsed)
+
+            # Check the status and error if it didn't work
+            if parsed["result"] != "success":
+                return JsonResponse({'error': "Failed to create product due to troute error"}, status=500)
 
             # Create the product linked to that inventory
             product = Product.objects.create(
@@ -579,7 +589,8 @@ def product(request):
                 price = request.POST.get('price'),
                 quantity = request.POST.get('quantity'),
                 description = request.POST.get('description'),
-                image = request.FILES.get('image')
+                image = request.FILES.get('image'),
+                troute_unique_id = parsed['product']['uniqueID']
             )
 
             return JsonResponse({'message': 'Product created', 'id': product.id}, status=201)
@@ -597,6 +608,22 @@ def product(request):
                 return JsonResponse({'error': 'Missing product ID'}, status=400)
 
             product = Product.objects.get(id=product_id)
+            if not product:
+                return JsonResponse({'error': "No product found"}, status=404)
+            
+            # Check if has troute unique id, delete from troute if does
+            if product.troute_unique_id:
+                response_from_php = call_php_delete_product(
+                    artisan.troute_login,
+                    artisan.troute_key,
+                    product.troute_unique_id
+                )
+
+                parsed = sanitize_troute_resp(response_from_php)
+                if parsed['result'] != "success":
+                    print(parsed)
+                    return JsonResponse({'error': "Couldn't delete product due to troute error."}, status=500)
+
             product.delete()
 
             return JsonResponse({'message': 'Product deleted'}, status=200)
@@ -1406,12 +1433,37 @@ def update_shop_settings(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 ############### Not Django Views, Just Helper funcs!!!!! ################################
-def call_php_create_product(name, description, price):
+def call_php_create_product(login, secret, name, description, price):
     url = "http://127.0.0.1:8001/createproduct.php"
     data = {
+        "x_login": login,
+        "x_merchant_key": secret,
         "x_product_name": name,
         "x_product_description": description,
         "x_product_price": price,
     }
     resp = requests.post(url, data=data)
     return resp.text
+
+def call_php_delete_product(login, secret, unique_id):
+    url = "http://127.0.0.1:8001/deleteproduct.php"
+    data = {
+        "x_login": login,
+        "x_merchant_key": secret,
+        "uniqueID": unique_id
+    }
+    resp = requests.post(url, data=data)
+    return resp.text
+
+def call_php_get_product():
+    pass
+
+def sanitize_troute_resp(resp_string):
+    # Sanitize the output
+    resp_string = resp_string.strip()
+    json_start = resp_string.find('{')
+    if json_start == -1:
+        raise ValueError("No JSON found in resonse")
+    json_str = resp_string[json_start:]
+    parsed = json.loads(json_str)
+    return parsed
