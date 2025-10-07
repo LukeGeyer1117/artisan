@@ -561,8 +561,8 @@ def product(request):
             
         try:
             inventory = Inventory.objects.get(artisan=artisan)
-
             if not inventory:
+                print('no inventory')
                 return JsonResponse({'error': "No associated inventory found!"}, status=404)
 
             # Attempt to make the product through php script
@@ -1455,8 +1455,15 @@ def call_php_delete_product(login, secret, unique_id):
     resp = requests.post(url, data=data)
     return resp.text
 
-def call_php_get_product():
-    pass
+def call_php_get_product(login, secret, unique_id):
+    url='http://127.0.0.1:8001/getproduct.php'
+    data = {
+        "x_login": login,
+        "x_merchant_key": secret,
+        "uniqueID": unique_id
+    }
+    resp = requests.post(url, data=data)
+    return resp.text
 
 def sanitize_troute_resp(resp_string):
     # Sanitize the output

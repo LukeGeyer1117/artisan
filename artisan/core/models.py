@@ -20,13 +20,16 @@ class ArtisanManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
 class Artisan(AbstractUser):
     # Core info for HiveMade
     full_name = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(unique=True)   # make email unique for login
-    username = models.CharField(max_length=50, blank=True)  
+    email = models.EmailField(unique=True)   # unique for login
+    username = models.CharField(max_length=50, blank=True)
     contact_email = models.CharField(max_length=100, blank=True, null=True, default="")
     shop_name = models.CharField(max_length=100)
     slug = models.CharField(max_length=100, default=False)
@@ -36,9 +39,43 @@ class Artisan(AbstractUser):
     accepting_custom_orders = models.BooleanField(default=False)
     image = models.ImageField(upload_to="pfps/", default="")
 
-    #Troute Info
+    # Troute Necessities
     troute_login = models.CharField(max_length=100, blank=True, null=True)
     troute_key = models.CharField(max_length=200, blank=True, null=True)
+
+    # Merchant / Company Info
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    address_line1 = models.CharField(max_length=100, blank=True, null=True)
+    address_line2 = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    state = models.CharField(max_length=50, blank=True, null=True)
+    zip_code = models.CharField(max_length=20, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    fax = models.CharField(max_length=20, blank=True, null=True)
+    website = models.URLField(max_length=200, blank=True, null=True)
+
+    # Billing Info
+    billing_bank_name = models.CharField(max_length=150, blank=True, null=True)
+    billing_routing_number = models.CharField(max_length=20, blank=True, null=True)
+    billing_account_number = models.CharField(max_length=30, blank=True, null=True)
+    billing_phone = models.CharField(max_length=20, blank=True, null=True)
+    billing_country = models.CharField(max_length=50, blank=True, null=True)
+    billing_zip = models.CharField(max_length=20, blank=True, null=True)
+    billing_state = models.CharField(max_length=50, blank=True, null=True)
+    billing_city = models.CharField(max_length=50, blank=True, null=True)
+    billing_address1 = models.CharField(max_length=100, blank=True, null=True)
+    billing_address2 = models.CharField(max_length=100, blank=True, null=True)
+    billing_notes = models.TextField(blank=True, null=True)
+
+    # Contact Info
+    contact_first_name = models.CharField(max_length=50, blank=True, null=True)
+    contact_last_name = models.CharField(max_length=50, blank=True, null=True)
+
+    # Merchant Settings
+    merchant_fields = models.CharField(max_length=255, blank=True, null=True)  # e.g. "CustomField1/CustomField2"
+    default_surcharge = models.CharField(max_length=20, blank=True, null=True)
+    surcharge_flat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    surcharge_percent = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
 
     # Social Media Links
     facebook_link = models.URLField(max_length=200, blank=True, null=True)
@@ -47,12 +84,11 @@ class Artisan(AbstractUser):
 
     # Required for custom user model
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["shop_name"]  
-
-    objects = ArtisanManager()
+    REQUIRED_FIELDS = ["shop_name"]
 
     def __str__(self):
         return self.shop_name
+
 
     
 class Inventory(models.Model):
