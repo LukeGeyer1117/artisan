@@ -1,5 +1,5 @@
 :root {
-  --main-bg-color: #fdfcf8;          /* soft cream background, like wax */
+  --main-bg-color: #f7f4ec;          /* soft cream background, like wax */
   --container-bg-color: #ffffff;     /* clean white for contrast */
   --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
   --text-color-secondary: #6b5e3c;   /* muted honey-brown for secondary text */
@@ -20,6 +20,8 @@
   
   --shadow-light: 0 4px 6px rgba(50, 40, 10, 0.05);   /* warmer toned shadow */
   --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
+
+  --border-radius: 8px;
 }
 
 * {
@@ -45,6 +47,10 @@ body {
   display: flex;
   min-height: 100vh;
   gap: 1.5rem;
+  flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--container-bg-color);
 }
 
 /* Apply to a scrollable container or globally with `body` or `*` */
@@ -96,14 +102,6 @@ body {
   padding: 1px 3px;
   border-radius: 2px;
   font-weight: 600;
-}
-
-.dashboard-main {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  box-sizing: border-box;
-  gap: 0;
 }
 
 .dashboard-sections {
@@ -1077,9 +1075,6 @@ table tbody tr td {
 
 .content {
   flex: 1;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
   padding: 40px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);

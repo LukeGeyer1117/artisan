@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-document.querySelector('.navbar a').addEventListener('click', function () {window.location.href = '/login/'});
-
 function showModal(modal) {
   modal.classList.add('active'); // Make it display: flex
   requestAnimationFrame(() => {
