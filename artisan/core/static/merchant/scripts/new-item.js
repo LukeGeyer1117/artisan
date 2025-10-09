@@ -6,7 +6,9 @@ if (window.location.hostname == 'localhost' || window.location.hostname == '127.
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('back-button-div').addEventListener('click', function () {window.location.href = '/inventory/'});
+    document.getElementById('back-button-div').addEventListener('click', function () {
+        window.location.href = '/inventory/';
+    });
 
     document.getElementById('new-product-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -23,21 +25,25 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`${API_BASE_URL}/product/`, {
             method: 'POST',
             body: formData,
-            credentials: 'include', // to send session cookie
+            credentials: 'include', // send session cookie
             headers: {
                 'X-CSRFToken': csrftoken
             }
         })
-        .then(response => {
-            if (!response.ok) throw new Error("Failed to create product");
-            return response.json();
+        .then(async response => {
+            const data = await response.json().catch(() => ({})); // handle non-JSON errors
+            if (!response.ok) {
+                const message = data.error || data.message || `HTTP ${response.status}`;
+                throw new Error(message);
+            }
+            return data;
         })
         .then(result => {
             window.location.href = '/inventory/';
         })
         .catch(error => {
             console.error(error);
-            alert('Product creation failed');
+            alert(`Product creation failed: ${error.message}`);
         });
     });
-})
+});
