@@ -138,7 +138,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (!response.ok) throw new Error("Failed to delete product");
 
       const result = await response.json();
-      alert("Product deleted!");
       window.location.reload();
     } catch (error) {
       console.error(error);

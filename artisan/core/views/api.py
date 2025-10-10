@@ -509,7 +509,7 @@ def login_artisan(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
-@require_http_methods(['POST', 'PATCH', 'DELETE'])
+@require_http_methods(['POST', 'DELETE'])
 def product(request):
     # Authenticate the caller
     artisan = request.user
@@ -570,29 +570,24 @@ def product(request):
             price = request.POST['price']
             quantity = request.POST['quantity']
             description = request.POST['description']
-            try:
-                image = request.Files['image']
-            except:
-                print("COUTLDN't:LKSDJFSLKDJF")
-            print("trying to patch")
+            image = request.FILES.get('image')
             category = request.POST['category']
 
             # Try to update in troute first
-            if name or price or description:
-                print("trying to edit product in troute")
-                response_from_php = call_php_edit_product(
-                    artisan.troute_login,
-                    artisan.troute_key,
-                    product.troute_unique_id,
-                    product.name,
-                    product.description,
-                    product.price
-                )
-                parsed = sanitize_troute_resp(response_from_php)
+            response_from_php = call_php_edit_product(
+                artisan.troute_login,
+                artisan.troute_key,
+                product.troute_unique_id,
+                name,
+                description,
+                price
+            )
+            parsed = sanitize_troute_resp(response_from_php)
+            print(f"Parsed result: {parsed['result']}")
 
-                if parsed['result'] != "success":
-                    return JsonResponse({'error': "Internal Server Error: Could not edit product due to Troute issue"}, status=500)
-
+            if parsed['result'] != "success":
+                return JsonResponse({'error': "Internal Server Error: Could not edit product due to Troute issue"}, status=500)
+                
             # Update fields if provided
             if name:
                 product.name = name
@@ -643,15 +638,9 @@ def product(request):
                 )
 
                 parsed = sanitize_troute_resp(response_from_php)
-                product.delete()
-                if parsed['response'] != "success":
-                    return JsonResponse({'message': "Product deleted, but no troute product was deleted"}, status=200)
-                else:
-                    return JsonResponse({'message': "Product deleted from here and troute"}, status=200)
             product.delete()
             return JsonResponse({'message': "Product Deleted"}, status=200)
-
-
+        
         except Product.DoesNotExist:
             return JsonResponse({'error': "Not Found: Product with id could not be found"}, status=404)
         except Exception as e:
@@ -1597,7 +1586,7 @@ def call_php_create_product(login, secret, name, description, price):
     return resp.text
 
 def call_php_edit_product(login, secret, uniqueID, name, description, price):
-    url = "htp://127.0.0.1:8001/editproduct.php"
+    url = "http://127.0.0.1:8001/editproduct.php"
     data = {
         "x_login": login,
         "x_merchant_key": secret,

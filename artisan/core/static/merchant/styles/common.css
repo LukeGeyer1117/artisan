@@ -765,9 +765,9 @@ table tbody tr td {
   max-width: 400px;
   min-width: 280px;
   background-color: white;
-  height: 92vh;
-  position: absolute;
-  top: 8vh;
+  height: 94vh;
+  position: sticky;
+  top: 6vh;
   right: 0;
   z-index: 999;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
@@ -807,8 +807,7 @@ table tbody tr td {
 /* ✅ Media query for mobile responsiveness */
 @media (max-width: 768px) {
   .side-modal, #product-edit-modal {
-    width: 100%;
-    max-width: 100%;
+    width: 100vw;
     min-width: unset;
   }
 }
