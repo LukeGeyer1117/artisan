@@ -14,6 +14,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth import logout
 
 # For PHP
 import requests
@@ -44,6 +45,7 @@ from .helper import generate_unique_slug
 @csrf_exempt
 @require_http_methods(['DELETE'])
 def session(request):
+    logout(request)
     request.session.flush()  # Clears all session data
     return JsonResponse({'message': 'Session cleared'})
 

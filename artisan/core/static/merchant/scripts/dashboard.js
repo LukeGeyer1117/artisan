@@ -20,21 +20,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       artisan = data.artisan;
     })
 
-    // Handle Signout button click
-    const signOutBtn = document.querySelector('.navbar a');
-    signOutBtn.addEventListener('click', (event) => {
-        fetch(`${API_BASE_URL}/session/`, {
-          method: 'DELETE'
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to clear session data.');
-            return response.json();
-        })
-        .then(result => {
-            window.location.href = "/login/"
-        })
-    })
-
     // Get all the orders assigned to the artisan
     fetch(`${API_BASE_URL}/orders/active/`, {
         method: 'GET',

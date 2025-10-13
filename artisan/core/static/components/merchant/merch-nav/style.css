@@ -31,10 +31,6 @@
   cursor: pointer;
 }
 
-.navbar div a {
-  color: white;
-}
-
 #logo {
   height: fit-content;
 }

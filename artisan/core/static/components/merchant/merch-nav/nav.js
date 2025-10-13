@@ -1,5 +1,9 @@
 import { get_merchant_information } from "../../../merchant/scripts/common.js";
 
+let API_BASE_URL;
+if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
+else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
+
 document.addEventListener('DOMContentLoaded', async function () {
   const merchant_information = await get_merchant_information();
   console.log(merchant_information);
@@ -32,5 +36,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     accountModal.querySelector('.navbar-pfp-container').addEventListener('click', function () {
       accountModal.style.display = 'none';
     })
+  })
+
+  // Handle clicking the Sign out Button
+  const signOutBtn = document.getElementById('account-modal-sign-out-link-div');
+  signOutBtn.addEventListener('click', (event) => {
+    console.log('click!');
+    fetch(`${API_BASE_URL}/session/`, {
+      method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to clear session data.');
+        return response.json();
+    })
+    .then(result => {
+        window.location.href = "/login/"
+      })
   })
 })

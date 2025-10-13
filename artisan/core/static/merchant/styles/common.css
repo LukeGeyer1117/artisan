@@ -804,7 +804,7 @@ table tbody tr td {
   cursor: pointer;
 }
 
-/* ✅ Media query for mobile responsiveness */
+/*Media query for mobile responsiveness */
 @media (max-width: 768px) {
   .side-modal, #product-edit-modal {
     width: 100vw;
