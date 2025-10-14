@@ -237,7 +237,7 @@ function setupCategoryList(categories, API_BASE_URL) {
 
 
     // Append the actual element
-    category_table.appendChild(category_row);
+    category_table.querySelector('tbody').appendChild(category_row);
   });
 
 

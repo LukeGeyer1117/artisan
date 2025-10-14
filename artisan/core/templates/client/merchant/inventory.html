@@ -25,7 +25,7 @@
       <!-- Help Links -->
       <section class="dashboard-section" id="inventory-main-section">
 
-        <div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
           <section class="dashboard-section" id="top-buttons-section">
             <div class="search-container">
               <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
@@ -36,24 +36,22 @@
             </div>
           </section>
 
-          <section class="dashboard-section" id="inventory-table-section">
-            <h3 style="border-bottom: 1px solid var(--border-color);">Products</h3>
+          <section class="table-section" id="inventory-table-section">
+            <h3>Products</h3>
             <table id="inventory-table" class="records-table">
               <thead>
                 <th id="id-header">ID</th>
-                <th>Name</th>
+                <th id="name-header">Name</th>
                 <th id="price-header">Price</th>
                 <th id="stock-header">Stock</th>
-                <th id="status-header">Status</th>
               </thead>
               <tbody>
               </tbody>
             </table>
           </section>
 
-          <section class="dashboard-section" id="categories-section">
-            <div id="category-manager" style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
-              <h3 style="border-bottom: 1px solid var(--border-color);">Categories</h3>
+            <div id="category-manager" class="table-section">
+              <h3>Categories</h3>
               <table id="categories-table" class="records-table">
                 <thead>
                   <th id="name-header">Name</th>
@@ -61,14 +59,11 @@
                 <tbody></tbody>
               </table>
               
-              <div>
+              <div style="padding: 0.5rem 1rem;">
                 <input type="text" id="new-category-input" placeholder="Add a new category">
                 <button id="add-category-btn">Add</button>
               </div>
-
-              <p id="category-message"></p>
             </div>
-          </section>
         </div>
       </section>
     </section>

@@ -1,5 +1,6 @@
 :root {
   --main-bg-color: #f7f4ec;          /* soft cream background, like wax */
+  --secondary-bg-color: #fffdf8;
   --container-bg-color: #ffffff;     /* clean white for contrast */
   --card-bg-color: #ffffff;
   --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
@@ -24,6 +25,8 @@
   --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
 
   --border-radius: 8px;
+
+  --table-row-border-color: #f0f0f0;
 }
 
 * {
@@ -48,11 +51,10 @@ body {
 .dashboard-main {
   display: flex;
   min-height: 100vh;
-  gap: 1.5rem;
   flex-direction: row;
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--container-bg-color);
+  background-color: var(--main-bg-color);
 }
 
 /* Apply to a scrollable container or globally with `body` or `*` */
@@ -108,9 +110,8 @@ body {
 
 .dashboard-sections {
   width: 100%;
-  max-width: 1000px;
   box-sizing: border-box;
-  margin: 0 auto;
+  margin: 0 1rem;
 }
 
 .dashboard-sections.compressed {
@@ -167,16 +168,20 @@ body {
   }
 }
 
-.table-holder {
-  height: fit-content;
-  max-height: 400px;
-  overflow-y: scroll;
+.table-section {
+  background-color: var(--card-bg-color);
+  box-shadow: var(--shadow-light);
+  border-radius: var(--border-radius);
 }
 
-.records-table {
-  width: 100%;
-  box-sizing: border-box;
-  border-collapse: collapse;
+.table-section h3 {
+  padding: .25rem 1rem;
+  margin: 0;
+}
+
+.table-holder {
+  height: fit-content;
+  overflow-y: scroll;
 }
 
 /* Records Table Styles */
@@ -184,45 +189,34 @@ body {
   width: 100%;
   border-collapse: collapse;
   background: var(--container-bg-color);
-  border-radius: 8px;
   overflow: hidden;
-  box-shadow: var(--shadow-light);
+  box-sizing: border-box;
+  border-collapse: collapse; 
 }
 
 /* Table Header */
 .records-table th {
-  background: var(--softened-accent-color);
-  color: var(--text-color-primary);
+  background: var(--accent-color);
+  color: var(--container-bg-color);
   font-weight: 600;
   font-size: 14px;
   text-align: left;
-  padding: 16px;
+  padding: 6px 16px;
   border-bottom: 2px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-.records-table th:first-child {
-  border-top-left-radius: 8px;
-}
-
-.records-table th:last-child {
-  border-top-right-radius: 8px;
-}
-
 /* Table Body */
 .records-table tbody tr {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--table-row-border-color);
   transition: all 0.1s ease;
 }
 
-.records-table tbody tr:last-child {
-  border-bottom: none;
-}
 
 .records-table td {
-  padding: 16px;
+  padding:  8px 16px;
   color: #374151;
   font-size: 14px;
   vertical-align: middle;
@@ -302,15 +296,6 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Zebra Striping (Optional) */
-.records-table tbody tr:nth-child(even) {
-  background-color: #fafbfc;
-}
-
-.records-table tbody tr:nth-child(even):hover {
-  background-color: #f1f5f9;
-}
-
 /* Loading/Empty States */
 .records-table tbody tr.loading td {
   padding: 40px 16px;
@@ -323,27 +308,6 @@ body {
   padding: 40px 16px;
   text-align: center;
   color: #9ca3af;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .records-table {
-    font-size: 12px;
-  }
-  
-  .records-table th,
-  .records-table td {
-    padding: 12px 8px;
-  }
-  
-  .records-table th {
-    font-size: 12px;
-  }
-  
-  .product-actions {
-    flex-direction: column;
-    gap: 4px;
-  }
 }
 
 /* Sortable Headers (Optional) */
@@ -487,17 +451,6 @@ body {
   }
 }
 
-@media (max-width: 1000px) {
-  #quick-stats {
-    flex-direction: column;
-  }
-
-  #sales-orders-card, #custom-orders-card {
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-
 #orders-card {
   width: 100%;
   box-sizing: border-box;
@@ -511,11 +464,6 @@ table {
   box-sizing: border-box;
   border-collapse: collapse;
   text-align: left;
-  border-radius: inherit;
-}
-
-table thead{
-  height: 3rem;
 }
 
 .dashboard-table-modal {
@@ -545,6 +493,10 @@ table thead{
 
 .dashboard-table-modal:hover {
   cursor: pointer;
+}
+
+.records-table thead tr {
+  border-bottom: none;
 }
 
 table thead th {
@@ -616,19 +568,6 @@ table tbody tr td {
 .item-row div {
   width: 33%;
   padding: auto;
-}
-
-@media (max-width: 1200px) {
-  #orders-section {
-    flex-direction: column;
-  }
-
-  #orders-card {
-    width: 100%;
-  }
-  #chosen-order-card {
-    width: 100%;
-  }
 }
 
 #inventory-card {
@@ -854,12 +793,6 @@ table tbody tr td {
 #confirm-delete-button {
   background: var(--error-color);
   color: var(--main-bg-color);
-}
-
-@media (max-width: 550px) {
-  .product-id, .product-price, .product-stock, #id-header, #price-header, #stock-header {
-    display: none;
-  }
 }
 
 @media (max-width: 650px) {
@@ -1305,11 +1238,6 @@ table tbody tr td {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 15px;
   }
-}
-
-#category-manager h3, #category-manager ul {
-  margin: 0;
-  list-style-type: none;
 }
 
 #file-upload-button {
