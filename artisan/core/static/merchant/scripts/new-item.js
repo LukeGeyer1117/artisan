@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json().catch(() => ({})); // handle non-JSON errors
             if (!response.ok) {
                 const message = data.error || data.message || `HTTP ${response.status}`;
-                throw new Error(message);
                 showToast(message);
+                throw new Error(message);
             }
             return data;
         })
