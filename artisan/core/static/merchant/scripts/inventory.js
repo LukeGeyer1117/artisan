@@ -1,4 +1,5 @@
 import { getCookie } from "./csrf.js";
+import { showToast } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
 import { searchAndFilter, showModal, hideModal } from "./common.js";
@@ -123,8 +124,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   document.getElementById('confirm-delete-button').addEventListener('click', async function () {
     if (!currentProduct) return;
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/product/`, {
+      fetch(`${API_BASE_URL}/product/`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -132,18 +132,22 @@ document.addEventListener('DOMContentLoaded', async function () {
           'X-CSRFToken': csrftoken
         },
         body: JSON.stringify({id: currentProduct.id})
-      }
-    );
-
-      if (!response.ok) throw new Error("Failed to delete product");
-
-      const result = await response.json();
-      window.location.reload();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete product");
+      })
+      .then(response => {
+        if (!response.ok) {
+          console.error(`HTTP Error: ${response.status}`);
+          return response.text();
+        }
+      })
+      .then(text => {
+        showToast(text);
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+      })
     }
-  });
+  )
 
   setupCategoryList(categories, API_BASE_URL);
 

@@ -21,7 +21,9 @@
 <body>
   {% block content %}
   {% endblock %}
-  {% block toast_notifs %}{% endblock %}
+  {% block toast %}
+    {% include 'client/components/toast-notif/toast.html' %}
+  {% endblock %}
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>

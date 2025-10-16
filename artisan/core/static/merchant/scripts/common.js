@@ -295,5 +295,12 @@ async function get_merchant_information() {
     return data.artisan;
 }
 
+function showToast(message, duration=3000) {
+  const toast = document.getElementById('toast');
+  toast.innerHTML = message;
+  toast.style.visibility = 'visible';
+  toast.style.opacity = '1';  
+}
 
-export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information};
+
+export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast};

@@ -1,5 +1,4 @@
-import os
-import json
+import os, json
 
 from django.db import transaction
 from django.http import JsonResponse
@@ -16,49 +15,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import logout
 
-# For PHP
-import requests
-
-from ..models import (
-    Artisan,
-    Inventory,
-    Product,
-    Order,
-    OrderItems,
-    CustomRequest,
-    GalleryImage,
-    LogoImage,
-    HeroImage,
-    Category,
-    ProductImage,
-    Theme,
-    TextContent,
-    ShopSettings,
-)
-
-from .helper import generate_unique_slug
-
-
-### API VIEWS
-
-# Clear session data when user logs out 
-@csrf_exempt
-@require_http_methods(['DELETE'])
-def session(request):
-    logout(request)
-    request.session.flush()  # Clears all session data
-    return JsonResponse({'message': 'Session cleared'})
+# All Django models
+from ..models import *
+# All helper functions
+from .helper import *
 
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.contrib.auth import login
 from django.db import transaction
-import json
 
-from ..models import Artisan, Inventory, Theme, LogoImage, HeroImage, ShopSettings
-from .helper import generate_unique_slug
-
+### API VIEWS
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET', 'PATCH'])
@@ -67,26 +35,29 @@ def artisan(request):
     # Create an Artisan (Sign Up)
     if request.method == 'POST':
         try:
+            #  Get the data from the request, and serialize it into individual fields
             data = json.loads(request.body)
-            print(f"incoming data: {data}")
-            email = data['email']
-            username = data['username']
-            shop_name = data['shop_name']
-            password = data['password']
+            post_data = {}
+            fields = ['email', 'username', 'shop_name', 'password', 'name', 'phone']
+            for field in fields:
+                post_data[field] = data[field]
+            print(post_data)
+
+            # Check if the email has been used
+            if Artisan.objects.filter(email=post_data['email']):
+                return JsonResponse({'error': "Email is already in use."}, status=400)
 
             # Use the custom manager to handle password hashing
             artisan = Artisan.objects.create_user(
-                email=email,
-                username=username,
-                shop_name=shop_name,
-                password=password,
-                full_name=data.get('name', ''),
-                phone_number=data.get('phone', ''),
-                slug=generate_unique_slug(shop_name),
+                email=post_data['email'],
+                username=post_data['username'],
+                shop_name=post_data['shop_name'],
+                password=post_data['password'],
+                full_name=post_data['name'],
+                phone_number=post_data['phone'],
+                slug=generate_unique_slug(post_data['shop_name']),
                 accepting_custom_orders=False,
             )
-
-            print(artisan)
 
             # Related setup
             Inventory.objects.create(artisan=artisan)
@@ -524,21 +495,26 @@ def product(request):
         # Get the inventory
         inventory = get_object_or_404(Inventory, artisan=artisan)
 
-        # Attempt the php script to make 
-        productName, productPrice, productDescription = request.POST.get('name'), request.POST.get('price'), request.POST.get('description')
-        productQuantity, productImage = request.POST.get('quantity'), request.FILES.get('image')
+        ### Attempt the php script to make product in Troute
+        data = {}
+        fields = ['name', 'price', 'description', 'quantity']
+        for field in fields:
+           data[field] = request.POST.get(field)
+        file_fields = ['image']
+        for field in file_fields:
+            data[field] = request.FILES.get(field)
 
         # Check the input
-        if not productName or not productPrice or not productDescription or not productQuantity or not productImage:
+        if not data['name'] or not data['price'] or not data['description'] or not data['quantity'] or not data['image']:
             return JsonResponse({'error': "Invalid Request: One or more missing fields"}, status=400)
 
         # Create the troute product
         response_from_php = call_php_create_product(
             artisan.troute_login,
             artisan.troute_key,
-            productName, 
-            productDescription,
-            productPrice,
+            data['name'], 
+            data['description'],
+            data['price'],
         )
 
         # Before making the product, make sure Troute created it
@@ -546,13 +522,14 @@ def product(request):
         if parsed['result'] != "success":
             return JsonResponse({'error': "Internal Server Error: Couldn't make product due to Troute error"}, status=500)
         
+        ### Create the product in my db
         Product.objects.create(
             inventory=inventory,
-            name=productName,
-            price=productPrice,
-            quantity=productQuantity,
-            description=productDescription,
-            image=productImage,
+            name=data['name'],
+            price=data['price'],
+            quantity=data['quantity'],
+            description=data['description'],
+            image=data['image'],
             troute_unique_id=parsed['product']['uniqueID']
             )
         
@@ -566,23 +543,27 @@ def product(request):
             if not product_id:
                 return JsonResponse({'error': "Invalid Request: Missing product ID"}, status=400)
             
-            product = Product.objects.get(id=product_id)
+            # Get the product, error if not found
+            product = get_object_or_404(Product, id=product_id)
 
-            name = request.POST['name']
-            price = request.POST['price']
-            quantity = request.POST['quantity']
-            description = request.POST['description']
-            image = request.FILES.get('image')
-            category = request.POST['category']
+            # Get all the required fields for the request
+            fields = ['name', 'price', 'quantity', 'description', 'category']
+            data = {}
+            for field in fields:
+                data[field] = request.POST.get(field)
+
+            file_fields = ['image']
+            for field in file_fields:
+                data[field] = request.FILES.get(field)
 
             # Try to update in troute first
             response_from_php = call_php_edit_product(
                 artisan.troute_login,
                 artisan.troute_key,
                 product.troute_unique_id,
-                name,
-                description,
-                price
+                data['name'],
+                data['description'],
+                data['price']
             )
             parsed = sanitize_troute_resp(response_from_php)
             print(f"Parsed result: {parsed['result']}")
@@ -591,18 +572,18 @@ def product(request):
                 return JsonResponse({'error': "Internal Server Error: Could not edit product due to Troute issue"}, status=500)
                 
             # Update fields if provided
-            if name:
-                product.name = name
-            if price:
-                product.price = price
-            if quantity:
-                product.quantity = quantity
-            if description:
-                product.description = description
-            if image:
-                product.image = image
-            if category:
-                product.category_id = category
+            if data['name']:
+                product.name = data['name']
+            if data['price']:
+                product.price = data['price']
+            if data['quantity']:
+                product.quantity = data['quantity']
+            if data['description']:
+                product.description = data['description']
+            if data['image']:
+                product.image = data['image']
+            if data['category']:
+                product.category_id = data['category']
 
             product.save()
 
@@ -647,135 +628,6 @@ def product(request):
             return JsonResponse({'error': "Not Found: Product with id could not be found"}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
-
-
-
-
-# @login_required
-# @require_http_methods(['POST', 'DELETE', 'GET'])
-# def product(request):
-#     # Make sure the user is logged in properly
-#     artisan = request.user
-
-#     if not artisan.is_authenticated:
-#         return JsonResponse({'error': "Not authenticated"}, status=401)
-    
-#     actual_method = request.POST.get('_method', '').upper()
-#     if request.method == 'POST':
-#         # Check to see if the acutal method tag is a 'PATCH'
-#         if actual_method == 'PATCH':
-#             try:
-#                 product_id = request.POST.get('id')
-#                 if not product_id:
-#                     return JsonResponse({'error': 'Missing product ID'}, status=400)
-
-#                 product = Product.objects.get(id=product_id)
-
-#                 print(request.POST)
-#                 print(request.FILES)  # This will help debug uploaded files
-
-#                 # Update fields if provided
-#                 if 'name' in request.POST:
-#                     product.name = request.POST['name']
-#                 if 'price' in request.POST:
-#                     product.price = request.POST['price']
-#                 if 'quantity' in request.POST:
-#                     product.quantity = request.POST['quantity']
-#                 if 'description' in request.POST:
-#                     product.description = request.POST['description']
-#                 if 'image' in request.FILES:
-#                     product.image = request.FILES['image']
-#                 if 'category' in request.POST:
-#                     product.category_id = request.POST['category']
-
-#                 product.save()
-
-#                 # Handle extra images
-#                 extra_images = request.FILES.getlist('extra_images')
-#                 for image_file in extra_images:
-#                     ProductImage.objects.create(product=product, image=image_file)
-
-#                 return JsonResponse({'message': 'Product updated', 'id': product.id})
-
-#             except Product.DoesNotExist:
-#                 return JsonResponse({'error': 'Product not found'}, status=404)
-#             except Exception as e:
-#                 return JsonResponse({'error': str(e)}, status=400)
-            
-#         try:
-#             inventory = Inventory.objects.get(artisan=artisan)
-#             if not inventory:
-#                 print('no inventory')
-#                 return JsonResponse({'error': "No associated inventory found!"}, status=404)
-
-#             # Attempt to make the product through php script
-#             response_from_php = call_php_create_product(
-#                 artisan.troute_login,
-#                 artisan.troute_key,
-#                 request.POST.get('name'),
-#                 request.POST.get('description'),
-#                 request.POST.get('price'),
-#             )
-
-#             # Sanitize the output
-#             parsed = sanitize_troute_resp(response_from_php)
-#             print(parsed)
-
-#             # Check the status and error if it didn't work
-#             if parsed["result"] != "success":
-#                 return JsonResponse({'error': "Failed to create product due to troute error"}, status=500)
-
-#             # Create the product linked to that inventory
-#             product = Product.objects.create(
-#                 inventory = inventory,
-#                 name = request.POST.get('name'),
-#                 price = request.POST.get('price'),
-#                 quantity = request.POST.get('quantity'),
-#                 description = request.POST.get('description'),
-#                 image = request.FILES.get('image'),
-#                 troute_unique_id = parsed['product']['uniqueID']
-#             )
-
-#             return JsonResponse({'message': 'Product created', 'id': product.id}, status=201)
-        
-#         except Inventory.DoesNotExist:
-#             return JsonResponse({'error': 'Artisan not found'}, status=404)
-#         except Exception as e:
-#             return JsonResponse({'error': str(e)}, status=400)
-#     elif request.method == 'DELETE':
-#         try:
-#             data = json.loads(request.body)
-#             product_id = data.get('id')
-#             if not product_id:
-#                 return JsonResponse({'error': 'Missing product ID'}, status=400)
-
-#             product = Product.objects.get(id=product_id)
-#             if not product:
-#                 return JsonResponse({'error': "No product found"}, status=404)
-            
-#             # Check if has troute unique id, delete from troute if does
-#             if product.troute_unique_id:
-#                 response_from_php = call_php_delete_product(
-#                     artisan.troute_login,
-#                     artisan.troute_key,
-#                     product.troute_unique_id
-#                 )
-
-#                 parsed = sanitize_troute_resp(response_from_php)
-#                 if parsed['result'] != "success":
-#                     print(parsed)
-#                     return JsonResponse({'error': "Couldn't delete product due to troute error."}, status=500)
-
-#             product.delete()
-
-#             return JsonResponse({'message': 'Product deleted'}, status=200)
-#         except Product.DoesNotExist:
-#             return JsonResponse({'error': 'Product not found'}, status=404)
-#         except Exception as e:
-#             return JsonResponse({'error': str(e)}, status=500)
-        
-
-#     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
 @require_GET
@@ -1573,59 +1425,11 @@ def update_shop_settings(request):
     except Exception as e:
         # Catch any other unexpected errors
         return JsonResponse({'error': str(e)}, status=500)
-
-############### Not Django Views, Just Helper funcs!!!!! ################################
-def call_php_create_product(login, secret, name, description, price):
-    url = "http://127.0.0.1:8001/createproduct.php"
-    data = {
-        "x_login": login,
-        "x_merchant_key": secret,
-        "x_product_name": name,
-        "x_product_description": description,
-        "x_product_price": price,
-    }
-    resp = requests.post(url, data=data)
-    return resp.text
-
-def call_php_edit_product(login, secret, uniqueID, name, description, price):
-    url = "http://127.0.0.1:8001/editproduct.php"
-    data = {
-        "x_login": login,
-        "x_merchant_key": secret,
-        "x_product_uniqueID": uniqueID,
-        "x_product_name": name,
-        "x_product_description": description,
-        "x_product_price": price
-    }
-    resp = requests.post(url, data=data)
-    return resp.text
-
-def call_php_delete_product(login, secret, unique_id):
-    url = "http://127.0.0.1:8001/deleteproduct.php"
-    data = {
-        "x_login": login,
-        "x_merchant_key": secret,
-        "uniqueID": unique_id
-    }
-    resp = requests.post(url, data=data)
-    return resp.text
-
-def call_php_get_product(login, secret, unique_id):
-    url='http://127.0.0.1:8001/getproduct.php'
-    data = {
-        "x_login": login,
-        "x_merchant_key": secret,
-        "uniqueID": unique_id
-    }
-    resp = requests.post(url, data=data)
-    return resp.text
-
-def sanitize_troute_resp(resp_string):
-    # Sanitize the output
-    resp_string = resp_string.strip()
-    json_start = resp_string.find('{')
-    if json_start == -1:
-        raise ValueError("No JSON found in resonse")
-    json_str = resp_string[json_start:]
-    parsed = json.loads(json_str)
-    return parsed
+    
+# Clear session data when user logs out 
+@csrf_exempt
+@require_http_methods(['DELETE'])
+def session(request):
+    logout(request)
+    request.session.flush()  # Clears all session data
+    return JsonResponse({'message': 'Session cleared'})

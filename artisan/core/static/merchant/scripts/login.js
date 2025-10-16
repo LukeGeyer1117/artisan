@@ -1,4 +1,5 @@
 import { getCookie } from "./csrf.js";
+import { showToast } from "./common.js";
 
 let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
@@ -34,7 +35,14 @@ document.addEventListener('DOMContentLoaded', function () {
             credentials: 'include'
         })
         .then(response => {
-            if (!response.ok) throw new Error("Failed to sign up");
+            if (!response.ok) {
+                console.error(`HTTP Error: ${response.status}`);
+                return response.text().then(text => {
+                    showToast(text);
+                    console.error('Response body:', text);
+                    throw new Error(`Request failed: ${response.status}`);
+                });
+            }
             return response.json();
         })
         .then(result => {
@@ -42,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => {
             console.error(error);
-            alert('Signup failed');
         });
     });
 
