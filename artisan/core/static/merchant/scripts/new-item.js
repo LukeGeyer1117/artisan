@@ -1,3 +1,4 @@
+import { showToast } from "./common.js";
 import { getCookie } from "./csrf.js";
 
 const csrftoken = getCookie('csrftoken');
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 const message = data.error || data.message || `HTTP ${response.status}`;
                 throw new Error(message);
+                showToast(message);
             }
             return data;
         })
