@@ -295,12 +295,25 @@ async function get_merchant_information() {
     return data.artisan;
 }
 
-function showToast(message, duration=3000) {
+function showToast(message, duration = 3000) {
   const toast = document.getElementById('toast');
-  toast.innerHTML = message;
-  toast.style.visibility = 'visible';
-  toast.style.opacity = '1';  
+  if (!toast) {
+    console.warn('Toast element not found in DOM');
+    return;
+  }
+
+  // Set the new message
+  toast.textContent = message;
+
+  // Show it
+  toast.classList.add('show');
+
+  // Hide after duration
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, duration);
 }
+
 
 
 export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast};
