@@ -1,4 +1,5 @@
 import { getCookie } from "./csrf.js";
+import { showToast } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
 let API_BASE_URL;
@@ -192,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       })
       .then(response => {
-        window.location.reload();
+        showToast("Theme Updated");
       })
     }
 

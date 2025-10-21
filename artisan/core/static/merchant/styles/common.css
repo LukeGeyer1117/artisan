@@ -1,32 +1,34 @@
 :root {
-  --main-bg-color: #f7f4ec;          /* soft cream background, like wax */
-  --secondary-bg-color: #fffdf8;
-  --container-bg-color: #ffffff;     /* clean white for contrast */
-  --card-bg-color: #ffffff;
-  --text-color-primary: #2e2a20;     /* deep brown-black, warm instead of harsh black */
-  --text-color-secondary: #6b5e3c;   /* muted honey-brown for secondary text */
-  --border-color: #e5d9b6;           /* pale golden border */
-  --softened-accent-color: #ffeec0;
-  --active-row-color: #fff8e4;
-  
-  --accent-color: #f4b400;           /* rich honey yellow (main hive accent) */
-  --accent-color-hover: #d79500;     /* deeper golden on hover */
-  
-  --button-color: #f4b400;           /* honey yellow buttons */
-  --button-hover-color: #d79500;     /* amber hover */
-  
-  --save-button-bg: #f4b400;         /* save button in honey yellow */
-  --save-button-hover-bg: #c47f00;   /* darker amber for hover */
-  
-  --error-color: #f0706c;            /* leave errors red for clarity */
-  
-  --shadow-extra-light: 0 2px 3px rgba(50, 40, 10, 0.2);
-  --shadow-light: 0 4px 6px rgba(50, 40, 10, 0.05);   /* warmer toned shadow */
-  --shadow-medium: 0 6px 10px rgba(50, 40, 10, 0.1);
+  --main-bg-color: #f8f3ef;          /* pale sandstone cream */
+  --secondary-bg-color: #fffaf6;     /* warm off-white */
+  --container-bg-color: #fff8f4;     /* soft desert light */
+  --card-bg-color: #ffffff;          /* crisp white contrast */
+
+  --text-color-primary: #3c2a23;     /* deep canyon brown */
+  --text-color-secondary: #805b4c;   /* muted clay tone */
+
+  --border-color: #e4c1a1;           /* warm sandstone edge */
+  --softened-accent-color: #f9d7b8;  /* pale peach accent */
+  --active-row-color: #fff1e8;       /* soft warm highlight */
+
+  --accent-color: #d96e3b;           /* rich red rock orange */
+  --accent-color-hover: #b8562a;     /* deeper canyon rust */
+
+  --button-color: #d96e3b;           /* red rock orange button */
+  --button-hover-color: #b8562a;     /* canyon rust hover */
+
+  --save-button-bg: #d96e3b;         /* same orange for save button */
+  --save-button-hover-bg: #a34724;   /* darker desert clay hover */
+
+  --error-color: #d04a3c;            /* warm red, fits theme but still signals error */
+
+  --shadow-extra-light: 0 2px 3px rgba(90, 40, 20, 0.15);
+  --shadow-light: 0 4px 6px rgba(90, 40, 20, 0.08);
+  --shadow-medium: 0 6px 10px rgba(90, 40, 20, 0.12);
 
   --border-radius: 8px;
 
-  --table-row-border-color: #f0f0f0;
+  --table-row-border-color: #f1e2d7; /* soft sandstone divider */
 }
 
 * {

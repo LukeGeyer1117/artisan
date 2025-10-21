@@ -1,4 +1,5 @@
 import { getCookie } from "./csrf.js";
+import { showToast } from "./common.js";
 import { get_merchant_information } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
@@ -157,7 +158,7 @@ async function submit_account_changes() {
 
             const data = await response.json();
             console.log('Account update successful:', data);
-            alert('Your account information has been updated!');
+            showToast("Account Information Updated");
 
         } catch (error) {
             console.error('Error submitting changes:', error);
@@ -211,7 +212,7 @@ async function upload_profile_image(file) {
 
         const data = await response.json();
         console.log('Image upload successful:', data);
-        alert(data.message || 'Profile picture uploaded successfully!');
+        showToast("Profile Image Updated");
         
         // Use the returned URL to update the display immediately
         if (data.image_url) {
@@ -243,7 +244,7 @@ async function remove_profile_picture() {
         }
 
         console.log('Image removed successfully!');
-        alert('Profile picture removed!');
+        showToast("Profile Picture Removed");
         
         // Re-fetch information to update the display to show initials
         await setup_account_settings();

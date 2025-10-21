@@ -1,4 +1,5 @@
 import os, json
+from datetime import datetime, timedelta
 
 from django.db import transaction
 from django.http import JsonResponse
@@ -445,6 +446,39 @@ def inactive_orders(request):
 
     except Exception as e:
         return JsonResponse({'error': f'Could not get active orders!: {e}'}, status=400)
+
+# Get orders for analytics
+@login_required(login_url='/login/')
+@require_GET
+def order_analytics(request, days: int):
+    try:
+        artisan = request.user
+        if not artisan.is_authenticated:
+            return JsonResponse({'error': "Not authenticated"}, status=401)
+        
+        if not days or type(days) != int:
+            return JsonResponse({'error': "No valid range specified"}, status=400)
+        
+        date = days_to_datetime(days)
+
+        # Only get 
+        orders = Order.objects.filter(artisan=artisan, created_at__gt=date)
+        orders_data = [
+            {
+                'total_price': order.total_price,
+                'status': order.status,
+                'created_at': order.created_at.strftime('%Y-%m-%d'),
+            } 
+            for order in orders
+        ]
+
+        return JsonResponse({'message': "Retrieved Orders", "orders": orders_data}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+        
+
+        
+
 
 @csrf_exempt
 @require_POST

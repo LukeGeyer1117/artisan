@@ -6,7 +6,6 @@ else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/a
 
 document.addEventListener('DOMContentLoaded', async function () {
   const merchant_information = await get_merchant_information();
-  console.log(merchant_information);
 
   const avatarContainers = document.querySelectorAll('.navbar-pfp-container');
 
@@ -41,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Handle clicking the Sign out Button
   const signOutBtn = document.getElementById('account-modal-sign-out-link-div');
   signOutBtn.addEventListener('click', (event) => {
-    console.log('click!');
     fetch(`${API_BASE_URL}/session/`, {
       method: 'DELETE'
     })

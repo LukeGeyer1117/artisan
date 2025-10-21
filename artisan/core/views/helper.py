@@ -1,5 +1,6 @@
 from django.utils.text import slugify
 from ..models import Artisan
+from datetime import datetime, timedelta
 
 # For PHP
 import requests
@@ -78,3 +79,7 @@ def sanitize_troute_resp(resp_string):
     json_str = resp_string[json_start:]
     parsed = json.loads(json_str)
     return parsed
+
+# Convert days ago into datetime
+def days_to_datetime(days: int):
+    return datetime.now() - timedelta(days=days)

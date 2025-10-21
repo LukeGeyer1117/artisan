@@ -19,11 +19,16 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+  <!-- Main Content -->
   {% block content %}
   {% endblock %}
+  <!-- Toast Notifications -->
   {% block toast %}
     {% include 'client/components/toast-notif/toast.html' %}
   {% endblock %}
+  <!-- Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- Extra Scripts -->
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>

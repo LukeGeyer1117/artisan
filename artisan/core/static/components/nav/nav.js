@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return response.json();
   })
   .then(data => {
-    console.log(data.image_url);
     document.querySelector(".nav-logo-image").src = data.image_url;
   })
 
