@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   renderAnalytics(orders);
 
   // Plot Chart
-  ChartSetup('analytics-chart');
+  CreateOrdersLineChart('analytics-chart', orders);
 
   async function renderAnalytics(orders) {
     // Analyze the data and render it to the basic divs
@@ -85,8 +85,9 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // Do chart setup
-  function ChartSetup(canvas_name, chart_type='line', timeframe=7) {
+  function CreateOrdersLineChart(canvas_name, orders, chart_type='line', timeframe=7) {
 
+    // Create the date labels
     const labels = Array.from({length: timeframe}, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (6 - i)); // dates oldest to newest
@@ -95,15 +96,42 @@ document.addEventListener('DOMContentLoaded', async function () {
       return `${month}/${day}`;
     })
 
+    // Count order totals per day
+    const order_counts = {}
+    orders.forEach(order => {
+      const date = new Date(order.created_at);
+      const key = `${date.getMonth() + 1}/${date.getDate()}`;
+      order_counts[key] = (order_counts[key] || 0) + 1;
+    })
+    const orders_data = labels.map(label => order_counts[label] || 0);
+    const maxValue = Math.max(orders_data);
+
     const ctx = document.getElementById(canvas_name);
     const config = {
       type: chart_type,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            // max: maxValue,
+            ticks: {
+              callback: function(value) {
+                return Number.isInteger(value) ? value : null;
+              },
+              stepSize: 1,
+            },
+            beginAtZero: true
+          }
+        },
+      },
+
       data: {
         labels: labels,
         datasets: [
           {
             label: "test",
-            data: [10, 1, 2, 43, 5, 76],
+            data: orders_data
           }
         ]
       },
