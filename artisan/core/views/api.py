@@ -462,7 +462,7 @@ def order_analytics(request, days: int):
         date = days_to_datetime(days)
 
         # Only get 
-        orders = Order.objects.filter(artisan=artisan, created_at__gt=date)
+        orders = Order.objects.filter(artisan=artisan, created_at__gt=date).order_by('-created_at')
         orders_data = [
             {
                 'total_price': order.total_price,
@@ -471,8 +471,8 @@ def order_analytics(request, days: int):
             } 
             for order in orders
         ]
-
-        return JsonResponse({'message': "Retrieved Orders", "orders": orders_data}, status=200)
+        
+        return JsonResponse({'message': "Retrieved Orders", "orders": orders_data[:3000]}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
         

@@ -25,16 +25,24 @@
         <div class="dashboard-flex-section" id="sales-flex-section">
           <div class="dashboard-card" id="sales-amount-card">
             <h3>Sales Amount</h3>
-            <p class="stat-value">$4,250</p>
+            <p class="stat-value"></p>
           </div>
           <div class="dashboard-card" id="sales-volume-card">
             <h3>Completed Orders</h3>
-            <p class="stat-value">128 Orders</p>
+            <p class="stat-value"></p>
           </div>
         </div>
         <div class="dashboard-card" id="analytics-card">
-          <h3>Performance Overview</h3>
-          <div style="height: 95%; width: 95%;">
+          <div class="chart-header">
+            <h3>Order Analytics</h3>
+            <select name="timeframe" id="timeframe">
+              <option value="3">3 Days</option>
+              <option value="7" selected>Past Week</option>
+              <option value="30">Past Month</option>
+              <option value="90">3 Months</option>
+            </select>
+          </div>
+          <div style="height: 95%; width: 100%;">
             <canvas id="analytics-chart"></canvas>
           </div>
         </div>
@@ -43,15 +51,15 @@
       <div class="dashboard-flex-section" id="orders-flex-section">
         <div class="dashboard-card" id="pending-orders-card">
           <h3>Pending Orders</h3>
-          <p class="stat-value">5</p>
+          <p class="stat-value"></p>
         </div>
         <div class="dashboard-card" id="incomplete-orders-card">
           <h3>Incomplete Orders</h3>
-          <p class="stat-value">2</p>
+          <p class="stat-value"></p>
         </div>
         <div class="dashboard-card" id="custom-requests-card">
           <h3>Custom Requests</h3>
-          <p class="stat-value">3</p>
+          <p class="stat-value"></p>
         </div>
       </div>
     </div>

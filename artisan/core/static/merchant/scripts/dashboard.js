@@ -7,16 +7,39 @@ let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;}
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
+// Get some of the base styling properties
+const root = document.documentElement;
+const linecolor1 = getComputedStyle(root).getPropertyValue('--line-color-1');
+const linecolor2 = getComputedStyle(root).getPropertyValue('--line-color-2');
+const lineTransparency = '73';
+
+// track the chart instance
+let chartInstance = null;
+
 document.addEventListener('DOMContentLoaded', async function () {
-  // Get orders
-  const data = await getOrders(10);
-  const orders = data.orders;
 
-  // Load analytics
-  renderAnalytics(orders);
+  // Do initial page setup - Target 1 Week.
+  PageInit(7);
 
-  // Plot Chart
-  CreateOrdersLineChart('analytics-chart', orders);
+  // Listen for select to change, reload page data
+  const timeFrameSelect = document.querySelector('#analytics-card .chart-header select');
+  timeFrameSelect.addEventListener('change', (event) => {
+    const nTimeframe =  event.target.value;
+    PageInit(Number(nTimeframe));
+  })
+
+  // Initial Page setup, with order fetch, graph setup, etc.
+  async function PageInit(timeframe=7) {
+    const data = await getOrders(timeframe);
+    const orders = data.orders;
+
+    if (orders.length > 3000) {
+      showToast('Only showing 3000 most recent orders');
+    }
+
+    renderAnalytics(orders);
+    CreateOrdersNRevenueLineChart('analytics-chart', orders, undefined, timeframe);
+  }
 
   async function renderAnalytics(orders) {
     // Analyze the data and render it to the basic divs
@@ -41,7 +64,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
 
       const data = await response.json();
-      console.log(data);
       return data;
 
     } catch (error) {
@@ -85,41 +107,73 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // Do chart setup
-  function CreateOrdersLineChart(canvas_name, orders, chart_type='line', timeframe=7) {
+  function CreateOrdersNRevenueLineChart(canvas_name, orders, chart_type='line', timeframe=7) {
+
 
     // Create the date labels
     const labels = Array.from({length: timeframe}, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() - (6 - i)); // dates oldest to newest
+      date.setDate(date.getDate() - (timeframe - i -1)); // dates oldest to newest
       const month = (date.getMonth() + 1);
       const day = date.getDate();
       return `${month}/${day}`;
     })
 
-    // Count order totals per day
+    // Count order & revenue totals per day
     const order_counts = {}
+    const revenue_counts = {}
     orders.forEach(order => {
       const date = new Date(order.created_at);
-      const key = `${date.getMonth() + 1}/${date.getDate()}`;
+      const key = `${date.getMonth() + 1}/${date.getDate() + 1}`;
       order_counts[key] = (order_counts[key] || 0) + 1;
+      revenue_counts[key] = (revenue_counts[key] || 0) + Number(order.total_price);
     })
+    // Map the totals per day to the chart labels
     const orders_data = labels.map(label => order_counts[label] || 0);
-    const maxValue = Math.max(orders_data);
+    const revenue_data = labels.map(label => revenue_counts[label] || 0);
 
+    // Get the canvas, and clear any chart out of it
     const ctx = document.getElementById(canvas_name);
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    // Configure the chart
+    // Details:
+    //    - 2 Y-axes, one for Orders, one for Revenue
+    //    - Line charts
     const config = {
       type: chart_type,
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        elements: {
+          line: {
+            tension: .25,
+          }
+        },
         scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
           y: {
-            // max: maxValue,
+            type: 'linear',
+            position: 'left',
+            grid: {
+              display: false
+            },
+            beginAtZero: true,
             ticks: {
-              callback: function(value) {
-                return Number.isInteger(value) ? value : null;
-              },
-              stepSize: 1,
+              stepSize: 1
+            },
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            grid: {
+              display: false
             },
             beginAtZero: true
           }
@@ -130,13 +184,22 @@ document.addEventListener('DOMContentLoaded', async function () {
         labels: labels,
         datasets: [
           {
-            label: "test",
-            data: orders_data
+            label: "Orders",
+            data: orders_data,
+            yAxisID: 'y',
+            borderColor: linecolor1 + lineTransparency
+          },
+          {
+            label: "Revenue",
+            data: revenue_data,
+            yAxisID: 'y1',
+            borderColor: linecolor2 + lineTransparency
           }
         ]
       },
     }
 
-    new Chart(ctx, config);
+    // Create the chart, and add it to chartInstance
+    chartInstance = new Chart(ctx, config);
   }
 })

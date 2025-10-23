@@ -29,6 +29,10 @@
   --border-radius: 8px;
 
   --table-row-border-color: #f1e2d7; /* soft sandstone divider */
+
+  /* Chart Colors */
+  --line-color-1: var(--accent-color);
+  --line-color-2: var(--text-color-secondary)
 }
 
 * {
@@ -1245,4 +1249,33 @@ table tbody tr td {
 #file-upload-button {
   border: none;
   padding: .25rem;
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-header select {
+  background-color: var(--accent-color);
+  color: var(--container-bg-color);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: .2rem 1rem;
+}
+
+.chart-header select:focus {
+  outline: none;
+}
+
+.chart-header select option {
+  color: var(--accent-color);
+  background-color: var(--card-bg-color);
+}
+
+.chart-header select option:checked {
+  color: var(--card-bg-color);
+  background: var(--accent-color);
 }
