@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('quantity', form.querySelector('#product-quantity').value);
         formData.append('image', form.querySelector('#product-image').files[0]);
 
+        console.log(formData);
+
         fetch(`${API_BASE_URL}/product/`, {
             method: 'POST',
             body: formData,
