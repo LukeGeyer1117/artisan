@@ -31,6 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
         'HiveMade-env.eba-we3wnpdx.us-west-2.elasticbeanstalk.com',
         'dixie.gallery',
+        'www.dixie.gallery',
         '44.251.204.187',
         '127.0.0.1'
                  ]
