@@ -33,7 +33,8 @@ ALLOWED_HOSTS = [
         'dixie.gallery',
         'www.dixie.gallery',
         '44.251.204.187',
-        '127.0.0.1'
+        '127.0.0.1',
+        'localhost'
                  ]
 
 
