@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/logo/', views.get_logo_image_by_session),
     path('api/hero/<slug:slug>/', views.get_hero_image_by_slug),
     path('api/hero/', views.get_hero_image_by_session),
+    path('api/csrf/', views.get_csrf_token), 
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('inventory/', views.inventory_view),

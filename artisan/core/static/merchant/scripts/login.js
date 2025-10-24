@@ -5,8 +5,6 @@ let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
-const csrftoken = getCookie('csrftoken');
-
 document.addEventListener('DOMContentLoaded', function () {
     
     // Handle a signup form submission
@@ -56,13 +54,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle a login form submission
     const loginForm = document.getElementById('login-form');
 
-    loginForm.addEventListener('submit', function (e) {
+    loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const data = {
         email: document.getElementById('email1').value,
         password: document.getElementById('password1').value
         }
+
+        await fetch(`${API_BASE_URL}/csrf/`, {
+            credentials: 'include',
+        });
+
+        const csrftoken = getCookie('csrftoken');
 
         fetch(`${API_BASE_URL}/login/`, {
             method: 'POST',

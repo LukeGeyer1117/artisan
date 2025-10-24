@@ -21,7 +21,7 @@ from ..models import *
 # All helper functions
 from .helper import *
 
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.contrib.auth import login
@@ -1467,3 +1467,7 @@ def session(request):
     logout(request)
     request.session.flush()  # Clears all session data
     return JsonResponse({'message': 'Session cleared'})
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'detail': "CSRF cookie set"})
