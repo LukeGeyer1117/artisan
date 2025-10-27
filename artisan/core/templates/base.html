@@ -18,6 +18,12 @@
 <body data-slug="{{ artisan.slug }}">
     {% block content %}
     {% endblock %}
+
+    <!-- Toast Notifications -->
+    {% block toast %}
+        {% include 'client/components/toast-notif/toast.html' %} 
+    {% endblock %}
+
     {% block extra_scripts %}{% endblock %}
     <script src="{% static 'customer/scripts/common.js' %}"></script>
 </body>

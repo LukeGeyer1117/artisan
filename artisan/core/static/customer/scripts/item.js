@@ -1,3 +1,4 @@
+import { showToast } from "../../merchant/scripts/common.js";
 
 // Get the product information
 document.addEventListener('DOMContentLoaded', async function () {
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (quantityDesired > 0) {
       addItemToCart(productInfo, quantityDesired);
     } else {
-      alert('Cannot add 0 items to cart!');
+      showToast("Cannot add 0 items to cart");
     }
   })
 })
@@ -131,8 +132,8 @@ function addItemToCart(product, quantity) {
   .then(data => {
     console.log('Cart updated:', data);
     // Optionally update the cart UI here
-    alert('Added to cart.');
-    window.location.href = `/shop/${slug}/`
+    showToast("Added to cart!");
+    window.location.href = `/shop/${slug}/`;
   })
   .catch(error => {
     console.error('Error:', error);
