@@ -1378,8 +1378,8 @@ def update_text_content(request):
     new_custom_order_prompt = data['custom_order_prompt']
     new_project_description_placeholder = data['project_description_placeholder']
 
-    text_content.hero_sentence_draw = new_sentence[:50]
-    text_content.hero_header_draw = new_header[:25]
+    text_content.hero_sentence_draw = new_sentence[:100]
+    text_content.hero_header_draw = new_header[:100]
     text_content.gallery_subtext = new_gallery_subtext
     text_content.custom_order_prompt = new_custom_order_prompt
     text_content.project_description_placeholder = new_project_description_placeholder

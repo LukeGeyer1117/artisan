@@ -253,8 +253,8 @@ class TextContent(models.Model):
     artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
 
     # Hero Text
-    hero_sentence_draw = models.CharField(max_length=50)
-    hero_header_draw = models.CharField(max_length=25)
+    hero_sentence_draw = models.CharField(max_length=100)
+    hero_header_draw = models.CharField(max_length=100)
 
     # New Fields
     gallery_subtext = models.CharField(max_length=100, blank=True)

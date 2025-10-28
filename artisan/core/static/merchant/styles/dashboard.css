@@ -2,7 +2,7 @@
 #dashboard-flex-sections {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: -webkit-fill-available;
 }
 
 #sales-analytics-flex-section {
@@ -22,7 +22,7 @@
   width: 20%;
 }
 
-@media (max-width: 769px) {
+@media (max-width: 1000px) {
   #dashboard-flex-sections {
     flex-direction: column;
   }
@@ -81,7 +81,7 @@
   height: 500px;
 }
 
-@media (max-width: 769px) {
+@media (max-width: 1000px) {
   #orders-flex-section .dashboard-card {
     flex: 1 1 200px;
   }

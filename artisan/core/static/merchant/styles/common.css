@@ -115,7 +115,7 @@ body {
 }
 
 .dashboard-sections {
-  width: 100%;
+  width: -webkit-fill-available;
   box-sizing: border-box;
   margin: 0 1rem;
 }
@@ -1278,4 +1278,13 @@ table tbody tr td {
 .chart-header select option:checked {
   color: var(--card-bg-color);
   background: var(--accent-color);
+}
+
+@media (max-width: 550px) {
+  #id-header {
+    display: none;
+  }
+  .id-td {
+    display: none;
+  }
 }

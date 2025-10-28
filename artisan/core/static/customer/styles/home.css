@@ -33,11 +33,14 @@
 }
 
 #home-cta-div {
-    max-width: 500px;
     padding: 2rem;
-    padding-left: 15%;
-    margin: 5rem 0 3rem;
-    background-color: #00000050;
+    height: 100%;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 #hero-main-draw {
@@ -45,6 +48,7 @@
     font-weight: 700;
     margin: 0 0 1rem;
     line-height: 1.2;
+    font-family: "Prata";
 }
 
 #hero-sentence-draw {
@@ -61,8 +65,12 @@
 }
 
 #hero-main-draw, #hero-sentence-draw, #hero-header-draw {
-    background-color: #00000000;
+    background: none;
     color: white;
+}
+
+#hero-sentence-draw, #hero-header-draw {
+    font-size: 1.25rem;
 }
 
 #hero-cta-button, #custom-order-portal-button {
