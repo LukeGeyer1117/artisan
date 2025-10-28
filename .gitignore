@@ -17,4 +17,7 @@ venv*/
 artisan/media/
 
 node_modules/
+# Ignore static files
+artisan/static/
+
 .env
