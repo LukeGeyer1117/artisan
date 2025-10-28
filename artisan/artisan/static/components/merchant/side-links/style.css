@@ -1,0 +1,107 @@
+.dashboard-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 94vh;
+  box-shadow: var(--shadow-light);
+  position: sticky;
+  left: 0;
+  top: 6vh;
+  transition: all .15s ease-in-out;
+  background-color: var(--card-bg-color);
+}
+
+.links-group {
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.links-group a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  width: fit-content;
+  gap: .5rem;
+  text-decoration: none;
+  padding: 1rem;
+  margin-right: 1rem;
+  transition: all 0.15s ease-in-out;
+  border-radius: 0 64pt 64pt 0;
+}
+
+.links-group a.active, .links-group a.active h3 {
+  color: var(--accent-color);
+}
+
+.links-group a.active svg {
+  fill: var(--accent-color);
+}
+
+.links-group a svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: var(--text-color-primary);
+  transition: fill .15s ease-in-out;
+}
+
+.links-group a h3 {
+  color: var(--text-color-primary);
+  font-size: 10pt;
+  margin: 0;
+  width: 100px;
+  /* transform: translateX(-200%); */
+  transition: all .15s ease-out, opacity 0.15s ease-out;
+}
+
+.links-group a:hover h3, .links-group a:hover svg {
+  display: block;
+  opacity: 1;
+  color: var(--accent-color);
+  fill: var(--accent-color);
+}
+
+/* Hamburger button styling */
+.hamburger-button {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: var(--button-color);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Sidebar hidden by default on small screens */
+@media (max-width: 768px) {
+  .dashboard-links {
+    position: fixed;
+    left: -250px; /* hide off screen */
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+  }
+
+  .links-group {
+    margin-top: 30%;
+  }
+
+  .dashboard-links.open {
+    left: 0; /* slide in */
+  }
+
+  .hamburger-button {
+    display: block;
+  }
+}

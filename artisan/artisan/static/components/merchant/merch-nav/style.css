@@ -1,0 +1,124 @@
+.navbar {
+  width: 100%;
+  height: fit-content;
+  box-sizing: border-box;
+  height: 6vh;
+  display: flex;
+  background: var(--accent-color);
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-light);
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+#logo, .account-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+  transition: all .15s ease-in-out;
+  height: fit-content;
+  padding: 0 1rem;
+  height: 100%;
+}
+
+.account-div:hover {
+  background: var(--accent-color-hover);
+  cursor: pointer;
+}
+
+#logo {
+  height: fit-content;
+}
+
+.account-modal {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  box-shadow: var(--shadow-light);
+  border-radius: var(--border-radius);
+  flex-direction: column;
+  width: fit-content;
+  min-width: 250px;
+  overflow: hidden;
+}
+
+.account-brief {
+  background: var(--accent-color);
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.account-brief h3 {
+  padding: 0;
+  margin: 0;
+  font-size: 20pt;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  color: var(--container-bg-color);
+}
+
+.account-brief h3:hover {
+  opacity: 0.7;
+}
+
+.account-modal-links {
+  background-color: var(--container-bg-color);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.account-modal-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: calc(var(--border-radius) / 2);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.account-modal-link svg {
+  flex-shrink: 0;
+  fill: var(--accent-color);
+}
+
+.account-modal-link h3 {
+  margin: 0;
+  padding: 0;
+  font-weight: 500;
+  font-size: 10pt;
+}
+
+.account-user-info {
+  background-color: var(--accent-color);
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--container-bg-color);
+}
+
+.account-user-name {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+}
+
+.account-user-email {
+  margin: 0.25rem 0 0 0;
+  padding: 0;
+  opacity: 0.7;
+  font-size: 0.875rem;
+}
+

@@ -1,0 +1,53 @@
+import { showToast } from "./common.js";
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
+let API_BASE_URL;
+if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
+else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('back-button-div').addEventListener('click', function () {
+        window.location.href = '/inventory/';
+    });
+
+    document.getElementById('new-product-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData();
+
+        formData.append('name', form.querySelector('#product-name').value);
+        formData.append('price', form.querySelector('#product-price').value);
+        formData.append('description', form.querySelector('#product-description').value);
+        formData.append('quantity', form.querySelector('#product-quantity').value);
+        formData.append('image', form.querySelector('#product-image').files[0]);
+
+        console.log(formData);
+
+        fetch(`${API_BASE_URL}/product/`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include', // send session cookie
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        })
+        .then(async response => {
+            const data = await response.json().catch(() => ({})); // handle non-JSON errors
+            if (!response.ok) {
+                const message = data.error || data.message || `HTTP ${response.status}`;
+                showToast(message, 4000);
+                throw new Error(message);
+            }
+            return data;
+        })
+        .then(result => {
+            window.location.href = '/inventory/';
+        })
+        .catch(error => {
+            console.error(error);
+            alert(`Product creation failed: ${error.message}`);
+        });
+    });
+});
