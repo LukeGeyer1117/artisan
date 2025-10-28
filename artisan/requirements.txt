@@ -25,3 +25,4 @@ djangorestframework
 # Other stuff
 requests
 Pillow
+gunicorn
