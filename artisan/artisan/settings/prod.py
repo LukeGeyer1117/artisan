@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = [
     'dixie.gallery',
