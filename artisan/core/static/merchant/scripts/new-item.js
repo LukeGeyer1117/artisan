@@ -26,7 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
     formData.append("quantity", form.querySelector("#product-quantity").value);
     formData.append("image", form.querySelector("#product-image").files[0]);
 
-    console.log(formData);
+    formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+    })
 
     // helpful debug logging
     if (window.location.hostname === "localhost") {
