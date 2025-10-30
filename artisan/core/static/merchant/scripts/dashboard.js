@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Analyze the results
   function Analyze(orders) {
+    console.log(orders);
     var sales_amount = 0;
     var completed_orders = 0;
     var pending_orders = 0;
@@ -82,10 +83,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     orders.forEach(order => {
       sales_amount += Number(order.total_price);
-      if (order.status == 'complete') {completed_orders += 1;}
+      if (order.status == 'completed') {completed_orders += 1;}
       if (order.status == 'pending') {pending_orders += 1;}
       if (order.status == 'approved' || order.status == 'in_progress') {incomplete_orders += 1;}
     })
+
+    console.log(`Sales: ${sales_amount}, Completed: ${completed_orders}, Pending: ${pending_orders}, Incomplete: ${incomplete_orders}`);
 
     return {
       'sales_amount': sales_amount, 

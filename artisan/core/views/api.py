@@ -527,7 +527,9 @@ def product(request):
     ### POST
     if request.method == 'POST' and request.POST.get('_method') != "PATCH":
         # Get the inventory, if somehow there isn't one, create it
-        inventory = Inventory.objects.get_or_create(artisan=artisan)
+        inventory, _ = Inventory.objects.get_or_create(artisan=artisan)
+
+        print(f'Inventory: {inventory}')
 
         ### Attempt the php script to make product in Troute
         data = {}
