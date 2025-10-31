@@ -555,8 +555,6 @@ def product(request):
 
         # Before making the product, make sure Troute created it
         parsed = sanitize_troute_resp(response_from_php)
-        if parsed['result'] != "success":
-            return JsonResponse({'error': "Internal Server Error: Couldn't make product due to Troute error"}, status=500)
         
         ### Create the product in my db
         Product.objects.create(
@@ -568,6 +566,9 @@ def product(request):
             image=data['image'],
             troute_unique_id=parsed['product']['uniqueID']
             )
+
+        if parsed['result'] != "success":
+            return JsonResponse({'message': "Product Created, but Troute product not successfully created"}, status=200)
         
         return JsonResponse({'message': "Product Created"}, status=200)
         
