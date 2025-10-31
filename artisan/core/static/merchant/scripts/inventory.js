@@ -201,44 +201,12 @@ function setupCategoryList(categories, API_BASE_URL) {
 
   // render the categories
   categories.forEach(category => {
-    let category_row = document.createElement('tr');
-    category_row.className = "category-record";
-    category_row.innerHTML = `
-      <td style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
-        ${category.name}
-        <button class="delete-category-button" style="color: red; border: none; background-color: #00000000;">Delete</button>
-      </td>`;
+    const category_row = CreateCategoryRow(category);
 
-    category_row.querySelector('button').addEventListener('click', function () {
-    // Ask for confirmation
-    const confirmed = window.confirm(`Are you sure you want to permanently delete the category "${category.name}"?`);
-    
-    if (!confirmed) {
-      return; // stop here if user canceled
-    }
-
-    // Proceed with API call
-    fetch(`${API_BASE_URL}/category/${category.id}/`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'X-CSRFToken': csrftoken
-      }
-    })
-    .then(response => {
-      if (!response.ok) throw new Error("Could not delete category!");
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-      category_row.remove(); // remove from DOM on success
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Something went wrong while deleting the category.");
+    // Create a listener for category delete
+    category_row.querySelector('.delete-category-button').addEventListener('click', function () {
+      DeleteCategory(category, category_row);
     });
-  });
-
 
     // Append the actual element
     category_table.querySelector('tbody').appendChild(category_row);
@@ -247,38 +215,7 @@ function setupCategoryList(categories, API_BASE_URL) {
 
   // Add event listener for creating a new category
   document.getElementById('add-category-btn').addEventListener('click', function () {
-    const categoryInput = document.getElementById('new-category-input');
-
-    if (categoryInput.value) {
-      fetch(`${API_BASE_URL}/category/`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({ name: categoryInput.value })
-      })
-        .then(response => {
-          if (!response.ok) throw new Error("Could not create a category");
-          return response.json();
-        })
-        .then(() => {
-          window.location.reload();
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
-  });
-}
-
-// Function to clear active row styling
-function clearActiveRows() {
-  const rows = document.querySelectorAll('#inventory-table tr');
-  rows.forEach(r => {
-    r.classList.remove('active');
-    r.classList.remove('gradient-background');
+    CreateCategory();
   });
 }
 
@@ -295,6 +232,15 @@ async function get_categories() {
     .then(data => {
       return data.categories;
     });
+}
+
+// Function to clear active row styling
+function clearActiveRows() {
+  const rows = document.querySelectorAll('#inventory-table tr');
+  rows.forEach(r => {
+    r.classList.remove('active');
+    r.classList.remove('gradient-background');
+  });
 }
 
 // Handle edit modal
@@ -391,4 +337,75 @@ function handle_product_edit(e, currentProduct, categories, extraImageFiles) {
     .catch(error => {
       console.error(error);
     });
+}
+
+function CreateCategoryRow(category) {
+  let category_row = document.createElement('tr');
+  category_row.className = "category-record";
+  category_row.innerHTML = `
+    <td style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+      ${category.name}
+      <div>
+        <button class="edit-category-button" style="color: var(--edit-color); border: none; background-color: #00000000">Edit</button>
+        <button class="delete-category-button" style="color: var(--error-color); border: none; background-color: #00000000;">Delete</button>
+      </div>
+    </td>`;
+
+  return category_row;
+}
+
+function CreateCategory() {
+  const categoryInput = document.getElementById('new-category-input');
+
+  if (categoryInput.value) {
+    fetch(`${API_BASE_URL}/category/`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify({ name: categoryInput.value })
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("Could not create a category");
+        return response.json();
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+}
+
+function DeleteCategory(category, category_row) {
+  // Ask for confirmation
+  const confirmed = window.confirm(`Are you sure you want to permanently delete the category "${category.name}"?`);
+  
+  if (!confirmed) {
+    return; // stop here if user canceled
+  }
+
+  // Proceed with API call
+  fetch(`${API_BASE_URL}/category/${category.id}/`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'X-CSRFToken': csrftoken
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not delete category!");
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+    category_row.remove(); // remove from DOM on success
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Something went wrong while deleting the category.");
+  });
 }

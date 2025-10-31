@@ -98,7 +98,10 @@ class Inventory(models.Model):
         return f"{self.artisan.shop_name}'s Inventory"
     
 class Product(models.Model):
+    # Link to inventory
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name="products")
+
+    # Core Info
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     order_type = models.CharField(max_length=20, blank=True)
@@ -107,6 +110,9 @@ class Product(models.Model):
     description = models.CharField(max_length=1000, default='', blank=True)
     image = models.ImageField(upload_to="images/", default='')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Other fields
+    is_featured = models.BooleanField(default=False)
 
     # Troute Unique Identifier
     troute_unique_id = models.PositiveIntegerField(null=True, blank=True, unique=True)

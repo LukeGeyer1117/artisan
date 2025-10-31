@@ -20,6 +20,7 @@
   --save-button-bg: #d96e3b;         /* same orange for save button */
   --save-button-hover-bg: #a34724;   /* darker desert clay hover */
 
+  --edit-color: #eea70f;
   --error-color: #d04a3c;            /* warm red, fits theme but still signals error */
 
   --shadow-extra-light: 0 2px 3px rgba(90, 40, 20, 0.15);

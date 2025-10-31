@@ -34,34 +34,60 @@ function applyGlobalTheme(theme) {
   const globalStyle = document.createElement('style');
   globalStyle.innerHTML = `
     * {
-      color: ${theme.text_color};
-      background-color: ${theme.background_color};
+      color: var(--text-color);
+      background-color: var(--background-color);
     }
 
     a {
-      color: ${theme.text_color};
+      color: var(--text-color);
     }
 
     a:hover {
-      color: ${theme.link_hover_color};
+      color: var(--link-hover-color);
+    }
+
+    .action-button {
+      background-color: var(--accent-color);
     }
 
     .add-to-cart-button {
-      color: ${theme.text_color};
-      background-color: ${theme.accent_color};
+      color: var(--text-color);
+      background-color: var(--accent-color);
     }
 
     .checkout-btn:hover {
-      background-color: ${theme.accent_color};
+      background-color: var(--accent-color);
     }
 
     .edit-btn:hover, .remove-btn:hover {
-      background-color: ${theme.accent_color};
+      background-color: var(--accent-color);
     }
 
     svg {
-      fill: ${theme.text_color}
+      fill: var(--theme-color);
+    }
+
+    .nav-links.show.menu-item-1.open {
+      background-color: var(--background-color);
     }
   `;
   document.head.appendChild(globalStyle);
+}
+
+async function GetShopSettingsSlug() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shop-settings/${slug}/`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) throw new Error("Could not get shop settings");
+
+    const data = await response.json();
+    const shop_settings = data.shop_settings;
+
+    return shop_settings;
+
+  } catch (error) {
+    console.error(`Error while getting shop settings: ${error}`);
+  }
 }

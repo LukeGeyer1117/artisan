@@ -5,6 +5,19 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'merchant/styles/custom.css' %}" />
+<style>
+  #custom-orders-disabled {
+    display: none; 
+    width: 88vw; 
+    height: 94vh; 
+    position: absolute; 
+    left: 12vw; 
+    top: 6vh;
+
+    background-color: var(--card-bg-color);
+    z-index: 1000;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -108,6 +121,16 @@
       <div id="request-images"></div>
     </div>
    </div>
+
+  <!-- If the Custom Order Setting is toggled off -->
+  <section class="dashboard-section" id="custom-orders-disabled">
+    <div class="disabled-message-container">
+      <h2>Custom Orders Are Currently Disabled</h2>
+      <p>You are not currently accepting custom order requests.</p>
+      <p>To start receiving requests again, enable the <strong>Accepting Custom Orders</strong> setting in your shop settings.</p>
+      <button id="go-to-settings-button" class="submit-button">Go to Settings</button>
+    </div>
+  </section>
 
   </main>
 {% endblock %}

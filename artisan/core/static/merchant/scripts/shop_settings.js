@@ -74,7 +74,7 @@ async function save_shop_changes() {
     returnPolicy: return_policy
   };
 
-  fetch(`${API_BASE_URL}/edit/shop-settings/`, {
+  fetch(`${API_BASE_URL}/shop-settings/edit/global/`, {
     method: 'POST',
     credentials: 'include',
     headers: {

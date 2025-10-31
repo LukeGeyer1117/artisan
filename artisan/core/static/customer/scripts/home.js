@@ -1,4 +1,5 @@
-// Toggle nav on small screens
+// Initialize this page. 
+// Includes Getting the Hero Image, Display Text, and Featured Products
 document.addEventListener("DOMContentLoaded", function () {
   const toggle = document.querySelector(".menu-toggle");
   const links = document.querySelector(".nav-links");
@@ -7,72 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
     links.classList.toggle("open");
   });
 
-  // Select all inventory items to populate the home screen
-  const slug = document.body.dataset.slug;
-
-  fetch(`${API_BASE_URL}/hero/${slug}/`, {
-    method: 'GET'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not get hero image.");
-    return response.json();
-  })
-  .then(data => {
-    const hero_image_url = data.image_url;
-    const hero_section = document.getElementById('home-hero-section');
-    hero_section.style.backgroundImage = `url(${hero_image_url})`;
-  })
-
-  // Get the text content for the page for this merchant
-  fetch(`${API_BASE_URL}/text/${slug}/`, {
-    method: 'GET'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not get text content");
-    return response.json();
-  })
-  .then(data => {
-    const text_content = data.text_content;
-    document.getElementById('hero-sentence-draw').innerHTML = text_content.hero_sentence_draw;
-    document.getElementById('hero-header-draw').innerHTML = text_content.hero_header_draw;
-  })
-
-  fetch(`${API_BASE_URL}/${slug}/products-limit/`, {
-    method: 'GET',
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Failed to fetch all products!");
-    return response.json();
-  })
-  .then(result => {
-    result.forEach(element => {
-      // Select the parent section
-      const section = document.getElementById('products-available');
-
-      // Create the product container
-      const productDiv = document.createElement('div');
-      productDiv.className = 'product';
-      productDiv.innerHTML = `
-        <img src='/media/${element.image}'>
-        <div class='product-info'>
-          <div class='info-subdiv'></div>
-          <h2 class='product-name'>${element.name}</h2>
-          <div class='info-subdiv' id='price-subdiv'>
-            <h4 class='price'>$${element.price}</h4>
-          </div>
-        </div>
-      `;
-
-      productDiv.addEventListener('click', function () {
-        window.location.href = `/item/${slug}/${element.id}/`;
-      })
-
-      // Insert before the "See All Products" link
-      const seeMoreSection = section.querySelector('.scroll-see-more');
-      section.insertBefore(productDiv, seeMoreSection);
-      new ProductScroller();
-    });
-  })
+  GetAndDisplayHero();
+  GetAndDisplayText();
+  GetAndDisplayFeaturedProducts();
 });
 
 // Open the modal and populate it
@@ -117,35 +55,73 @@ window.addEventListener('click', (e) => {
   }
 });
 
-function addItemToCart(product, quantity) {
-  fetch(`${API_BASE_URL}/cart/`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 'product_id': product.id, 'quantity': quantity })
+function GetAndDisplayHero() {
+  fetch(`${API_BASE_URL}/hero/${slug}/`, {
+    method: 'GET'
   })
   .then(response => {
-    if (!response.ok) {
-      throw new Error('Failed to add item to cart');
-    }
+    if (!response.ok) throw new Error("Could not get hero image.");
     return response.json();
   })
   .then(data => {
-    // Optionally update the cart UI here\
-    showToast('Added to cart!');
+    const hero_image_url = data.image_url;
+    const hero_section = document.getElementById('home-hero-section');
+    hero_section.style.backgroundImage = `url(${hero_image_url})`;
   })
-  .catch(error => {
-    console.error('Error:', error);
-  });
 }
 
-function showToast(message, duration = 3000) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
+function GetAndDisplayText() {
+  fetch(`${API_BASE_URL}/text/${slug}/`, {
+    method: 'GET'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get text content");
+    return response.json();
+  })
+  .then(data => {
+    const text_content = data.text_content;
+    document.getElementById('hero-sentence-draw').innerHTML = text_content.hero_sentence_draw;
+    document.getElementById('hero-header-draw').innerHTML = text_content.hero_header_draw;
+  })
+}
+
+function GetAndDisplayFeaturedProducts() {
+  fetch(`${API_BASE_URL}/${slug}/products-limit/`, {
+    method: 'GET',
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Failed to fetch all products!");
+    return response.json();
+  })
+  .then(result => {
+    result.forEach(element => {
+      // Select the parent section
+      const section = document.getElementById('products-available');
+
+      // Create the product container
+      const productDiv = document.createElement('div');
+      productDiv.className = 'product';
+      productDiv.innerHTML = `
+        <img src='/media/${element.image}'>
+        <div class='product-info'>
+          <div class='info-subdiv'></div>
+          <h2 class='product-name'>${element.name}</h2>
+          <div class='info-subdiv' id='price-subdiv'>
+            <h4 class='price'>$${element.price}</h4>
+          </div>
+        </div>
+      `;
+
+      productDiv.addEventListener('click', function () {
+        window.location.href = `/item/${slug}/${element.id}/`;
+      })
+
+      // Insert before the "See All Products" link
+      const seeMoreSection = section.querySelector('.scroll-see-more');
+      section.insertBefore(productDiv, seeMoreSection);
+      new ProductScroller();
+    });
+  })
 }
 
 class ProductScroller {

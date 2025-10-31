@@ -1405,6 +1405,17 @@ def get_shop_settings_by_session(request):
 
     return JsonResponse({'message': message, 'shop_settings': shop_settings_data, 'slug': artisan.slug})
 
+@require_GET
+def get_shop_settings_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+
+    shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+
+    shop_settings_data = model_to_dict(shop_settings)
+    message = 'found shop settings'
+
+    return JsonResponse({'message': message, 'shop_settings': shop_settings_data})
+
 @login_required(login_url='/login/')
 @require_POST
 def update_shop_settings(request):
@@ -1428,6 +1439,7 @@ def update_shop_settings(request):
         if (old_shop_name != data.get('shopName')):
             new_slug = generate_unique_slug(data.get('shopName'))
             artisan.slug = new_slug
+            artisan.shop_name = data.get('shopName')
             artisan.save()
             
 

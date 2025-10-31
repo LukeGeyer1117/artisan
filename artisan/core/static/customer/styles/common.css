@@ -43,6 +43,10 @@
   margin: 0;
 }
 
+html {
+  width: -webkit-fill-available;
+}
+
 .prata-regular {
   font-family: "Prata", serif;
   font-weight: 400;
