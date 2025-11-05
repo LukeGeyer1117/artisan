@@ -1,0 +1,131 @@
+Atlas Payment Gateway Integration Guide
+
+This document explains how to integrate the Atlas payment gateway into your website using the provided HTML and JavaScript example.
+
+1. Overview
+
+Atlas provides a secure, tokenized payment solution that allows you to accept credit card payments without handling raw card data directly on your servers. The workflow is:
+
+Customer enters card and billing info.
+
+Atlas generates a token representing the card.
+
+Your site submits the token and transaction data to the Atlas server.
+
+Atlas processes the payment and returns a transaction response.
+
+2. HTML Setup
+
+The HTML page contains:
+
+A form (<form id="payment-form">) for payment details.
+
+Billing fields like name, address, email, and phone.
+
+Hidden inputs for token and merchant credentials.
+
+A submit button.
+
+Example billing fields included:
+
+<label>First Name <input type="text" name="billing[first_name]" required></label>
+<label>Last Name <input type="text" name="billing[last_name]" required></label>
+<label>Email <input type="email" name="billing[email]" required></label>
+<!-- Add Address, City, State, ZIP, Country, Phone -->
+
+
+Hidden fields:
+
+<input type="hidden" id="gw-token" name="token">
+<input type="hidden" id="gw-merchant" name="merchant" value="YOURMERCHANTNAME">
+<input type="hidden" id="gw-login" name="x_login" value="">
+<input type="hidden" id="gw-trankey" name="x_tran_key" value="">
+
+3. JavaScript Setup
+3.1 Include Atlas Gateway Script
+<script src="https://develop.expitrans.com/atlas/gateway.js"></script>
+
+
+This script handles tokenization of card fields.
+
+3.2 Prepare Form Submission
+
+Capture the form submission event.
+
+Fill in merchant credentials:
+
+loginInput.value = "YOURMERCHANTNAME";
+trankeyInput.value = "YOURMERCHANTKEY";
+
+
+Listen for the token-ready event:
+
+window.addEventListener('gw:token-ready', (e) => {
+    const { token } = e.detail || {};
+    tokenInput.value = token; // Save token
+});
+
+4. Collect Data and Send Transaction
+
+Once the token is ready:
+
+Collect billing and transaction data from the form:
+
+const payload = {
+    token: tokenInput.value,
+    amount: formData.get('amount'),
+    merchant: merchantInput.value,
+    x_login: loginInput.value,
+    x_tran_key: trankeyInput.value,
+    billing: {
+        first_name: formData.get('billing[first_name]'),
+        last_name: formData.get('billing[last_name]'),
+        address: formData.get('billing[address]'),
+        city: formData.get('billing[city]'),
+        state: formData.get('billing[state]'),
+        zip: formData.get('billing[zip]'),
+        country: formData.get('billing[country]'),
+        phone: formData.get('billing[phone]'),
+        email: formData.get('billing[email]')
+    }
+};
+
+
+Send the transaction to Atlas using fetch:
+
+fetch('https://develop.expitrans.com/atlas/transact_token.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+})
+
+
+Handle the response:
+
+.then(data => {
+    if (data.error) result.innerText = 'Transaction failed: ' + data.error;
+    else if (data.transaction_id) result.innerText = 'Transaction success! ID: ' + data.transaction_id;
+    else result.innerText = 'Transaction response:\n' + (data.raw || JSON.stringify(data, null, 2));
+})
+
+5. Key Notes
+
+Tokenization: The card is never sent directly to your server—only the token is submitted.
+
+Merchant Credentials: Keep x_login and x_tran_key private.
+
+Form Fields: Required fields include amount, billing[first_name], billing[last_name], billing[email], billing[address], billing[city], billing[state], billing[zip], billing[country].
+
+Testing: Use the develop.expitrans.com endpoint for sandbox testing.
+
+6. How to Use
+
+Copy the HTML template to your page.
+
+Replace x_login and x_tran_key with your Atlas credentials.
+
+Include the gateway.js script.
+
+Open the page, enter card/billing info, and click Pay Now.
+
+Monitor the #result div for transaction status.

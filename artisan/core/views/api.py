@@ -66,6 +66,7 @@ def artisan(request):
             LogoImage.objects.create(artisan=artisan)
             HeroImage.objects.create(artisan=artisan)
             ShopSettings.objects.create(artisan=artisan)
+            Policies.objects.create(artisan=artisan)
 
             # Auto-login after signup
             login(request, artisan)
@@ -1217,6 +1218,7 @@ def get_theme_by_session(request):
 
     theme_data = {
         'text_color': theme.text_color,
+        'text_color_secondary': theme.text_color_secondary,
         'background_color': theme.background_color,
         'accent_color': theme.accent_color,
         'link_hover_color': theme.link_hover_color,
@@ -1243,11 +1245,12 @@ def update_theme(request):
         return JsonResponse({'error': "Invalid JSON"})
     
     # Validate fields exist
-    required_fields = ['text_color', 'background_color', 'accent_color', 'link_hover_color']
+    required_fields = ['text_color', 'text_color_secondary', 'background_color', 'accent_color', 'link_hover_color']
     if not all(field in data for field in required_fields):
         return JsonResponse({'error': "Missing required field(s)"}, status=400)
 
     theme.text_color = data['text_color']
+    theme.text_color_secondary = data['text_color_secondary']
     theme.background_color = data['background_color']
     theme.accent_color = data['accent_color']
     theme.link_hover_color = data['link_hover_color']
@@ -1432,8 +1435,9 @@ def update_shop_settings(request):
         # Get the JSON data from the request body
         data = json.loads(request.body)
         
-        # Get the artisan and their shop settings
+        # Get the shop settings and policies
         shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
+        policies, _ = Policies.objects.get_or_create(artisan=artisan)
 
         # Check if the shop name has changed
         old_shop_name = shop_settings.shop_name
@@ -1456,14 +1460,16 @@ def update_shop_settings(request):
         shop_settings.shop_status = data.get('shopStatus', shop_settings.shop_status)
         shop_settings.status_message = data.get('statusMessage', shop_settings.status_message)
         shop_settings.minimum_order_amount = data.get('minimumOrderAmount', shop_settings.minimum_order_amount)
-        shop_settings.terms_and_conditions = data.get('termsAndConditions', shop_settings.terms_and_conditions)
-        shop_settings.shipping_policy = data.get('shippingPolicy', shop_settings.shipping_policy)
-        shop_settings.return_policy = data.get('returnPolicy', shop_settings.return_policy)
+        #  Update the policies too
+        policies.terms_and_conditions = data.get('termsAndConditions', policies.terms_and_conditions)
+        policies.shipping_policy = data.get('shippingPolicy', policies.shipping_policy)
+        policies.return_policy = data.get('returnPolicy', policies.return_policy)
 
         # Save the changes to the database
         shop_settings.save()
+        policies.save()
 
-        return JsonResponse({'message': "Updated shop settings."}, status=200)
+        return JsonResponse({'message': "Updated shop settings and policies"}, status=200)
 
     except json.JSONDecodeError:
         # Handle cases where the request body is not valid JSON
@@ -1474,6 +1480,43 @@ def update_shop_settings(request):
     except Exception as e:
         # Catch any other unexpected errors
         return JsonResponse({'error': str(e)}, status=500)
+    
+@login_required(login_url='/login/')
+@require_http_methods(['POST', 'GET'])
+def policy(request):
+    """
+    Create, Get, and Update (don't delete) merchant terms and conditions.
+    """
+    artisan = request.user
+    if not artisan.is_authenticated:
+        return JsonResponse({'error': "Not authenticated"}, status=401)
+
+    elif request.method == "GET":
+        policies, created = Policies.objects.get_or_create(artisan=artisan)
+
+        message = ''
+        if created:
+            message += "Created Policies"
+        else:
+            message += "Found Policies"
+
+        policies_data = model_to_dict(policies)
+        return JsonResponse({'message': message, "policies": policies_data}, status=200)
+    
+@require_GET
+def policy_by_slug(_, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+
+    print(artisan)
+
+    # If artisan, load the policies
+    policies, _ = Policies.objects.get_or_create(artisan=artisan)
+    policies_data = model_to_dict(policies)
+
+    print(policies_data)
+
+    return JsonResponse({'message': "Found policies", "policies": policies_data}, status=200)
+
     
 # Clear session data when user logs out 
 @csrf_exempt

@@ -23,13 +23,13 @@ from core import views
 urlpatterns = [
     path('', views.splash),
     path('admin/', admin.site.urls),
-    path('home/', views.home, name="home"),
-    path('home/<slug:slug>/', views.home, name="slug_home"),
+    path('home/<slug:slug>/', views.home, name="home"),
     path('gallery/<slug:slug>/', views.gallery, name="gallery"),
     path('shop/<slug:slug>/', views.shop, name="shop"),
     path('cart/<slug:slug>/', views.cart, name="cart"),
     path('checkout/<slug:slug>/', views.checkout, name="checkout"),
     path('custom/<slug:slug>/', views.custom, name="custom"),
+    path('policies/<slug:slug>/', views.policies, name="policies"),
     path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
     path('item/<slug:slug>/<int:item_id>/', views.item),
     path('about/<slug:slug>/', views.about, name='about'),
@@ -93,5 +93,7 @@ urlpatterns = [
     path('api/shop-settings/', views.get_shop_settings_by_session),
     path('api/shop-settings/edit/global/', views.update_shop_settings),
     path('api/shop-settings/<slug:slug>/', views.get_shop_settings_by_slug),
+    path('api/policy/', views.policy),
+    path('api/policy/<slug:slug>/', views.policy_by_slug),
     path('api/session/', views.session)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

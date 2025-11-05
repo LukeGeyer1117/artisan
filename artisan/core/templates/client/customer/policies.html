@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Policies{% endblock %}
+
+{% block extra_head %}
+<!-- Put the stylesheet for this page here -->
+  <link rel="stylesheet" href="{% static 'customer/styles/policies.css' %}">
+{% endblock %}
+
+{% block content %}
+
+  <!-- NAV component -->
+  {% block nav %}
+    {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %}
+  {% endblock %}
+
+  <main>
+    <section id="policies">
+      <div class="section-header">
+        <h1 class="section-title">Policies</h2>
+        <p class="section-description">Standard Operating Procedures</p>
+      </div>
+      <div id="subsection-container">
+        <article class="subsection" id="terms-and-conditions">
+          <h2 class="subsection-header">Terms & Conditions</h2>
+          <pre class="subsection-body">
+            <!-- Terms & conditions here -->
+          </pre>
+        </article>
+
+        <article class="subsection" id="refund-exchange-policy">
+          <h2 class="subsection-header">Refund / Exchange Policy</h2>
+          <pre class="subsection-body">
+            <!-- Refund & exchange policy here -->
+          </pre>
+        </article>
+
+        <article class="subsection" id="shipping-policy">
+          <h2 class="subsection-header">Shipping / Fulfillment Policy</h2>
+          <pre class="subsection-body">
+            <!-- Shipping & fulfillment policy here -->
+          </pre>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER Component -->
+   {% block footer %}
+    {% include 'client/components/customer/footer/footer.html' %}
+   {% endblock %}
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="{% static 'customer/scripts/policies.js' %}"></script>
+{% endblock %}

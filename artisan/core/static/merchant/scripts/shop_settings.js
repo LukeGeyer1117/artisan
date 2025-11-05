@@ -7,10 +7,16 @@ else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/a
 
 document.addEventListener('DOMContentLoaded', async function () {
   // Get the data and populate the fields
-  const data = await get_shop_settings();
-  console.log(data);
-  let changed = false;
+  const data_settings = await get_shop_settings();
+  const data_policies = await get_policies();
 
+  const shop_settings = data_settings.shop_settings;
+  const policies = data_policies.policies;
+
+  populate_fields_initial(shop_settings, policies, data_settings.slug);
+
+  // Detect changes
+  let changed = false;
   const setting_inputs = document.querySelectorAll('.shop-setting-input');
   setting_inputs.forEach(input => {
     input.addEventListener('change', function () {
@@ -37,9 +43,23 @@ async function get_shop_settings() {
     return response.json();
   })
   .then(data => {
-    populate_fields_initial(data.shop_settings, data.slug);
     return data;
   })
+}
+
+async function get_policies() {
+  return await fetch(`${API_BASE_URL}/policy/`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Could not get policies");
+    return response.json();
+  })
+  .then(data => {
+    return data;
+  })
+  
 }
 
 async function save_shop_changes() {
@@ -99,7 +119,7 @@ async function save_shop_changes() {
   });
 }
 
-function populate_fields_initial(shop_settings, slug) {
+function populate_fields_initial(shop_settings, policies, slug) {
   document.getElementById('shop-name').value = shop_settings.shop_name;
   document.getElementById('shop-description').value = shop_settings.shop_description;
   document.getElementById('accepting-custom-orders').checked = shop_settings.accepting_custom_orders;
@@ -110,9 +130,9 @@ function populate_fields_initial(shop_settings, slug) {
   document.getElementById('shop-status').value = shop_settings.shop_status;
   document.getElementById('vacation-message').value = shop_settings.status_message;
   document.getElementById('minimum-order').value = shop_settings.minimum_order_amount;
-  document.getElementById('terms-and-conditions').value = shop_settings.terms_and_conditions;
-  document.getElementById('shipping-policy').value = shop_settings.shipping_policy;
-  document.getElementById('return-policy').value = shop_settings.return_policy;
+  document.getElementById('terms-and-conditions').value = policies.terms_and_conditions;
+  document.getElementById('shipping-policy').value = policies.shipping_policy;
+  document.getElementById('return-policy').value = policies.return_policy;
 
   // Build the base URL depending on environment
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);

@@ -50,6 +50,10 @@ def custom(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
     return render(request, 'client/customer/custom.html', {'artisan': artisan})
 
+def policies(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/policies.html', {'artisan': artisan})
+
 def item(request, slug, item_id):
     artisan = get_object_or_404(Artisan, slug=slug)
     item = get_object_or_404(Product, id=item_id)

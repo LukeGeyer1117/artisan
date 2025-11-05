@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Local Gateway Test Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        #gateway-card-container { margin-bottom: 20px; }
+        input { padding: 8px; margin: 4px 0; width: 250px; }
+        button { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
+        label { display: block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Local Gateway Test</h1>
+
+<form id="payment-form">
+    <div id="gateway-card-container"></div>
+
+    <label>Amount
+        <input type="number" name="amount" value="10.00" step="0.01" required>
+    </label>
+
+    <!-- Billing fields -->
+    <label>First Name <input type="text" name="billing[first_name]" required></label>
+    <label>Last Name <input type="text" name="billing[last_name]" required></label>
+    <label>Address <input type="text" name="billing[address]" required></label>
+    <label>City <input type="text" name="billing[city]" required></label>
+    <label>State <input type="text" name="billing[state]" required></label>
+    <label>ZIP <input type="text" name="billing[zip]" required></label>
+    <label>Country <input type="text" name="billing[country]" value="USA" required></label>
+    <label>Phone <input type="text" name="billing[phone]"></label>
+    <label>Email <input type="email" name="billing[email]" required></label>
+
+    <!-- hidden token field -->
+    <input type="hidden" id="gw-token" name="token">
+    <!-- hidden merchant info -->
+    <input type="hidden" id="gw-merchant" name="merchant" value="YOURMERCHANTNAME">
+    <input type="hidden" id="gw-login" name="x_login" value="">
+    <input type="hidden" id="gw-trankey" name="x_tran_key" value="">
+
+    <button type="submit">Pay Now</button>
+</form>
+
+<div id="result" style="margin-top:20px;"></div>
+
+<script src="https://develop.expitrans.com/atlas/gateway.js"></script>
+<script>
+const form = document.getElementById('payment-form');
+const result = document.getElementById('result');
+const tokenInput = document.getElementById('gw-token');
+const merchantInput = document.getElementById('gw-merchant');
+const loginInput = document.getElementById('gw-login');
+const trankeyInput = document.getElementById('gw-trankey');
+
+// Fill login/trankey
+loginInput.value = "YOURMERCHANTNAME";
+trankeyInput.value = "YOURMERCHANTKEY";
+
+// Listen for token-ready event
+window.addEventListener('gw:token-ready', (e) => {
+    const { token } = e.detail || {};
+    if (token) tokenInput.value = token;
+
+    result.innerText = 'Submitting transaction...';
+
+    // Collect billing data
+    const formData = new FormData(form);
+    const payload = {
+        token: tokenInput.value,
+        amount: formData.get('amount'),
+        merchant: merchantInput.value,
+        x_login: loginInput.value,
+        x_tran_key: trankeyInput.value,
+        billing: {
+            first_name: formData.get('billing[first_name]'),
+            last_name: formData.get('billing[last_name]'),
+            address: formData.get('billing[address]'),
+            city: formData.get('billing[city]'),
+            state: formData.get('billing[state]'),
+            zip: formData.get('billing[zip]'),
+            country: formData.get('billing[country]'),
+            phone: formData.get('billing[phone]'),
+            email: formData.get('billing[email]')
+        }
+    };
+
+    fetch('https://develop.expitrans.com/atlas/transact_token.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(async res => {
+        const text = await res.text();
+        console.log('Raw response:', text);
+        try { return JSON.parse(text); } catch { return { ok: res.ok, raw: text }; }
+    })
+    .then(data => {
+        console.log('Parsed response:', data);
+        if (data && data.error) result.innerText = 'Transaction failed: ' + data.error;
+        else if (data && data.transaction_id) result.innerText = 'Transaction success! ID: ' + data.transaction_id;
+        else result.innerText = 'Transaction response:\n' + (data.raw || JSON.stringify(data, null, 2));
+    })
+    .catch(err => { result.innerText = 'Request failed: ' + err.message; });
+});
+</script>
+
+</body>
+</html>

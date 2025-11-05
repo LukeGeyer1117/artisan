@@ -1,19 +1,20 @@
-{% load static %} {# Remember to load static here as well if it's used in the footer #}
+{% load static %}
 
 <footer class="site-footer">
     <div class="footer-content">
         <div class="footer-column">
             <h4>Explore</h4>
-            <a href="{% url 'slug_home' slug %}">Home</a> {# Use url tags for robustness #}
+            <a href="{% url 'home' slug=artisan.slug %}">Home</a>
             <a href="{% url 'gallery' slug=artisan.slug %}">Gallery</a>
             <a href="{% url 'shop' slug=artisan.slug %}">Shop</a>
             <a href="{% url 'custom' slug=artisan.slug %}">Custom Orders</a>
             <a href="{% url 'cart' slug=artisan.slug%}">Cart</a>
-            <a href="{% url 'about' slug=artisan.slug %}">About & Terms/Conditions</a>
+            <a href="{% url 'policies' slug=artisan.slug %}">Terms & Conditions</a>
         </div>
 
         <div class="footer-column">
             <h4>About</h4>
+            <a href="{% url 'about' slug=artisan.slug %}">About</a>
         </div>
 
         <div class="footer-column">

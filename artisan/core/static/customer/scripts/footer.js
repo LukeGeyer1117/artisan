@@ -20,7 +20,6 @@ async function get_merchant_information() {
     }
     
     const data = await response.json();
-    console.log('Merchant information retrieved:', data);
     return data.artisan;
     
   } catch (error) {

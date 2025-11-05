@@ -248,6 +248,7 @@ class Theme(models.Model):
 
     # Basic colors
     text_color = models.CharField(max_length=7, default="#ffffff") #default to white text
+    text_color_secondary = models.CharField(max_length=7, default="#ffffff") # Default to white secondary text
     background_color = models.CharField(max_length=7, default="#000000") # default black background
     accent_color = models.CharField(max_length=7, default="#007bff")
     link_hover_color = models.CharField(max_length=7, default="#007bff")
@@ -312,11 +313,17 @@ class ShopSettings(models.Model):
     
     # Removed max_length, set max_digits instead
     minimum_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"{self.artisan.username}'s Shop Settings"
     
-    # Policy Settings
+class Policies(models.Model):
+    artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
+
+    # Policies to be stored
     terms_and_conditions = models.CharField(max_length=1000, default='')
     shipping_policy = models.CharField(max_length=500, default='')
     return_policy = models.CharField(max_length=500, default='')
 
     def __str__(self):
-        return f"{self.artisan.username}'s Shop Settings"
+        return f"{self.artisan.username}'s Policies"

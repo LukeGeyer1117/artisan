@@ -23,17 +23,19 @@ document.addEventListener('DOMContentLoaded', async function () {
   .then(data => {
     // set the theme values
     let textColorSelect = document.getElementById('textColor');
+    let textColor2Select = document.getElementById('textSecondaryColor');
     let backgroundColorSelect = document.getElementById('backgroundColor');
     let accentColorSelect = document.getElementById('accentColor');
     let linkHoverColorSelect = document.getElementById('linkHoverColor');
 
     const theme = data.theme;
     textColorSelect.value = theme.text_color;
+    textColor2Select.value = theme.text_color_secondary;
     backgroundColorSelect.value = theme.background_color;
     accentColorSelect.value = theme.accent_color;
     linkHoverColorSelect.value = theme.link_hover_color;
 
-    const colorSelectors = [textColorSelect, backgroundColorSelect, accentColorSelect, linkHoverColorSelect];
+    const colorSelectors = [textColorSelect, textColor2Select, backgroundColorSelect, accentColorSelect, linkHoverColorSelect];
     colorSelectors.forEach(selector => {
       selector.addEventListener('input', function () {
         changed = true;
@@ -42,17 +44,22 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Live preview updates for colors
     const textColorInput = document.getElementById("textColor");
+    const textColor2Input = document.getElementById("textSecondaryColor");
     const backgroundColorInput = document.getElementById("backgroundColor");
     const accentColorInput = document.getElementById("accentColor");
     const linkHoverColorInput = document.getElementById("linkHoverColor");
 
     const previewHeader = document.getElementById("previewHeader");
+    const previewContent = document.querySelector('.preview-content');
     const previewText = document.getElementById("previewText");
+    const previewText2 = document.getElementById('inline-secondary-text-color');
     const previewLink = document.getElementById("previewLink");
     const previewAccentText = document.getElementById('inline-accent-color-text');
 
     previewHeader.style.backgroundColor = theme.background_color;
+    previewContent.style.backgroundColor = theme.background_color;
     previewText.style.color = theme.text_color;
+    previewText2.style.color = theme.text_color_secondary;
     previewLink.style.color = theme.text_color;
     previewAccentText.style.color = theme.accent_color;
 
@@ -68,8 +75,13 @@ document.addEventListener('DOMContentLoaded', async function () {
       previewLink.style.color = textColorInput.value;
     });
 
+    textColor2Input.addEventListener("input", () => {
+      previewText2.style.color = textColor2Input.value;
+    })
+
     backgroundColorInput.addEventListener("input", () => {
       previewHeader.style.backgroundColor = backgroundColorInput.value;
+      previewContent.style.backgroundColor = backgroundColorInput.value;
     });
 
     linkHoverColorInput.addEventListener("input", () => {
@@ -175,6 +187,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // If colors changed
     if (changed) {
       const newTextColor = document.getElementById('textColor').value;
+      const newSecondaryTextColor = document.getElementById('textSecondaryColor').value;
       const newBackgroundColor = document.getElementById('backgroundColor').value;
       const newAccentColor = document.getElementById('accentColor').value;
       const newLinkHoverColor = document.getElementById('linkHoverColor').value;
@@ -184,6 +197,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         credentials: 'include',
         body: JSON.stringify({
           'text_color': newTextColor, 
+          'text_color_secondary': newSecondaryTextColor,
           'background_color': newBackgroundColor, 
           'accent_color': newAccentColor, 
           'link_hover_color': newLinkHoverColor}),

@@ -1,0 +1,76 @@
+/* --- Layout & Structure --- */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+#policies {
+  margin-top: 2rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-description {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* --- Subsections --- */
+#subsection-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.subsection {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.subsection-header {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Preserve line breaks and keep long text readable */
+.subsection-body {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* --- Responsive --- */
+@media (min-width: 768px) {
+  #subsection-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  /* Make terms section span full width if desired */
+  #terms-and-conditions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1024px) {
+  main {
+    padding: 3rem 0;
+  }
+
+  .section-title {
+    font-size: 2.25rem;
+  }
+}
