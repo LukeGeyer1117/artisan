@@ -6,21 +6,41 @@ else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/a
 // Assuming `slug` is already defined somewhere in your script
 document.addEventListener('DOMContentLoaded', async function () {
   try {
-    const response = await fetch(`${API_BASE_URL}/theme/${slug}/`, {
-      method: 'GET'
-    });
-    
-    if (!response.ok) throw new Error("Could not get theme");
-    
-    const data = await response.json();
-    const theme = data.theme;
-
-    // Apply theme to global styles
-    applyGlobalTheme(theme);
+    loadTheme(slug);
   } catch (error) {
     console.error('Theme load error:', error);
   }
 });
+
+async function loadTheme(slug) {
+  const cacheKey = `theme_${slug}`;
+  const cached = localStorage.getItem(cacheKey);
+
+  // Apply the saved theme if it exists and ttl has not expired
+  if (cached) {
+    const { theme, deathDate } = JSON.parse(cached);
+    const isExpired = (deathDate - Date.now()) < 0;
+
+    if (!isExpired) {
+      applyGlobalTheme(theme);
+      console.log(`Applied stored theme`);
+      return;
+    }
+  }
+
+  // Fetch the theme here if the saved one doesn't exist or is expired.
+  const response = await fetch(`${API_BASE_URL}/theme/${slug}/`, {
+    method: 'GET'
+  });
+  const data = await response.json();
+  const theme = data.theme;
+  localStorage.setItem(cacheKey, JSON.stringify({
+    theme,
+    deathDate: Date.now() + theme.ttl,
+  }));
+  applyGlobalTheme(theme);
+  console.log(`Applied fetched theme`);
+}
 
 function applyGlobalTheme(theme) {
   const rootStyle = document.documentElement.style;
@@ -73,7 +93,7 @@ function applyGlobalTheme(theme) {
       fill: var(--accent-color);
     }
 
-    .nav-links.show.menu-item-1.open {
+    .nav-links.show.menu-item-1 {
       background-color: var(--background-color);
     }
   `;

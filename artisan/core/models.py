@@ -253,6 +253,9 @@ class Theme(models.Model):
     accent_color = models.CharField(max_length=7, default="#007bff")
     link_hover_color = models.CharField(max_length=7, default="#007bff")
 
+    # TTL
+    ttl = models.PositiveIntegerField(default=(1000 * 60))
+
     def __str__(self):
         return f'{self.artisan.slug}'
     
@@ -267,6 +270,9 @@ class TextContent(models.Model):
     gallery_subtext = models.CharField(max_length=100, blank=True)
     custom_order_prompt = models.TextField(blank=True)
     project_description_placeholder = models.CharField(max_length=150, blank=True)
+
+    # TTL
+    ttl = models.PositiveIntegerField(default=(1000 * 60))
 
     def __str__(self):
         return f'{self.artisan.slug} - text content'
@@ -321,9 +327,12 @@ class Policies(models.Model):
     artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
 
     # Policies to be stored
-    terms_and_conditions = models.CharField(max_length=1000, default='')
-    shipping_policy = models.CharField(max_length=500, default='')
-    return_policy = models.CharField(max_length=500, default='')
+    terms_and_conditions = models.TextField(max_length=5000, default='')
+    shipping_policy = models.TextField(max_length=2000, default='')
+    return_policy = models.TextField(max_length=2000, default='')
+
+    # TTL
+    ttl = models.PositiveIntegerField(default=(1000 * 60))
 
     def __str__(self):
         return f"{self.artisan.username}'s Policies"

@@ -3,16 +3,27 @@ import { getCookie } from "./csrf.js";
 document.addEventListener("DOMContentLoaded", async function () {
   const slug = document.body.dataset.slug;
   const csrf = getCookie("csrftoken");
-  const data = await get_policies(slug, csrf);
-  const policies = data.policies;
+  const policies = await get_policies(slug, csrf);
 
-  console.log(policies);
-  
   display_policies(policies);
 
 })
 
 async function get_policies(slug, csrf) {
+  // Check if we have cached the policies
+  const cacheKey = `policies_${slug}`;
+  const cached = localStorage.getItem(cacheKey);
+
+  if (cached) {
+    const { policies, deathDate } = JSON.parse(cached);
+    const isExpired = (deathDate - Date.now()) < 0;
+
+    if (!isExpired) {
+      console.log(`Found policies locally`);
+      return policies;
+    }
+  }
+
   const response = await fetch(`${API_BASE_URL}/policy/${slug}/`, {
     method: 'GET',
     headers: {
@@ -25,7 +36,13 @@ async function get_policies(slug, csrf) {
   }
 
   const data = await response.json();
-  return data;
+  const policies = data.policies;
+  localStorage.setItem(cacheKey, JSON.stringify({
+    policies,
+    deathDate: Date.now() + policies.ttl,
+  }))
+  console.log(`Stored policies locally.`);
+  return data.policies;
 }
 
 function display_policies(policies) {

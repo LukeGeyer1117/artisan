@@ -1199,9 +1199,11 @@ def get_theme_by_slug(request, slug):
 
     theme_data = {
         'text_color': theme.text_color,
+        'text_color_secondary': theme.text_color_secondary,
         'background_color': theme.background_color,
         'accent_color': theme.accent_color,
         'link_hover_color': theme.link_hover_color,
+        'ttl': theme.ttl
     }
 
     return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
@@ -1222,6 +1224,7 @@ def get_theme_by_session(request):
         'background_color': theme.background_color,
         'accent_color': theme.accent_color,
         'link_hover_color': theme.link_hover_color,
+        'ttl': theme.ttl
     }
 
     message = 'Created Theme' if created else 'found theme'
