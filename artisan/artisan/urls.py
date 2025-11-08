@@ -15,12 +15,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from core import views
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
+    # Site URLS
     path('', views.splash),
     path('admin/', admin.site.urls),
     path('home/<slug:slug>/', views.home, name="home"),
@@ -48,10 +50,8 @@ urlpatterns = [
     path('settings/', views.settings_view),
     path('add-item/', views.new_item_view),
     path('api/artisan/', views.artisan),
-    path('api/artisan/upload_profile_image/', views.artisan_upload_profile_image),
-    path('api/artisan/remove_profile_image/', views.artisan_remove_profile_image),
-    path('api/artisan/<slug:slug>/', views.artisan_by_slug),
-    path('api/inventories/', views.create_inventory),
+    path('api/artisan/pfp/', views.ArtisanPFPView.as_view()),
+    path('api/artisan/<slug:slug>/', views.ArtisanBySlugView.as_view()),
     path('api/inventory/', views.get_inventory),
     path('api/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
     path('api/<slug:slug>/products-limit/', views.get_products_by_artisan_slug_limited),
@@ -95,5 +95,16 @@ urlpatterns = [
     path('api/shop-settings/<slug:slug>/', views.get_shop_settings_by_slug),
     path('api/policy/', views.policy),
     path('api/policy/<slug:slug>/', views.policy_by_slug),
-    path('api/session/', views.session)
+    path('api/session/', views.session),
+
+    # Swagger
+    # 1. Your API schema (the .yml file)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    
+    # 2. Optional UI: Swagger
+    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    
+    # 3. Optional UI: ReDoc
+    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -111,6 +111,16 @@ class Product(models.Model):
     image = models.ImageField(upload_to="images/", default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Status
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('active', 'Active'),
+            ('inactive', 'Inactive'),
+        ],
+        default='active'
+    )
+
     # Other fields
     is_featured = models.BooleanField(default=False)
 

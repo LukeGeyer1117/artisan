@@ -27,7 +27,15 @@ from django.http import JsonResponse
 from django.contrib.auth import login
 from django.db import transaction
 
+from rest_framework.views import APIView
+from rest_framework.response import Response  # Use DRF's Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+
 ### API VIEWS
+
+
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET', 'PATCH'])
@@ -58,6 +66,9 @@ def artisan(request):
                 phone_number=post_data['phone'],
                 slug=generate_unique_slug(post_data['shop_name']),
                 accepting_custom_orders=False,
+
+                troute_login=False,
+                troute_key=False,
             )
 
             # Related setup
@@ -82,10 +93,16 @@ def artisan(request):
     elif request.method == 'GET':
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'No Artisan logged in!'}, status=401)
+        
+        artisan = Artisan.objects.get(id=request.user.id)
+        registered = True
+        if not artisan.troute_key or not artisan.troute_login:
+            registered = False
 
         artisan = Artisan.objects.filter(id=request.user.id).values().first()
+        print(artisan)
         if artisan:
-            return JsonResponse({'message': "Artisan found!", 'artisan': artisan})
+            return JsonResponse({'message': "Artisan found!", 'registered': registered,'artisan': artisan})
         return JsonResponse({'error': "No Artisan Found!"}, status=404)
 
     # Update the current Artisan
@@ -115,121 +132,91 @@ def artisan(request):
             return JsonResponse({'error': "Artisan not found."}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
-        
-@csrf_exempt
-@require_http_methods(['GET'])
-def artisan_by_slug(request, slug):
+    
+class ArtisanBySlugView(APIView):
     """
-    Public view for customers to get artisan information by slug.
+    Public view for customers to get artisan information by slug. 
     Only returns safe, customer-facing data.
     """
-    try:
-        artisan = Artisan.objects.get(slug=slug)
-        
-        # Only return customer-safe fields
-        artisan_data = {
-            'shop_name': artisan.shop_name,
-            'slug': artisan.slug,
-            'contact_email': artisan.contact_email,
-            'accepting_custom_orders': artisan.accepting_custom_orders,
-            'image_url': artisan.image.url if artisan.image else None,
-            'facebook_link': artisan.facebook_link,
-            'instagram_link': artisan.instagram_link,
-            'youtube_link': artisan.youtube_link,
-        }
-        
-        return JsonResponse({
-            'message': 'Artisan found',
-            'artisan': artisan_data
-        })
-        
-    except Artisan.DoesNotExist:
-        return JsonResponse({'error': 'Artisan not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': 'An error occurred'}, status=500)
-        
-@login_required(login_url='/login/')
-@require_POST
-def artisan_upload_profile_image(request):
-    artisan = request.user
+    def get(self, request, slug):
+        try:
+            artisan = Artisan.objects.get(slug=slug)
+            
+            # Only return customer-safe fields
+            artisan_data = {
+                'shop_name': artisan.shop_name,
+                'slug': artisan.slug,
+                'contact_email': artisan.contact_email,
+                'accepting_custom_orders': artisan.accepting_custom_orders,
+                'image_url': artisan.image.url if artisan.image else None,
+                'facebook_link': artisan.facebook_link,
+                'instagram_link': artisan.instagram_link,
+                'youtube_link': artisan.youtube_link,
+            }
+            
+            return Response({
+                'message': 'Artisan found',
+                'artisan': artisan_data
+            }, status=status.HTTP_200_OK)
+            
+        except Artisan.DoesNotExist:
+            return Response({'error': 'Artisan not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
+class ArtisanPFPView(APIView):
+    """
+    Merchant-only view for PFPs
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
-    try:
-        
-        # Check if an image file was included in the request
-        if 'image' not in request.FILES:
-            return JsonResponse({'error': 'No image file found in the request.'}, status=400)
+    def post(self, request):
+        """
+        Allow merchant to upload a new profile picture. Delete old, if it exists
+        """
+        artisan = request.user
 
-        new_image = request.FILES['image']
-        print(f"New Image: {new_image}")
-        
-        # Optionally, delete the old image file if it exists
-        if artisan.image and os.path.exists(artisan.image.path):
-            os.remove(artisan.image.path)
+        try:
+            # Check if an image was included in the request
+            if 'image' not in request.FILES:
+                return Response({'error': "No image file found in the request"}, status=400)
+            new_image = request.FILES['image']
+            print(f"New Image: ${new_image}")
 
-        # Update the image field with the new file
-        artisan.image = new_image
-        artisan.save()
-        
-        return JsonResponse({
-            'message': 'Profile image uploaded successfully',
-            'image_url': artisan.image.url
-        }, status=200)
-
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-    
-@login_required(login_url='/login/')
-@require_http_methods(['DELETE'])
-def artisan_remove_profile_image(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error1': "Not authenticated"}, status=401)
-    
-    try:
-        if artisan.image:
-            # Delete the file from the filepath if it exists
-            if os.path.exists(artisan.image.path):
+            # Delete the old image, if it exists
+            if artisan.image and os.path.exists(artisan.image.path):
                 os.remove(artisan.image.path)
-        
-            # Clear the image field
-            artisan.image.delete(save=False) # Remove file from storage
-            artisan.image = None
+
+            # Update the image field with new file
+            artisan.image = new_image
             artisan.save()
 
-            return JsonResponse({
-                'message': "Profile image removed successfully"
-            }, status=200)
+            return Response({
+                'message': "PFP uploaded successfully",
+                'image_url': artisan.image.url
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-        else:
-            return JsonResponse({'error': 'No profile image to remove'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    def delete(self, request):
+        """
+        Allow merchant to remove a PFP.
+        """
+        artisan = request.user
+        try:
+            if artisan.image:
+                # Delete the file from filepath if it exists
+                if os.path.exists(artisan.image.path): os.remove(artisan.image.path)
+                artisan.image.delete(save=False)
+                artisan.image = None
+                artisan.save()
 
-# Create an Inventory
-@csrf_exempt
-@require_POST
-def create_inventory(request):
-    try:
-        data = json.loads(request.body)
-        artisan_id = data.get('artisan_id')
-
-        # Fetch the Artisan instance
-        artisan = Artisan.objects.get(id=artisan_id)
-
-        # Create the Inventory linked to that Artisan
-        inventory = Inventory.objects.create(artisan=artisan)
-
-        return JsonResponse({'message': 'Inventory created', 'id': inventory.id}, status=201)
-
-    except Artisan.DoesNotExist:
-        return JsonResponse({'error': 'Artisan not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+                return Response({'message': "PFP removed successfully"}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': "No PFP found for removal"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Create a new order, and order item items
 @csrf_exempt
@@ -517,7 +504,7 @@ def login_artisan(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
-@require_http_methods(['POST', 'DELETE'])
+@require_http_methods(['POST', 'DELETE', 'GET'])
 def product(request):
     # Authenticate the caller
     artisan = request.user
@@ -556,7 +543,10 @@ def product(request):
 
         # Before making the product, make sure Troute created it
         parsed = sanitize_troute_resp(response_from_php)
-        
+
+        if parsed['result'] != 'success':
+            return JsonResponse({'error': "Troute product creation failed", "message": "confirm troute credentials with SA"}, status=500)
+
         ### Create the product in my db
         Product.objects.create(
             inventory=inventory,
@@ -567,9 +557,6 @@ def product(request):
             image=data['image'],
             troute_unique_id=parsed['product']['uniqueID']
             )
-
-        if parsed['result'] != "success":
-            return JsonResponse({'message': "Product Created, but Troute product not successfully created"}, status=200)
         
         return JsonResponse({'message': "Product Created"}, status=200)
         
@@ -1495,32 +1482,22 @@ def policy(request):
         return JsonResponse({'error': "Not authenticated"}, status=401)
 
     elif request.method == "GET":
-        policies, created = Policies.objects.get_or_create(artisan=artisan)
+        policies, _ = Policies.objects.get_or_create(artisan=artisan)
 
-        message = ''
-        if created:
-            message += "Created Policies"
-        else:
-            message += "Found Policies"
-
-        policies_data = model_to_dict(policies)
-        return JsonResponse({'message': message, "policies": policies_data}, status=200)
-    
-@require_GET
-def policy_by_slug(_, slug):
-    artisan = get_object_or_404(Artisan, slug=slug)
-
-    print(artisan)
-
-    # If artisan, load the policies
-    policies, _ = Policies.objects.get_or_create(artisan=artisan)
     policies_data = model_to_dict(policies)
-
-    print(policies_data)
 
     return JsonResponse({'message': "Found policies", "policies": policies_data}, status=200)
 
-    
+@require_GET
+def policy_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+
+    policies = Policies.objects.get_or_create(artisan=artisan)
+
+    policies_data = model_to_dict(policies)
+
+    return JsonResponse({'message': "Found policies", "policies": policies_data}, status=200)
+
 # Clear session data when user logs out 
 @csrf_exempt
 @require_http_methods(['DELETE'])

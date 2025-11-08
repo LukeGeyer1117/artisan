@@ -192,8 +192,10 @@ async function upload_profile_image(file) {
         console.log('Making request to:', `${API_BASE_URL}/artisan/upload_profile_image/`);
         console.log('Request method: POST');
         console.log('Request credentials: include');
+
+        console.log(`csrftoken: ${csrftoken}`);
         
-        const response = await fetch(`${API_BASE_URL}/artisan/upload_profile_image/`, {
+        const response = await fetch(`${API_BASE_URL}/artisan/pfp/`, {
             method: 'POST',
             body: formData,
             credentials: 'include',
@@ -231,7 +233,7 @@ async function upload_profile_image(file) {
 
 async function remove_profile_picture() {
     try {
-        const response = await fetch(`${API_BASE_URL}/artisan/remove_profile_image/`, {
+        const response = await fetch(`${API_BASE_URL}/artisan/pfp/`, {
             method: 'DELETE',
             credentials: 'include',
             headers: {

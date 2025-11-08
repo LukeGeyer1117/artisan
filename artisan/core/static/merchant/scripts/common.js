@@ -292,6 +292,12 @@ async function get_merchant_information() {
     }
 
     const data = await response.json();
+
+    console.log(`FETCH: `, data.artisan);  
+    if (data.artisan.troute_key == "False" || data.artisan.troute_login == "False") {
+      showToast("You are not fully registered. Please contact your System Administrator or Agent");
+    }
+
     return data.artisan;
 }
 

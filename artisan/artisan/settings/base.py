@@ -22,10 +22,23 @@ INSTALLED_APPS = [
   'django.contrib.messages',
   'django.contrib.staticfiles',
   'django_extensions',
+  'drf_yasg',
+  'drf_spectacular',
   'corsheaders',
   'rest_framework',
   'core',
 ]
+
+REST_FRAMEWORK = {
+  'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Artisan API',
+    'DESCRIPTION': 'A detailed description of my Artisan\'s API.',
+    'VERSION': '1.0.0',
+    # Other settings...
+}
 
 MIDDLEWARE = [
   'django.middleware.security.SecurityMiddleware',

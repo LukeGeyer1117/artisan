@@ -26,3 +26,5 @@ djangorestframework
 requests
 Pillow
 gunicorn
+drf-yasg
+drf-spectacular[swagger-ui,redoc]
