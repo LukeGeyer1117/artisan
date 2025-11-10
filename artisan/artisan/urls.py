@@ -62,8 +62,8 @@ urlpatterns = [
     path('api/cart/', views.add_product_to_cart),
     path('api/checkout/', views.api_checkout, name="checkout"),
     path('api/process_payment/', views.process_payment, name="process_payment"),
-    path('api/order/', views.order, name="order"),
-    path('api/order/status/', views.update_order_status),
+    path('api/order/', views.OrderView.as_view(), name="order"),
+    path('api/order/status/', views.UpdateOrderStatusView.as_view()),
     path('api/orders/', views.orders, name="orders"),
     path('api/orders/active/', views.active_orders),
     path('api/orders/inactive/', views.inactive_orders),
@@ -95,7 +95,7 @@ urlpatterns = [
     path('api/shop-settings/<slug:slug>/', views.get_shop_settings_by_slug),
     path('api/policy/', views.policy),
     path('api/policy/<slug:slug>/', views.policy_by_slug),
-    path('api/session/', views.session),
+    path('api/session/', views.SessionView.as_view()),
 
     # Swagger
     # 1. Your API schema (the .yml file)
