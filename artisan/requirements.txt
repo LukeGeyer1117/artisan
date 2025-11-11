@@ -21,6 +21,7 @@ Django
 django-environ
 django-cors-headers
 djangorestframework
+django-extensions
 # Other stuff
 requests
 Pillow
