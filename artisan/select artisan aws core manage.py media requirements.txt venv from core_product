@@ -1,0 +1,29 @@
+                   List of relations
+ Schema |             Name              | Type  | Owner 
+--------+-------------------------------+-------+-------
+ public | auth_group                    | table | lukeg
+ public | auth_group_permissions        | table | lukeg
+ public | auth_permission               | table | lukeg
+ public | core_artisan                  | table | lukeg
+ public | core_artisan_groups           | table | lukeg
+ public | core_artisan_user_permissions | table | lukeg
+ public | core_category                 | table | lukeg
+ public | core_customrequest            | table | lukeg
+ public | core_galleryimage             | table | lukeg
+ public | core_heroimage                | table | lukeg
+ public | core_inventory                | table | lukeg
+ public | core_logoimage                | table | lukeg
+ public | core_order                    | table | lukeg
+ public | core_orderitems               | table | lukeg
+ public | core_policies                 | table | lukeg
+ public | core_product                  | table | lukeg
+ public | core_productimage             | table | lukeg
+ public | core_shopsettings             | table | lukeg
+ public | core_textcontent              | table | lukeg
+ public | core_theme                    | table | lukeg
+ public | django_admin_log              | table | lukeg
+ public | django_content_type           | table | lukeg
+ public | django_migrations             | table | lukeg
+ public | django_session                | table | lukeg
+(24 rows)
+

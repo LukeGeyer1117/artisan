@@ -22,9 +22,8 @@ from core import views
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
-    # Site URLS
+    # Customer URLS
     path('', views.splash),
-    path('admin/', admin.site.urls),
     path('home/<slug:slug>/', views.home, name="home"),
     path('gallery/<slug:slug>/', views.gallery, name="gallery"),
     path('shop/<slug:slug>/', views.shop, name="shop"),
@@ -32,14 +31,11 @@ urlpatterns = [
     path('checkout/<slug:slug>/', views.checkout, name="checkout"),
     path('custom/<slug:slug>/', views.custom, name="custom"),
     path('policies/<slug:slug>/', views.policies, name="policies"),
-    path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
     path('item/<slug:slug>/<int:item_id>/', views.item),
     path('about/<slug:slug>/', views.about, name='about'),
-    path('api/logo/<slug:slug>/', views.get_logo_image_by_slug),
-    path('api/logo/', views.get_logo_image_by_session),
-    path('api/hero/<slug:slug>/', views.get_hero_image_by_slug),
-    path('api/hero/', views.get_hero_image_by_session),
-    path('api/csrf/', views.get_csrf_token), 
+    path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
+
+    # Merchant URLS
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('inventory/', views.inventory_view),
@@ -49,62 +45,84 @@ urlpatterns = [
     path('gallery/', views.gallery_view),
     path('settings/', views.settings_view),
     path('add-item/', views.new_item_view),
+
+    # Administrator URLS
+    path('admin/', admin.site.urls),
+
+    # Documentation
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+    #                                                         #
+    #--------------------API Endpoint URLS--------------------#
+    #                                                         #
+
+    # Artisan
     path('api/artisan/', views.artisan),
     path('api/artisan/pfp/', views.ArtisanPFPView.as_view()),
     path('api/artisan/<slug:slug>/', views.ArtisanBySlugView.as_view()),
-    path('api/inventory/', views.get_inventory),
-    path('api/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
-    path('api/<slug:slug>/products-limit/', views.get_products_by_artisan_slug_limited),
+    # Product
     path('api/product/', views.product),
     path('api/product/<str:product_id>/', views.get_product),
     path('api/products/', views.get_all_products),
-    path('api/login/', views.login_artisan),
-    path('api/cart/', views.add_product_to_cart),
-    path('api/checkout/', views.api_checkout, name="checkout"),
-    path('api/process_payment/', views.process_payment, name="process_payment"),
+    path('api/<slug:slug>/products/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
+    path('api/<slug:slug>/products-limit/', views.get_products_by_artisan_slug_limited),
+    path('api/product-image/<int:product_id>/', views.get_gallery_images_by_product_id),
+    # Orders
     path('api/order/', views.OrderView.as_view(), name="order"),
     path('api/order/status/', views.UpdateOrderStatusView.as_view()),
-    path('api/orders/', views.orders, name="orders"),
-    path('api/orders/active/', views.active_orders),
+    path('api/orders/', views.OrdersMerchantView.as_view()),
+    path('api/orders/active/', views.ActiveOrdersMerchantView.as_view()),
     path('api/orders/inactive/', views.inactive_orders),
     path('api/orders/<int:days>/', views.order_analytics),
     path('api/order/restock/', views.restock),
     path('api/orderitems/', views.order_items, name="orderitems"),
-    path('api/custom/', views.get_custom_order),
-    path('api/custom/status', views.change_custom_status),
+    # Custom Request
+    path('api/custom/', views.CustomOrderMerchantView.as_view()),
+    path('api/custom/status', views.CustomOrderMerchantView.as_view()),
+    # Policy
+    path('api/policy/', views.PolicyView.as_view()),
+    path('api/policy/<slug:slug>/', views.PolicyBySlugView.as_view()),
+    # Category
+    path('api/categories/', views.get_categories_by_session),
+    path('api/category/', views.create_new_category),
+    path('api/categories/<slug:slug>/', views.get_categories_by_slug),
+    path('api/category/<int:id>/', views.alter_category), 
+    # Text Content
+    path('api/text/<slug:slug>/', views.get_text_content_by_slug),
+    path('api/text/', views.get_text_content_by_session),
+    path('api/edit/text/', views.update_text_content),
+    # Settings
+    path('api/shop-settings/', views.get_shop_settings_by_session),
+    path('api/shop-settings/edit/global/', views.update_shop_settings),
+    path('api/shop-settings/<slug:slug>/', views.get_shop_settings_by_slug),
+    # Imagery
+    path('api/logo/<slug:slug>/', views.get_logo_image_by_slug),
+    path('api/logo/', views.get_logo_image_by_session),
+    path('api/hero/<slug:slug>/', views.get_hero_image_by_slug),
+    path('api/hero/', views.get_hero_image_by_session),
+    path('api/update/logo/', views.update_logo),
+    path('api/update/hero/', views.update_hero),
+    # Gallery
     path('api/gallery/upload/', views.upload_image, name='upload_image'),
     path('api/gallery/save-order/', views.save_gallery_order, name='save_gallery_order'),
     path('api/gallery/', views.get_gallery_images, name='get_gallery_images'),
     path('api/gallery/<slug:slug>/', views.get_gallery_images_by_slug),
     path('api/gallery/delete/<int:image_id>/', views.delete_image, name='delete_image'),
-    path('api/product-image/<int:product_id>/', views.get_gallery_images_by_product_id),
-    path('api/categories/<slug:slug>/', views.get_categories_by_slug),
-    path('api/categories/', views.get_categories_by_session),
-    path('api/category/', views.create_new_category),
-    path('api/category/<int:id>/', views.alter_category), 
+    # Theme
     path('api/theme/<slug:slug>/', views.get_theme_by_slug),
     path('api/theme/', views.get_theme_by_session),
     path('api/update/theme/', views.update_theme, name='update_theme'),
-    path('api/update/logo/', views.update_logo),
-    path('api/update/hero/', views.update_hero),
-    path('api/text/<slug:slug>/', views.get_text_content_by_slug),
-    path('api/text/', views.get_text_content_by_session),
-    path('api/edit/text/', views.update_text_content),
-    path('api/shop-settings/', views.get_shop_settings_by_session),
-    path('api/shop-settings/edit/global/', views.update_shop_settings),
-    path('api/shop-settings/<slug:slug>/', views.get_shop_settings_by_slug),
-    path('api/policy/', views.policy),
-    path('api/policy/<slug:slug>/', views.policy_by_slug),
-    path('api/session/', views.SessionView.as_view()),
+    # Payments  
+    path('api/checkout/', views.api_checkout, name="checkout"),
+    path('api/process_payment/', views.process_payment, name="process_payment"),
 
-    # Swagger
-    # 1. Your API schema (the .yml file)
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    
-    # 2. Optional UI: Swagger
-    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    
-    # 3. Optional UI: ReDoc
-    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    # MISCELLANEOUS
+    path('api/csrf/', views.get_csrf_token), 
+    path('api/inventory/', views.get_inventory),
+    path('api/login/', views.login_artisan),
+    path('api/cart/', views.add_product_to_cart),
+    path('api/session/', views.SessionView.as_view()),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

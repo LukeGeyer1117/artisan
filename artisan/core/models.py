@@ -127,6 +127,8 @@ class Product(models.Model):
     # Troute Unique Identifier
     troute_unique_id = models.PositiveIntegerField(null=True, blank=True, unique=True)
 
+    troute_registered = models.BooleanField(default=False)
+
     def __str__(self):
         return f'{self.inventory.artisan} - {self.name} - {self.price}'
     
@@ -264,7 +266,7 @@ class Theme(models.Model):
     link_hover_color = models.CharField(max_length=7, default="#007bff")
 
     # TTL
-    ttl = models.PositiveIntegerField(default=(1000 * 60))
+    ttl = models.PositiveIntegerField(default=(1000 * 15))
 
     def __str__(self):
         return f'{self.artisan.slug}'
@@ -342,7 +344,7 @@ class Policies(models.Model):
     return_policy = models.TextField(max_length=2000, default='')
 
     # TTL
-    ttl = models.PositiveIntegerField(default=(1000 * 60))
+    ttl = models.PositiveIntegerField(default=(1000 * 30))
 
     def __str__(self):
         return f"{self.artisan.username}'s Policies"

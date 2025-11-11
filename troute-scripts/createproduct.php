@@ -14,8 +14,6 @@ $productPrice       = $_POST['x_product_price'] ?? "29.99";
 
 // Build POST data for creating a product
 $postData = [
-    "x_login" => $merchantName,
-    "x_tran_key" => $merchantKey,
     "product" => [
         "uniqueID" => null,
         "name" => $productName,
@@ -25,13 +23,17 @@ $postData = [
     ];
 
 // Initialize cURL
+$token = base64_encode($merchantName.":".$merchantKey);
+
 $ch = curl_init($url);
-curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/x-www-form-urlencoded'
+    'Content-Type: application/x-www-form-urlencoded',
+    'Authorization: Basic '.$token
 ]);
+
 
 // Optional: for dev/test with self-signed certs
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);

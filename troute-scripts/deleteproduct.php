@@ -15,8 +15,6 @@ if (!$merchantKey || !$secretKey || !$uniqueID) {
 
 // Build JSON body
 $data = [
-    "x_login"    => $merchantKey,
-    "x_tran_key" => $secretKey,
     "uniqueID"   => $uniqueID
 ];
 
@@ -27,21 +25,14 @@ $ch = curl_init($url);
 
 // DELETE request
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-
-// Set JSON body
 curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-
-// Headers
+$token = $merchantKey.":".$secretKey;
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Content-Type: application/json",
-    "Accept: application/x-www-form-urlencoded"
+    "Accept: application/x-www-form-urlencoded",
+    "Authorization: Basic ".$token
 ]);
-
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-// Optional: dev/test self-signed certs
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
 // Execute
 $response = curl_exec($ch);

@@ -32,12 +32,12 @@ from rest_framework.response import Response  # Use DRF's Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import serializers
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiRequest, OpenApiResponse
 
+
 ### API VIEWS
-
-
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET', 'PATCH'])
@@ -140,6 +140,16 @@ class ArtisanBySlugView(APIView):
     Public view for customers to get artisan information by slug. 
     Only returns safe, customer-facing data.
     """
+
+    @extend_schema(
+        summary="Get an artisan by slug",
+        responses={
+            200: "Artisan found",
+            404: "Artisan not found",
+            500: "Internal server error"
+        }
+    )
+
     def get(self, request, slug):
         try:
             artisan = Artisan.objects.get(slug=slug)
@@ -173,63 +183,10 @@ class ArtisanPFPView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
-    @extend_schema(
-        summary="Upload or replace profile picture (PFP)",
-        description=(
-            "Allows an authenticated merchant to upload a new profile picture. "
-            "If an existing picture exists, it will be deleted and replaced. "
-            "Accepts a multipart/form-data request containing an `image` field."
-        ),
-        request=OpenApiRequest(
-            request={
-                'multipart/form-data': {
-                    'type': 'object',
-                    'properties': {
-                        'image': {
-                            'type': 'string',
-                            'format': 'binary',
-                            'description': 'The image file to upload as the new profile picture.'
-                        }
-                    },
-                    'required': ['image']
-                }
-            }
-        ),
-        responses={
-            200: OpenApiResponse(
-                description="Profile picture uploaded successfully.",
-                examples=[
-                    OpenApiExample(
-                        "Success",
-                        summary="Upload successful",
-                        value={"message": "PFP uploaded successfully", "image_url": "/media/artisans/pfp.jpg"}
-                    )
-                ]
-            ),
-            400: OpenApiResponse(
-                description="No image file found in the request.",
-                examples=[
-                    OpenApiExample(
-                        "Missing file",
-                        value={"error": "No image file found in the request"}
-                    )
-                ]
-            ),
-            500: OpenApiResponse(
-                description="Unexpected server error.",
-                examples=[
-                    OpenApiExample(
-                        "Server error",
-                        value={"error": "Some internal error message"}
-                    )
-                ]
-            )
-        },
-        tags=["Merchant Profile"]
-    )
     def post(self, request):
         """
         Allow merchant to upload a new profile picture. Delete old, if it exists.
+        Requires form data sent as body that must include 
         """
         artisan = request.user
 
@@ -255,41 +212,6 @@ class ArtisanPFPView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @extend_schema(
-        summary="Remove profile picture (PFP)",
-        description="Allows an authenticated merchant to remove their profile picture. Deletes the file from storage and clears the image field.",
-        responses={
-            200: OpenApiResponse(
-                description="PFP removed successfully.",
-                examples=[
-                    OpenApiExample(
-                        "Success",
-                        summary="Removed successfully",
-                        value={"message": "PFP removed successfully"}
-                    )
-                ]
-            ),
-            404: OpenApiResponse(
-                description="No profile picture found to remove.",
-                examples=[
-                    OpenApiExample(
-                        "No PFP found",
-                        value={"error": "No PFP found for removal"}
-                    )
-                ]
-            ),
-            500: OpenApiResponse(
-                description="Unexpected server error.",
-                examples=[
-                    OpenApiExample(
-                        "Server error",
-                        value={"error": "Some internal error message"}
-                    )
-                ]
-            )
-        },
-        tags=["Merchant Profile"]
-    )
     def delete(self, request):
         """
         Allow merchant to remove a PFP.
@@ -460,61 +382,81 @@ def restock(request):
         item.product.save()
 
     return JsonResponse({'message': 'Restocked items'})
-
     
+class CustomOrderMerchantView(APIView):
+    """
+    Merchant-only endpoint to make and manage custom orders
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
-# Change status of custom request
-@csrf_exempt
-@require_POST
-def change_custom_status(request):
-    try:
-        data = json.loads(request.body)
-        request_id = data['request_id']
-        status = data['status']
-        
-        request = CustomRequest.objects.get(id=request_id)
-        request.status = status
-
-        request.save()
-        return JsonResponse({'message': 'Updated order status'}, status=200)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
-
-# Get all orders under a certain merchant
-@login_required(login_url='/login/')
-@require_GET
-def orders(request):
-    try:
+    def get(self, request):
         artisan = request.user
 
-        if not artisan.is_authenticated:
-            return JsonResponse({'error': "Not authenticated"}, status=401)
+        custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
+        return Response({'message': "Found requests", 'customRequests': list(custom_requests)})
 
-        orders = Order.objects.filter(artisan=artisan).order_by('created_at')
-        orders_data = [
-            {
-                'id': order.id,
-                'customer_name': order.customer_name,
-                'customer_email': order.customer_email,
-                'customer_phone': order.customer_phone,
-                'shipping_addr': order.shipping_addr,
-                'city': order.city,
-                'state': order.state,
-                'zip_code': order.zip_code,
-                'status': order.status,
-                'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
-                'total_price': order.total_price,
-            }
-            for order in orders
-        ]
 
-        return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
-    except Order.DoesNotExist:
-        return JsonResponse({'message': 'No Orders Found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': f"Could not get orders: {e}"})
+    def patch(self, request):
+        try:
+            data = json.loads(request.body)
+            custom_id = data['request_id']
+            status=data['status']
+
+            custom = CustomRequest.objects.get(id=custom_id)
+            custom.status = status
+
+            custom.save()
+            return Response({'message': "Updated request status"}, status=status.HTTP_200_OK)
+        except CustomRequest.DoesNotExist:
+            return Response({'error': f"Custom request patch failed: No CustomRequest object found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Custom request patch failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class OrdersMerchantView(APIView):
+    """
+    Merchant-only view allowing merchant to get all their orders.
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+    def get(self, request):
+        try:
+            artisan = request.user
+
+            orders = Order.objects.filter(artisan=artisan).order_by('created_at')
+            orders_data = [ model_to_dict(order) for order in orders ]
+
+            return Response({'message': "Found Orders", 'orders': orders_data}, status=status.HTTP_200+OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't get Orders: {str(e)}"})
 
 # Get only orders with a 'pending' or 'approved' status
+class ActiveOrdersMerchantView(APIView):
+    """
+    Merchant-only view to get all active orders in states 'pending', 'approved', or 'in_progress'
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request):
+        try:
+            artisan = request.user
+
+            orders = Order.objects.filter(
+                artisan=artisan,
+                status__in=['pending', 'approved', 'in_progress']
+            ).order_by('created_at')
+
+            orders_data = [ model_to_dict(order) for order in orders ]
+
+            return Response({'message': "Orders Found", 'orders': orders_data}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldnt get active orders: {str(e)}"})
+
 @login_required(login_url='/login/')
 @require_GET
 def active_orders(request):
@@ -529,22 +471,7 @@ def active_orders(request):
             status__in=['pending', 'approved', 'in_progress']
         ).order_by('created_at')
 
-        orders_data = [
-            {
-                'id': order.id,
-                'customer_name': order.customer_name,
-                'customer_email': order.customer_email,
-                'customer_phone': order.customer_phone,
-                'shipping_addr': order.shipping_addr,
-                'city': order.city,
-                'state': order.state,
-                'zip_code': order.zip_code,
-                'status': order.status,
-                'created_at': order.created_at.strftime('%Y-%m-%d %H:%M'),
-                'total_price': order.total_price,
-            }
-            for order in orders
-        ]
+        orders_data = [ model_to_dict(order) for order in orders ]
 
         return JsonResponse({'message': 'Retrieved Orders', 'orders': orders_data}, status=200)
 
@@ -676,7 +603,7 @@ def product(request):
         # Check the input
         if not data['name'] or not data['price'] or not data['description'] or not data['quantity'] or not data['image']:
             return JsonResponse({'error': "Invalid Request: One or more missing fields"}, status=400)
-
+        
         # Create the troute product
         response_from_php = call_php_create_product(
             artisan.troute_login,
@@ -688,8 +615,10 @@ def product(request):
 
         # Before making the product, make sure Troute created it
         parsed = sanitize_troute_resp(response_from_php)
+        registered = True
 
         if parsed['result'] != 'success':
+            registered = False
             return JsonResponse({'error': "Troute product creation failed", "message": "confirm troute credentials with SA"}, status=500)
 
         ### Create the product in my db
@@ -700,7 +629,8 @@ def product(request):
             quantity=data['quantity'],
             description=data['description'],
             image=data['image'],
-            troute_unique_id=parsed['product']['uniqueID']
+            troute_unique_id=parsed['product']['uniqueID'],
+            troute_registered=registered
             )
         
         return JsonResponse({'message': "Product Created"}, status=200)
@@ -803,23 +733,14 @@ def product(request):
 @require_GET
 def get_product(request, product_id):
     try:    
-        product = Product.objects.filter(id=product_id).values().first()
+        product = Product.objects.filter(id=product_id).first()
 
         if not product:
             return JsonResponse({'error': 'Product not found'}, status=404)
 
-        return JsonResponse({'message': 'Found proudct', 'product': product}, status=200)
+        return JsonResponse({'message': 'Found proudct', 'product': model_to_dict(product)}, status=200)
     except Exception as e:
         return JsonResponse({'error': f'Error finding product: {e}'})
-
-@csrf_exempt
-@require_http_methods(['PUT'])
-def set_product_category(request):
-    artisan=Artisan.objects.get(id=request.session.get('artisan_id'))
-    if not artisan:
-        return JsonResponse({'error': 'Not authenticated'}, status=401)
-    data = json.loads(request.body)
-    print(data)
 
 @login_required(login_url='/login/')
 @require_GET
@@ -980,18 +901,6 @@ def api_checkout(request):
 def process_payment(request):
     return JsonResponse({'message': 'Payment Processed Successfully', 'payment_status': "SUCCEED"}, status=200)
 
-
-
-@login_required(login_url='/login/')
-@require_GET
-def get_custom_order(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
-
-    custom_requests = CustomRequest.objects.filter(artisan=artisan).values()
-    return JsonResponse({'message': 'Found requests', 'customRequests': list(custom_requests)})
 
 @login_required(login_url='/login/')
 @require_http_methods(['POST'])
@@ -1633,15 +1542,43 @@ def policy(request):
 
     return JsonResponse({'message': "Found policies", "policies": policies_data}, status=200)
 
-@require_GET
-def policy_by_slug(request, slug):
-    artisan = get_object_or_404(Artisan, slug=slug)
+class PolicyView(APIView):
+    """
+    Merchant-only view to create, get, and update policies
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
-    policies = Policies.objects.get_or_create(artisan=artisan)
+    def get(self, request):
+        try:
+            artisan = request.user
+            policies, _ = Policies.objects.get_or_create(artisan=artisan)
 
-    policies_data = model_to_dict(policies)
+            policies_data = model_to_dict(policies)
+            return Response({'message': "Found policies", "policies": policies_data}, status=status.HTTP_200_OK)
+        
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Policies error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return JsonResponse({'message': "Found policies", "policies": policies_data}, status=200)
+
+class PolicyBySlugView(APIView):
+    """
+    Customer-view to get a merchant's policies by slug.
+    """
+    def get(self, request, slug):
+        try:
+
+            artisan = Artisan.objects.get(slug=slug)
+            policies = Policies.objects.get_or_create(artisan=artisan)
+            policies_data = model_to_dict(policies)
+
+            return Response({'message': "Found Policies", "policies": policies_data}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"})
+        except Exception as e:
+            return Response({'error': f"Policies Couldn't be found, error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class SessionView(APIView):
     """
