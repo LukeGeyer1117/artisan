@@ -28,3 +28,5 @@ Pillow
 gunicorn
 drf-yasg
 drf-spectacular[swagger-ui,redoc]
+typing_extensions>=4.12.0
+
