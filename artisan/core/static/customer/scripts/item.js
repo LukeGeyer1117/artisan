@@ -10,64 +10,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     window.location.href = `/shop/${slug}/`;
   })
 
-  let productInfo;
-
-  await fetch(`${API_BASE_URL}/product/${String(item_id)}`, {
-    method: 'GET'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not fetch product info");
-    return response.json();
-  })
-  .then(data => {
-    console.log(data.product);
-    const product = data.product;
-    productInfo = product;
-    document.querySelector('.product-title').innerHTML = product.name;
-    document.querySelector('.product-category').innerHTML = "Category: " + (product.category_id || 'Product');
-    if (parseInt(product.quantity) > 0) {
-      document.querySelector('.product-stock').innerHTML = product.quantity + " In Stock"
-      document.querySelector('.product-stock').style.color = "#57ba6d";
-    } else {
-      document.querySelector('.product-stock').innerHTML = "Sold Out";
-      document.querySelector('.product-stock').style.color = "#ff7a7a";
-    }
-
-    document.querySelector('.product-price').innerHTML = `$${product.price}`;
-    document.querySelector('.product-description-body').textContent = product.description;
-
-    document.querySelector('.item-photos-main').src = `/media/${product.image}`;
-    const miniImg = document.createElement('img');
-    miniImg.src = `/media/${product.image}`;
-    document.querySelector('.item-photos-multi').appendChild(miniImg);
-
-    miniImg.addEventListener('click', function () {
-      document.querySelector('.item-photos-main').src = `/media/${product.image}`;
-    })
-  })
-
-  // Get any Product Images that are linked to the current product
-  await fetch(`${API_BASE_URL}/product-image/${item_id}/`, {
-    method: 'GET'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error('Could not get product images!');
-    return response.json();
-  })
-  .then(data => {
-    const product_images = data.product_images;
-    const product_image_main = document.querySelector('.item-photos-main');
-    product_images.forEach(image=> {
-      console.log(image);
-      const miniImg = document.createElement('img');
-      miniImg.src = `/media/${image.image}`;
-      document.querySelector('.item-photos-multi').appendChild(miniImg);
-
-      miniImg.addEventListener('click', function () {
-        product_image_main.src = miniImg.src;
-      })
-    });
-  })
+  // Get the product and its images, and build the HTML around them
+  const product = await GetProduct(item_id);    // Defined in customer commmon.js
+  const product_images = await GetProductImages(item_id); // Same as above
+  BuildHTML(product, product_images);
 
   // Double check if quantity input value is ok
   const quantityInput = document.querySelector('.number-input');
@@ -137,5 +83,41 @@ function addItemToCart(product, quantity) {
   })
   .catch(error => {
     console.error('Error:', error);
+  });
+}
+
+function BuildHTML(product, product_images) {
+  document.querySelector('.product-title').innerHTML = product.name;
+  document.querySelector('.product-category').innerHTML = "Category: " + (product.category_id || 'Product');
+  if (parseInt(product.quantity) > 0) {
+    document.querySelector('.product-stock').innerHTML = product.quantity + " In Stock"
+    document.querySelector('.product-stock').style.color = "#57ba6d";
+  } else {
+    document.querySelector('.product-stock').innerHTML = "Sold Out";
+    document.querySelector('.product-stock').style.color = "#ff7a7a";
+  }
+
+  document.querySelector('.product-price').innerHTML = `$${product.price}`;
+  document.querySelector('.product-description-body').textContent = product.description;
+
+  document.querySelector('.item-photos-main').src = `${product.image}`;
+  const miniImg = document.createElement('img');
+  miniImg.src = `${product.image}`;
+  document.querySelector('.item-photos-multi').appendChild(miniImg);
+
+  miniImg.addEventListener('click', function () {
+    document.querySelector('.item-photos-main').src = `/media/${product.image}`;
+  })   
+  
+  const product_image_main = document.querySelector('.item-photos-main');
+  product_images.forEach(image=> {
+    console.log(image);
+    const miniImg = document.createElement('img');
+    miniImg.src = `/media/${image.image}`;
+    document.querySelector('.item-photos-multi').appendChild(miniImg);
+
+    miniImg.addEventListener('click', function () {
+      product_image_main.src = miniImg.src;
+    })
   });
 }

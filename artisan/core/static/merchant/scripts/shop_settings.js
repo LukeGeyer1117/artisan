@@ -79,22 +79,22 @@ async function save_shop_changes() {
 
   // Create a JavaScript object with the data
   const shopData = {
-    shopName: shop_name,
-    shopDescription: shop_description,
-    acceptingCustomOrders: accepting_custom_orders,
-    maximumActiveOrders: maximum_active_orders,
-    standardProcessingDays: standard_processing_days,
-    shopLocation: shop_location,
+    shop_name: shop_name,
+    shop_description: shop_description,
+    accepting_custom_orders: accepting_custom_orders,
+    maximum_active_orders: maximum_active_orders,
+    standard_processing_days: standard_processing_days,
+    shop_location: shop_location,
     currency: currency,
-    shopStatus: shop_status,
-    statusMessage: status_message,
-    minimumOrderAmount: minimum_order_amount,
-    termsAndConditions: terms_and_conditions,
-    shippingPolicy: shipping_policy,
-    returnPolicy: return_policy
+    shop_status: shop_status,
+    status_message: status_message,
+    minimum_order_amount: minimum_order_amount,
+    terms_and_conditions: terms_and_conditions,
+    shipping_policy: shipping_policy,
+    return_policy: return_policy
   };
 
-  fetch(`${API_BASE_URL}/shop-settings/edit/global/`, {
+  fetch(`${API_BASE_URL}/shop-settings/`, {
     method: 'POST',
     credentials: 'include',
     headers: {

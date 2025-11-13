@@ -31,7 +31,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response  # Use DRF's Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework import serializers
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiRequest, OpenApiResponse
@@ -102,7 +102,6 @@ def artisan(request):
             registered = False
 
         artisan = Artisan.objects.filter(id=request.user.id).values().first()
-        print(artisan)
         if artisan:
             return JsonResponse({'message': "Artisan found!", 'registered': registered,'artisan': artisan})
         return JsonResponse({'error': "No Artisan Found!"}, status=404)
@@ -603,7 +602,7 @@ def product(request):
         # Check the input
         if not data['name'] or not data['price'] or not data['description'] or not data['quantity'] or not data['image']:
             return JsonResponse({'error': "Invalid Request: One or more missing fields"}, status=400)
-        
+    
         # Create the troute product
         response_from_php = call_php_create_product(
             artisan.troute_login,
@@ -733,12 +732,19 @@ def product(request):
 @require_GET
 def get_product(request, product_id):
     try:    
-        product = Product.objects.filter(id=product_id).first()
+        product = Product.objects.get(id=product_id)
+        product_data = model_to_dict(product)
+
+        if product.image:
+            print(product.image.url)
+            product_data['image'] = product.image.url
+        else:
+            product_data['image'] = None
 
         if not product:
             return JsonResponse({'error': 'Product not found'}, status=404)
 
-        return JsonResponse({'message': 'Found proudct', 'product': model_to_dict(product)}, status=200)
+        return JsonResponse({'message': 'Found proudct', 'product': product_data}, status=200)
     except Exception as e:
         return JsonResponse({'error': f'Error finding product: {e}'})
 
@@ -1071,64 +1077,153 @@ def get_hero_image_by_slug(request, slug):
             return JsonResponse({'error': 'Error serving image'}, status=500)
     return JsonResponse({'error': "Method Not Allowed"}, status=405)
 
-@login_required(login_url='/login/')
-@require_GET
-def get_hero_image_by_session(request):
-    artisan = request.user
+class HeroImageMerchantView(APIView):
+    """
+    Merchant-only view to get and create hero images
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': 'Not authenticated'}, stauts=401)
+    def get(self, request):
+        try:
+            artisan = request.user
 
-    hero, created = HeroImage.objects.get_or_create(artisan=artisan)
+            hero, created = HeroImage.objects.get_or_create(artisan=artisan)
 
-    message = 'Created hero image' if created else 'Found hero image'
+            message = "Created hero image" if created else "Found hero image"
 
-    # Check if logo has an image and if the image has a URL
-    if not hero.image or not hero.image.url:
-        return JsonResponse({'error': 'Image not found'})
-    
-    return JsonResponse({'message': message, 'image_url': hero.image.url}, status=200)
+            # Check image
+            if not hero.image or not hero.image.url:
+                return Response({'error': "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            return Response({'message': message, 'image_url': hero.image.url}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't get Hero Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
+        
+    def post(self, request):
+        try:
+            artisan = request.user
 
-@csrf_exempt
-def get_logo_image_by_slug(request, slug):
-    if request.method == 'GET':
-        print(slug)
+            # Check if a file was uploaded
+            if 'hero' not in request.FILES:
+                return JsonResponse({'error': "No hero file provided"}, status=400)
+            uploaded_file = request.FILES['hero']
+
+            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
+            if uploaded_file.content_type not in allowed_types:
+                return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
+            
+            # Optional: Validate file size
+            max_size = 5 * 1024 * 1024 # 5MB
+            max_in_mb = max_size // 1024 // 1024
+            if uploaded_file.size > max_size:
+                return JsonResponse({'error': f"File too large. Max size is {max_in_mb}MB"}, status=400)
+
+            # Get or create a HeroImage for this artisan
+            hero_image, created = HeroImage.objects.get_or_create(artisan=artisan)
+
+            # Delete the old image file if it exists (only if we're updating, not creating)
+            if not created and hero_image.image:
+                hero_image.image.delete(save=False)
+
+            # Save the new image
+            hero_image.image = uploaded_file
+            hero_image.save()
+
+            return JsonResponse({'message': "Hero image updated successfully"}, status=200)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't get Logo Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
+
+
+class LogoImageCustomerView(APIView):
+    """
+    Customer-only view for getting a logo image based on slug
+    """
+    def get(self, request, slug):
         artisan = get_object_or_404(Artisan, slug=slug)
-        print(artisan)
         logo = get_object_or_404(LogoImage, artisan=artisan)
 
         try:
-            # Check if the image file exists
             if not logo.image:
-                return JsonResponse({'error': "Image not found"})
-        
-            return JsonResponse({'message': "Found logo_image", 'image_url': logo.image.url}, status=200)
+                return Response({'error': "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            return Response({'message': "Found logo image", 'image_url': logo.image.url}, status=status.HTTP_200_OK)
         except Exception as e:
-            return JsonResponse({'error': "Error serving image"}, status=500)
-    return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+            return Response({'error': f"Couldn't get logo image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-'''
-API URL: '/api/logo/'
-REQUIRES LOGIN
-'''
-@login_required(login_url='/login/')
-@require_GET
-def get_logo_image_by_session(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': 'Not authenticated'})
-
-    logo, created = LogoImage.objects.get_or_create(artisan=artisan)
-
-    message = 'Created logo image' if created else 'Found logo image'
-
-    # Check if logo has an image and if the image has a URL
-    if not logo.image or not logo.image.url:
-        return JsonResponse({'error': 'Image not found'})
+class LogoImageMerchantView(APIView):
+    """
+    Merchant-only view to get and add Logo Image
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     
-    return JsonResponse({'message': message, 'image_url': logo.image.url}, status=200)
+    def get(self, request):
+        """
+        Get the image. Create one if one does not exist.
+        """
+        try:
+            artisan = request.user
+
+            logo, created = LogoImage.objects.get_or_create(artisan=artisan)
+            message = "Created logo image" if created else "Found logo image"
+
+            # Make sure logo image has valid url
+            if not logo.image or not logo.image.url:
+                return Response({'error': "No valid image found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            return Response({'message': message, 'image_url': logo.image.url}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't get Logo Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
+        
+    def post(self, request):
+        """
+        Create or update a logo image
+        """
+        try:
+            artisan = request.user
+            
+            # Check if a file was uploaded
+            if 'logo' not in request.FILES:
+                return JsonResponse({'error': "No logo file provided"}, status=400)
+            
+            uploaded_file = request.FILES['logo']
+            
+            # Optional: Validate file type
+            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
+            if uploaded_file.content_type not in allowed_types:
+                return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
+            
+            # Optional: Validate file size (e.g., max 5MB)
+            max_size = 5 * 1024 * 1024  # 5MB in bytes
+            if uploaded_file.size > max_size:
+                return JsonResponse({'error': "File too large. Maximum size is 5MB."}, status=400)
+            
+            # Get or create LogoImage for this artisan
+            logo_image, created = LogoImage.objects.get_or_create(artisan=artisan)
+
+            # Delete the old image file if it exists
+            if not created and logo_image.image:
+                logo_image.image.delete(save=False)
+            
+            # Save the new image
+            logo_image.image = uploaded_file
+            logo_image.save()
+            
+            return Response({'message': "Logo updated successfully"}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't modify Logo Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
+        
+
+        
 
 @csrf_exempt
 def create_hero_image(request):
@@ -1306,43 +1401,6 @@ def update_theme(request):
     return JsonResponse({'message': "updated theme"}, status=200)
 
 @login_required(login_url='/login/')
-@require_http_methods(['POST'])
-def update_logo(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
-    
-    # Check if a file was uploaded
-    if 'logo' not in request.FILES:
-        return JsonResponse({'error': "No logo file provided"}, status=400)
-    
-    uploaded_file = request.FILES['logo']
-    
-    # Optional: Validate file type
-    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
-    if uploaded_file.content_type not in allowed_types:
-        return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
-    
-    # Optional: Validate file size (e.g., max 5MB)
-    max_size = 5 * 1024 * 1024  # 5MB in bytes
-    if uploaded_file.size > max_size:
-        return JsonResponse({'error': "File too large. Maximum size is 5MB."}, status=400)
-    
-    # Get or create LogoImage for this artisan
-    logo_image, created = LogoImage.objects.get_or_create(artisan=artisan)
-
-    # Delete the old image file if it exists
-    if not created and logo_image.image:
-        logo_image.image.delete(save=False)
-    
-    # Save the new image
-    logo_image.image = uploaded_file
-    logo_image.save()
-    
-    return JsonResponse({'message': "Logo updated successfully"}, status=200)
-
-@login_required(login_url='/login/')
 @require_POST
 def update_hero(request):
     artisan = request.user
@@ -1378,169 +1436,140 @@ def update_hero(request):
 
     return JsonResponse({'message': "Hero image updated successfully"}, status=200)
 
-@csrf_exempt
-@require_GET
-def get_text_content_by_slug(request, slug):
-    artisan = get_object_or_404(Artisan, slug=slug)
-    text_content = get_object_or_404(TextContent, artisan=artisan)
-
-    text_content_data = {
-        'hero_sentence_draw': text_content.hero_sentence_draw,
-        'hero_header_draw': text_content.hero_header_draw,
-        'gallery_subtext': text_content.gallery_subtext,
-        'custom_order_prompt': text_content.custom_order_prompt,
-        'project_description_placeholder': text_content.project_description_placeholder
-    }
-
-    return JsonResponse({'message': 'Found Text Content', 'text_content': text_content_data})
-
-@login_required(login_url='/login/')
-@require_GET
-def get_text_content_by_session(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': 'Not authenticated'}, status=401)
-
-    text_content, created = TextContent.objects.get_or_create(artisan=artisan)
-
-    message = 'created new text content' if created else 'found text content'
-
-    # Convert model instance to dict so it can be JSON serialized
-    text_content_data = model_to_dict(text_content)
-
-    return JsonResponse({'message': message, 'text_content': text_content_data}, status=200)
-
-@login_required(login_url='/login/')
-@require_http_methods(['POST', 'OPTIONS'])
-def update_text_content(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
-
-    text_content = get_object_or_404(TextContent, artisan=artisan)
-
-    data = json.loads(request.body)
-    new_sentence = data['sentence']
-    new_header = data['header']
-    new_gallery_subtext = data['gallery_subtext']
-    new_custom_order_prompt = data['custom_order_prompt']
-    new_project_description_placeholder = data['project_description_placeholder']
-
-    text_content.hero_sentence_draw = new_sentence[:100]
-    text_content.hero_header_draw = new_header[:100]
-    text_content.gallery_subtext = new_gallery_subtext
-    text_content.custom_order_prompt = new_custom_order_prompt
-    text_content.project_description_placeholder = new_project_description_placeholder
-
-    text_content.save()
-
-    return JsonResponse({'message': "Updated Text Content"}, status=200)
-
-@login_required(login_url='/login/')
-@require_GET
-def get_shop_settings_by_session(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': 'Not authenticated'}, status=401)
-
-    shop_settings, created = ShopSettings.objects.get_or_create(artisan=artisan)
-
-    shop_settings_data = model_to_dict(shop_settings)
-    message = 'created new shop settings' if created else 'found shop settings'
-
-    return JsonResponse({'message': message, 'shop_settings': shop_settings_data, 'slug': artisan.slug})
-
-@require_GET
-def get_shop_settings_by_slug(request, slug):
-    artisan = get_object_or_404(Artisan, slug=slug)
-
-    shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
-
-    shop_settings_data = model_to_dict(shop_settings)
-    message = 'found shop settings'
-
-    return JsonResponse({'message': message, 'shop_settings': shop_settings_data})
-
-@login_required(login_url='/login/')
-@require_POST
-def update_shop_settings(request):
+class TextContentCustomerView(APIView):
     """
-    Updates the shop settings for the authenticated artisan.
+    Customer-only view to get text content by merchand slug
     """
-    artisan = request.user
+    def get(self, request, slug):
+        try:
+            artisan = get_object_or_404(Artisan, slug=slug)
+            text_content = get_object_or_404(TextContent, artisan=artisan)
 
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
+            text_content_data = model_to_dict(text_content)
+            return Response({'message': "Found Text Content", 'text_content': text_content_data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f"Couldn't get text content: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    try:
-        # Get the JSON data from the request body
-        data = json.loads(request.body)
+class TextContentMerchantView(APIView):
+    """
+    Merchant-only view for merchants to create, get, update text content
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get(self, request):
+        try:
+            artisan = request.user
+
+            text_content, created = TextContent.objects.get_or_create(artisan=artisan)
+
+            message = "created new text content" if created else "found text content"
+
+            # Convert model instance to dict to JSON serialize it
+            text_content_data = model_to_dict(text_content)
+
+            return Response({'message': message, 'text_content': text_content_data}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't get Text Content: ${str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        # Get the shop settings and policies
-        shop_settings = get_object_or_404(ShopSettings, artisan=artisan)
-        policies, _ = Policies.objects.get_or_create(artisan=artisan)
+    def post(self, request):
+        try:
+            artisan = request.user
+            text_content, _ = TextContent.objects.get_or_create(artisan=artisan)
+            data = request.data
 
-        # Check if the shop name has changed
-        old_shop_name = shop_settings.shop_name
-        if (old_shop_name != data.get('shopName')):
-            new_slug = generate_unique_slug(data.get('shopName'))
-            artisan.slug = new_slug
-            artisan.shop_name = data.get('shopName')
-            artisan.save()
-            
+            text_content.hero_sentence_draw = data['sentence'][:100]
+            text_content.hero_header_draw = data['header'][:100]
+            text_content.gallery_subtext = data['gallery_subtext']
+            text_content.custom_order_prompt = data['custom_order_prompt']
+            text_content.project_description_placeholder = data['project_description_placeholder']
 
-        # Update the model fields with the data from the JSON
-        # It's crucial to map the JSON keys to your model fields
-        shop_settings.shop_name = data.get('shopName', shop_settings.shop_name)
-        shop_settings.shop_description = data.get('shopDescription', shop_settings.shop_description)
-        shop_settings.accepting_custom_orders = data.get('acceptingCustomOrders', shop_settings.accepting_custom_orders)
-        shop_settings.maximum_active_orders = data.get('maximumActiveOrders', shop_settings.maximum_active_orders)
-        shop_settings.standard_processing_days = data.get('standardProcessingDays', shop_settings.standard_processing_days)
-        shop_settings.shop_location = data.get('shopLocation', shop_settings.shop_location)
-        shop_settings.currency = data.get('currency', shop_settings.currency)
-        shop_settings.shop_status = data.get('shopStatus', shop_settings.shop_status)
-        shop_settings.status_message = data.get('statusMessage', shop_settings.status_message)
-        shop_settings.minimum_order_amount = data.get('minimumOrderAmount', shop_settings.minimum_order_amount)
-        #  Update the policies too
-        policies.terms_and_conditions = data.get('termsAndConditions', policies.terms_and_conditions)
-        policies.shipping_policy = data.get('shippingPolicy', policies.shipping_policy)
-        policies.return_policy = data.get('returnPolicy', policies.return_policy)
+            text_content.save()
+            return Response({'message': "Updated Text Content"}, status=status.HTTP_200_OK)
 
-        # Save the changes to the database
-        shop_settings.save()
-        policies.save()
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't update Text Content: ${str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return JsonResponse({'message': "Updated shop settings and policies"}, status=200)
-
-    except json.JSONDecodeError:
-        # Handle cases where the request body is not valid JSON
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-    except KeyError as e:
-        # Handle cases where a required key is missing from the JSON
-        return JsonResponse({'error': f'Missing key: {e}'}, status=400)
-    except Exception as e:
-        # Catch any other unexpected errors
-        return JsonResponse({'error': str(e)}, status=500)
-    
-@login_required(login_url='/login/')
-@require_http_methods(['POST', 'GET'])
-def policy(request):
+class ShopSettingsCustomerView(APIView):
     """
-    Create, Get, and Update (don't delete) merchant terms and conditions.
+    Customer-only view to get an artisan's shop settings by slug.
     """
-    artisan = request.user
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
+    def get(self, request, slug):
+        try:
+            artisan = get_object_or_404(Artisan, slug=slug)
 
-    elif request.method == "GET":
-        policies, _ = Policies.objects.get_or_create(artisan=artisan)
+            shop_settings, created = ShopSettings.objects.get_or_create(artisan=artisan)
+            shop_settings_data = model_to_dict(shop_settings)
 
-    policies_data = model_to_dict(policies)
+            message = "Created shop settings" if created else "Found shop settings"
 
-    return JsonResponse({'message': "Found policies", "policies": policies_data}, status=200)
+            return Response({'message': message, 'shop_settings': shop_settings_data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f"Couldn't get shop settings: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ShopSettingsMerchantView(APIView):
+    """
+    Merchant-only view to get, create, and update shop settings
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get(self, request):
+        try:
+            artisan = request.user
+
+            shop_settings, created = ShopSettings.objects.get_or_create(artisan=artisan)
+
+            shop_settings_data = model_to_dict(shop_settings)
+            message = 'created new shop settings' if created else 'found shop settings'
+
+            return Response({'message': message, 'shop_settings': shop_settings_data, 'slug': artisan.slug}, status=status.HTTP_200_OK)
+        except Artisan.DoesNotExist:
+            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f"Couldn't get Shop settings: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        try:
+            artisan = request.user
+            data = request.data
+
+            # Get settings and policies
+            shop_settings, _ = ShopSettings.objects.get_or_create(artisan=artisan)
+            policies, _ = Policies.objects.get_or_create(artisan=artisan)
+
+            # Check if the shop name has changed
+            old_shop_name = shop_settings.shop_name
+            if (old_shop_name != data.get('shop_name')):
+                new_slug = generate_unique_slug(data.get('shop_name'))
+                artisan.slug = new_slug
+                artisan.shop_name = data.get('shop_name')
+                artisan.save()
+
+            # Update the model fields with the data from the JSON
+            shop_settings_fields = [
+                'shop_name', 'shop_description', 'accepting_custom_orders', 'maximum_active_orders', 'standard_processing_days',
+                'shop_location', 'currency', 'shop_status', 'status_message', 'minimum_order_amount'      
+            ]
+            for field in shop_settings_fields:
+                print(data.get(field))
+                setattr(shop_settings, field, data.get(field))
+            policies_fields = ['terms_and_conditions', 'shipping_policy', 'return_policy']
+            for field in policies_fields:
+                setattr(policies, field, data.get(field))
+
+            # Save the changes to the database
+            shop_settings.save()
+            policies.save()
+
+            return Response({'message': "Updated shop settings and policies"}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({'error': f"Couldn't create or update Shop Settings: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PolicyView(APIView):
     """
@@ -1562,18 +1591,16 @@ class PolicyView(APIView):
         except Exception as e:
             return Response({'error': f"Policies error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class PolicyBySlugView(APIView):
     """
     Customer-view to get a merchant's policies by slug.
     """
     def get(self, request, slug):
         try:
-
             artisan = Artisan.objects.get(slug=slug)
-            policies = Policies.objects.get_or_create(artisan=artisan)
-            policies_data = model_to_dict(policies)
+            policies, _ = Policies.objects.get_or_create(artisan=artisan)
 
+            policies_data = model_to_dict(policies)
             return Response({'message': "Found Policies", "policies": policies_data}, status=status.HTTP_200_OK)
         except Artisan.DoesNotExist:
             return Response({'error': "Artisan not found"})

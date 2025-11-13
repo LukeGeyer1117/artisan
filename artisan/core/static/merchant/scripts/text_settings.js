@@ -58,7 +58,7 @@ async function get_text_content() {
 
 async function update_text_content(sentence, header, gallery_subtext, custom_order_prompt, project_description_placeholder) {
   try {
-    const response = await fetch(`${API_BASE_URL}/edit/text/`, {
+    const response = await fetch(`${API_BASE_URL}/text/`, {
       method: 'POST',
       credentials: 'include',
       headers: {

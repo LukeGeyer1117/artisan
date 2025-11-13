@@ -44,6 +44,8 @@ def call_php_edit_product(login, secret, uniqueID, name, description, price):
         "x_product_description": description,
         "x_product_price": price
     }
+    print(data)
+
     resp = requests.post(url, data=data)
     return resp.text
 

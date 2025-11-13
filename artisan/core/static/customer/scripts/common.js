@@ -117,3 +117,25 @@ async function GetShopSettingsSlug() {
     console.error(`Error while getting shop settings: ${error}`);
   }
 }
+
+async function GetProduct(item_id) {
+  const response = await fetch(`${API_BASE_URL}/product/${String(item_id)}/`, {
+    method: 'GET'
+  });
+
+  if (!response.ok) throw new Error("Couldn't get product");
+
+  const data = await response.json();
+  return data.product;
+}
+
+async function GetProductImages(item_id) {
+  const response = await fetch(`${API_BASE_URL}/product/images/${item_id}/`, {
+    method: 'GET'
+  });
+
+  if (!response.ok) throw new Error("Couldn't get product images.");
+
+  const data = await response.json();
+  return data.product_images;
+}

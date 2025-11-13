@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const formData = new FormData();
         formData.append('logo', file);
 
-        fetch(`${API_BASE_URL}/update/logo/`, {
+        fetch(`${API_BASE_URL}/logo/`, {
           method: 'POST',
           credentials: 'include',
           body: formData, 

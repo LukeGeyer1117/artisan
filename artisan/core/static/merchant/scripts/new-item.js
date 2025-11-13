@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-        const call = `${API_BASE_URL}/product/`
-        console.log(call);
+      const call = `${API_BASE_URL}/product/`
+      console.log(call);
       const response = await fetch(`${API_BASE_URL}/product/`, {
         method: "POST",
         body: formData,
