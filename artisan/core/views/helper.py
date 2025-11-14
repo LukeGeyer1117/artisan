@@ -85,3 +85,13 @@ def sanitize_troute_resp(resp_string):
 # Convert days ago into datetime
 def days_to_datetime(days: int):
     return datetime.now() - timedelta(days=days)
+
+# Validate file type is allowed
+def validate_image_type(uploaded_file):
+    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
+    return False if uploaded_file.content_type not in allowed_types else True
+
+# Make sure file is <5MB
+def validate_file_size(uploaded_file, max_mb=5):
+    max_size = max_mb * 1024**2
+    return False if uploaded_file.size > max_size else True

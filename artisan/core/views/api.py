@@ -36,6 +36,14 @@ from rest_framework import serializers
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiRequest, OpenApiResponse
 
+# Serialize some status codes
+STATUS_404 = status.HTTP_404_NOT_FOUND
+STATUS_400 = status.HTTP_400_BAD_REQUEST
+STATUS_500 = status.HTTP_500_INTERNAL_SERVER_ERROR
+STATUS_200 = status.HTTP_200_OK
+
+# Serialize some common response errors
+ARTISAN_NOT_FOUND = Response({'error': "Artisan not found"}, status=STATUS_404)
 
 ### API VIEWS
 
@@ -168,12 +176,12 @@ class ArtisanBySlugView(APIView):
             return Response({
                 'message': 'Artisan found',
                 'artisan': artisan_data
-            }, status=status.HTTP_200_OK)
+            }, status=STATUS_200)
             
         except Artisan.DoesNotExist:
-            return Response({'error': 'Artisan not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Artisan not found'}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'An error occurred'}, status=STATUS_500)
 
 class ArtisanPFPView(APIView):
     """
@@ -207,9 +215,9 @@ class ArtisanPFPView(APIView):
             return Response({
                 'message': "PFP uploaded successfully",
                 'image_url': artisan.image.url
-            }, status=status.HTTP_200_OK)
+            }, status=STATUS_200)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=STATUS_500)
 
     def delete(self, request):
         """
@@ -225,11 +233,11 @@ class ArtisanPFPView(APIView):
                 artisan.image = None
                 artisan.save()
 
-                return Response({'message': "PFP removed successfully"}, status=status.HTTP_200_OK)
+                return Response({'message': "PFP removed successfully"}, status=STATUS_200)
             else:
-                return Response({'error': "No PFP found for removal"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'error': "No PFP found for removal"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=STATUS_500)
 
 
 # Create a new order, and order item items
@@ -301,12 +309,12 @@ class OrderView(APIView):
                 product.save()
                 orderItems.append(orderitem)
             request.session['cart-product-ids'] = {}
-            return Response({'message': "Order Created", "order": order.id, "items": len(orderItems)}, status=status.HTTP_200_OK)
+            return Response({'message': "Order Created", "order": order.id, "items": len(orderItems)}, status=STATUS_200)
         
         except Artisan.DoesNotExist:
-            return Response({'error': f"Artisan not found for order creation."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': f"Artisan not found for order creation."}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Couldn't create order. Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't create order. Error: {str(e)}"}, status=STATUS_500)
 
 # UPdate an order's status
 class UpdateOrderStatusView(APIView):
@@ -348,11 +356,11 @@ class UpdateOrderStatusView(APIView):
             order.status=status
 
             order.save()
-            return Response({'message': "Order status updated"}, status=status.HTTP_200_OK)
+            return Response({'message': "Order status updated"}, status=STATUS_200)
         except Order.DoesNotExist:
-            return Response({'error': "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Order not found"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Couldn't update order status. Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't update order status. Error: {str(e)}"}, status=STATUS_500)
     
 @csrf_exempt
 @require_POST
@@ -406,11 +414,11 @@ class CustomOrderMerchantView(APIView):
             custom.status = status
 
             custom.save()
-            return Response({'message': "Updated request status"}, status=status.HTTP_200_OK)
+            return Response({'message': "Updated request status"}, status=STATUS_200)
         except CustomRequest.DoesNotExist:
-            return Response({'error': f"Custom request patch failed: No CustomRequest object found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': f"Custom request patch failed: No CustomRequest object found"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Custom request patch failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Custom request patch failed: {str(e)}"}, status=STATUS_500)
 
 class OrdersMerchantView(APIView):
     """
@@ -427,7 +435,7 @@ class OrdersMerchantView(APIView):
 
             return Response({'message': "Found Orders", 'orders': orders_data}, status=status.HTTP_200+OK)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldn't get Orders: {str(e)}"})
 
@@ -450,9 +458,9 @@ class ActiveOrdersMerchantView(APIView):
 
             orders_data = [ model_to_dict(order) for order in orders ]
 
-            return Response({'message': "Orders Found", 'orders': orders_data}, status=status.HTTP_200_OK)
+            return Response({'message': "Orders Found", 'orders': orders_data}, status=STATUS_200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldnt get active orders: {str(e)}"})
 
@@ -573,146 +581,167 @@ def login_artisan(request):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)  
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
-@login_required
-@require_http_methods(['POST', 'DELETE', 'GET'])
-def product(request):
-    # Authenticate the caller
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
-
-    ### POST
-    if request.method == 'POST' and request.POST.get('_method') != "PATCH":
-        # Get the inventory, if somehow there isn't one, create it
-        inventory, _ = Inventory.objects.get_or_create(artisan=artisan)
-
-        print(f'Inventory: {inventory}')
-
-        ### Attempt the php script to make product in Troute
-        data = {}
-        fields = ['name', 'price', 'description', 'quantity']
-        for field in fields:
-           data[field] = request.POST.get(field)
-        file_fields = ['image']
-        for field in file_fields:
-            data[field] = request.FILES.get(field)
-
-        # Check the input
-        if not data['name'] or not data['price'] or not data['description'] or not data['quantity'] or not data['image']:
-            return JsonResponse({'error': "Invalid Request: One or more missing fields"}, status=400)
     
-        # Create the troute product
-        response_from_php = call_php_create_product(
-            artisan.troute_login,
-            artisan.troute_key,
-            data['name'], 
-            data['description'],
-            data['price'],
-        )
+class ProductsMerchantView(APIView):
+    """
+    Merchant-only view for multi-product CRUD
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
-        # Before making the product, make sure Troute created it
-        parsed = sanitize_troute_resp(response_from_php)
-        registered = True
-
-        if parsed['result'] != 'success':
-            registered = False
-            return JsonResponse({'error': "Troute product creation failed", "message": "confirm troute credentials with SA"}, status=500)
-
-        ### Create the product in my db
-        Product.objects.create(
-            inventory=inventory,
-            name=data['name'],
-            price=data['price'],
-            quantity=data['quantity'],
-            description=data['description'],
-            image=data['image'],
-            troute_unique_id=parsed['product']['uniqueID'],
-            troute_registered=registered
-            )
-        
-        return JsonResponse({'message': "Product Created"}, status=200)
-        
-    ### PATCH
-    elif request.method == 'POST' and request.POST.get('_method') == 'PATCH':
+    def get(self, request):
         try:
-            # Make sure the product id was given correctly
-            product_id = request.POST.get('id')
-            if not product_id:
-                return JsonResponse({'error': "Invalid Request: Missing product ID"}, status=400)
+            artisan = request.user
+
+            inventory, _ = Inventory.objects.get_or_create(artisan=artisa)
+
             
-            # Get the product, error if not found
-            product = get_object_or_404(Product, id=product_id)
 
-            # Get all the required fields for the request
-            fields = ['name', 'price', 'quantity', 'description', 'category']
-            data = {}
-            for field in fields:
-                data[field] = request.POST.get(field)
+class ProductMerchantView(APIView):
+    """
+    Merchant-only view for single product CRUD
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
-            file_fields = ['image']
-            for field in file_fields:
-                data[field] = request.FILES.get(field)
-
-            # Try to update in troute first
-            response_from_php = call_php_edit_product(
-                artisan.troute_login,
-                artisan.troute_key,
-                product.troute_unique_id,
-                data['name'],
-                data['description'],
-                data['price']
-            )
-            parsed = sanitize_troute_resp(response_from_php)
-            print(f"Parsed result: {parsed['result']}")
-
-            if parsed['result'] != "success":
-                return JsonResponse({'error': "Internal Server Error: Could not edit product due to Troute issue"}, status=500)
-                
-            # Update fields if provided
-            if data['name']:
-                product.name = data['name']
-            if data['price']:
-                product.price = data['price']
-            if data['quantity']:
-                product.quantity = data['quantity']
-            if data['description']:
-                product.description = data['description']
-            if data['image']:
-                product.image = data['image']
-            if data['category']:
-                product.category_id = data['category']
-
-            product.save()
-
-            # Handle extra images
-            extra_images = request.FILES.getlist('extra_images')
-            for image_file in extra_images:
-                ProductImage.objects.create(product=product, image=image_file)
-
-            return JsonResponse({'message': "Updated Product"}, status=200)
-            
-        except Product.DoesNotExist:
-            return JsonResponse({'error': "Not Found: Product with id could not be found"}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    ### DELETE
-    elif request.method == 'DELETE':
+    def get(self, request):
         try:
-            # Load product id from request
+            artisan = request.user
+
+            inventory, _ = Inventory.objects.get_or_create(artisan=artisan)
+
             data = json.loads(request.body)
             product_id = data['id']
 
-            if not product_id:
-                return JsonResponse({'error': "Invalid Request: No Product ID"}, status=400)
-            
-            # Use the product id to get the product
-            product = Product.objects.get(id=product_id)
+            product = Product.objects.get(inventory=inventory, id=product_id)
 
-            # Make sure product has troute unique id and call delete to troute first
-            if product.troute_unique_id:
+            product_data = model_to_dict(product)
+
+            return Response({'message': "Found product", 'product': product_data}, status=STATUS_200)
+        except Artisan.DoesNotExist:
+            return Response({'error': ARTISAN_NOT_FOUND})
+        except Exception as e:
+            return Response({'error': f"Couldn't get product: {str(e)}"}, status=STATUS_500)
+        
+    def post(self, request):
+        try:
+            artisan = request.user
+            inventory = get_object_or_404(Inventory, artisan=artisan)
+            # Make sure we actually want to create a new product
+            if request.POST.get('_method') != 'PATCH':
+                try:
+                    fields = ['name', 'price', 'description', 'quantity']
+                    data = {field: request.POST.get(field) for field in fields}
+                    data['image'] = request.FILES.get('image')
+
+                    # Call troute script to make a product
+                    response_from_php = call_php_create_product(
+                        artisan.troute_login,
+                        artisan.troute_key,
+                        data['name'],
+                        data['description'],
+                        data['price'],
+                    )
+
+                    parsed = sanitize_troute_resp(response_from_php)
+
+                    if parsed['result'] != 'success':
+                        return Response({'error': "Troute product creation error"}, status=STATUS_500)
+                    
+                    Product.objects.create(
+                        inventory=inventory,
+                        name=data['name'],
+                        price=data['price'],
+                        quantity=data['quantity'],
+                        description=data['description'],
+                        image=data['image'],
+                        troute_unique_id=parsed['product']['uniqueID'],
+                        troute_registered=True
+                    )
+
+                    return Response({'message': "Product created"}, status=STATUS_200)
+                except Exception as e:
+                    return Response({'error': "Could not create product"}, status=STATUS_500) 
+
+            else:
+                try:
+                    # Get the product id
+                    product_id = request.POST.get('id')
+                    if not product_id:
+                        return Response({'error': "Missing product id"}, status=STATUS_400)
+                    
+                    # Get the product
+                    product = get_object_or_404(Product, inventory=inventory, id=product_id)
+
+                    # Get all the required fields for the request
+                    fields = ['name', 'price', 'quantity', 'description', 'category']
+                    data = {}
+                    for field in fields:
+                        data[field] = request.POST.get(field)
+
+                    file_fields = ['image']
+                    for field in file_fields:
+                        data[field] = request.FILES.get(field)
+
+                    # Try to update in troute first
+                    response_from_php = call_php_edit_product(
+                        artisan.troute_login,
+                        artisan.troute_key,
+                        product.troute_unique_id,
+                        data['name'],
+                        data['description'],
+                        data['price']
+                    )
+                    parsed = sanitize_troute_resp(response_from_php)
+                    print(f"Parsed result: {parsed['result']}")
+
+                    if parsed['result'] != "success":
+                        return JsonResponse({'error': "Internal Server Error: Could not edit product due to Troute issue"}, status=500)
+                        
+                    # Update fields if provided
+                    if data['name']:
+                        product.name = data['name']
+                    if data['price']:
+                        product.price = data['price']
+                    if data['quantity']:
+                        product.quantity = data['quantity']
+                    if data['description']:
+                        product.description = data['description']
+                    if data['image']:
+                        product.image = data['image']
+                    if data['category']:
+                        product.category_id = data['category']
+
+                    product.save()
+
+                    # Handle extra images
+                    extra_images = request.FILES.getlist('extra_images')
+                    for image_file in extra_images:
+                        ProductImage.objects.create(product=product, image=image_file)
+
+                    return JsonResponse({'message': "Updated Product"}, status=200)
+                except Exception as e:
+                    return Response({'error': "Couldn't update product"}, status=STATUS_500)
+                
+        except Exception as e:
+            return Response({'error': "Couldn't update or create product"}, status=STATUS_500)
+        
+    def delete(self, request):
+        try:
+            # Load the product from request
+            artisan = request.user
+            inventory = get_object_or_404(Inventory, artisan=artisan)
+            data = json.load(request.body)
+            product_id = data['id']
+
+            if not product_id:
+                return Response({'error': "Invalid request, no product id"}, status=STATUS_400)
+            
+            # Make sure the product belongs to the user
+            product = Product.objects.get(id=product_id, inventory=inventory)
+
+            # See if the product has a unique troute id and delete it first
+            if product.troute_unique_id and product.troute_registered:
                 response_from_php = call_php_delete_product(
                     artisan.troute_login,
                     artisan.troute_key,
@@ -720,13 +749,15 @@ def product(request):
                 )
 
                 parsed = sanitize_troute_resp(response_from_php)
+
+                if parsed['result'] != 'success':
+                    return Response({'error': "Product could not be deleted at this time. Troute err"}, status=STATUS_500)
+                
             product.delete()
-            return JsonResponse({'message': "Product Deleted"}, status=200)
+            return Response({'message': "Product deleted"}, status=STATUS_200)
         
-        except Product.DoesNotExist:
-            return JsonResponse({'error': "Not Found: Product with id could not be found"}, status=404)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            return Response({"error": "Could not delete product"}, status=STATUS_500)
 
 @csrf_exempt
 @require_GET
@@ -786,14 +817,6 @@ def get_products_by_artisan_slug_limited(request, slug):
     
     products = Product.objects.filter(inventory=inventory).order_by('price').values()[:20]
     return JsonResponse(list(products), safe=False)
-
-@require_GET
-def get_all_products(request):
-    try:
-        products = Product.objects.all().values()
-        return JsonResponse(list(products), safe=False)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt    
 def add_product_to_cart(request):
@@ -1059,24 +1082,24 @@ def delete_image(request, image_id):
     except Exception as e:
         print(f"Delete error: {e}")
         return JsonResponse({'error': str(e)}, status=500)
-    
-@csrf_exempt
-def get_hero_image_by_slug(request, slug):
-    if request.method == 'GET':
-        artisan = get_object_or_404(Artisan, slug=slug)
-        hero = get_object_or_404(HeroImage, artisan=artisan)
-        print(artisan, hero)
 
+class HeroImageCustomerView(APIView):
+    """
+    Customer-only view to get a merchant hero image by slug
+    """
+    def get(self, request, slug):
         try:
-            # check if the image file exists
+            artisan = get_object_or_404(Artisan, slug=slug)
+            hero = get_object_or_404(HeroImage, artisan=artisan)
+
+            # Check if the image file exists
             if not hero.image or not os.path.exists(hero.image.path):
-                return JsonResponse({'error': 'Image file not found'}, status=404)
-
-            return JsonResponse({'message': 'Found hero image', 'image_url': hero.image.url}, status=200)
+                return Response({'error': "Image file not found"}, status=STATUS_404)
+            
+            return Response({'message': "Found hero image", 'image_url': hero.image.url}, status=STATUS_200)
         except Exception as e:
-            return JsonResponse({'error': 'Error serving image'}, status=500)
-    return JsonResponse({'error': "Method Not Allowed"}, status=405)
-
+            return Response({'error': f"Couldn't get hero image: {str(e)}"}, status=STATUS_500)
+        
 class HeroImageMerchantView(APIView):
     """
     Merchant-only view to get and create hero images
@@ -1094,11 +1117,11 @@ class HeroImageMerchantView(APIView):
 
             # Check image
             if not hero.image or not hero.image.url:
-                return Response({'error': "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'error': "Image not found"}, status=STATUS_404)
             
-            return Response({'message': message, 'image_url': hero.image.url}, status=status.HTTP_200_OK)
+            return Response({'message': message, 'image_url': hero.image.url}, status=STATUS_200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldn't get Hero Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
         
@@ -1110,16 +1133,14 @@ class HeroImageMerchantView(APIView):
             if 'hero' not in request.FILES:
                 return JsonResponse({'error': "No hero file provided"}, status=400)
             uploaded_file = request.FILES['hero']
-
-            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
-            if uploaded_file.content_type not in allowed_types:
-                return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
             
-            # Optional: Validate file size
-            max_size = 5 * 1024 * 1024 # 5MB
-            max_in_mb = max_size // 1024 // 1024
-            if uploaded_file.size > max_size:
-                return JsonResponse({'error': f"File too large. Max size is {max_in_mb}MB"}, status=400)
+            # Validate the file type
+            if not validate_image_type(uploaded_file):
+                return Response({'error': "Invalid file type. Please upload an image file."}, status=status.HTTP_400_BAD_REQEUST)
+            
+            # Validate the file size
+            if not validate_file_size(uploaded_file):
+                return Response({'error': "File too large, max is 5MB"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Get or create a HeroImage for this artisan
             hero_image, created = HeroImage.objects.get_or_create(artisan=artisan)
@@ -1134,7 +1155,7 @@ class HeroImageMerchantView(APIView):
 
             return JsonResponse({'message': "Hero image updated successfully"}, status=200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldn't get Logo Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
 
@@ -1149,11 +1170,11 @@ class LogoImageCustomerView(APIView):
 
         try:
             if not logo.image:
-                return Response({'error': "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'error': "Image not found"}, status=STATUS_404)
             
-            return Response({'message': "Found logo image", 'image_url': logo.image.url}, status=status.HTTP_200_OK)
+            return Response({'message': "Found logo image", 'image_url': logo.image.url}, status=STATUS_200)
         except Exception as e:
-            return Response({'error': f"Couldn't get logo image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't get logo image: {str(e)}"}, status=STATUS_500)
 
 class LogoImageMerchantView(APIView):
     """
@@ -1174,11 +1195,11 @@ class LogoImageMerchantView(APIView):
 
             # Make sure logo image has valid url
             if not logo.image or not logo.image.url:
-                return Response({'error': "No valid image found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'error': "No valid image found"}, status=STATUS_404)
             
-            return Response({'message': message, 'image_url': logo.image.url}, status=status.HTTP_200_OK)
+            return Response({'message': message, 'image_url': logo.image.url}, status=STATUS_200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldn't get Logo Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
         
@@ -1216,18 +1237,11 @@ class LogoImageMerchantView(APIView):
             logo_image.image = uploaded_file
             logo_image.save()
             
-            return Response({'message': "Logo updated successfully"}, status=status.HTTP_200_OK)
+            return Response({'message': "Logo updated successfully"}, status=STATUS_200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldn't modify Logo Image: {str(e)}"}, status=status.HTTP_500_INTERAL_SERVER_ERROR)
-        
-
-        
-
-@csrf_exempt
-def create_hero_image(request):
-    pass
 
 @login_required(login_url='/login/')
 @require_POST
@@ -1327,114 +1341,79 @@ def alter_category(request, id):
         category.delete()
         return JsonResponse({'message': 'Category deleted successfully.'}, status=200)
 
-@csrf_exempt
-@require_GET
-def get_theme_by_slug(request, slug):
-    artisan = get_object_or_404(Artisan, slug=slug)
-    theme = get_object_or_404(Theme, artisan=artisan)
-
-    theme_data = {
-        'text_color': theme.text_color,
-        'text_color_secondary': theme.text_color_secondary,
-        'background_color': theme.background_color,
-        'accent_color': theme.accent_color,
-        'link_hover_color': theme.link_hover_color,
-        'ttl': theme.ttl
-    }
-
-    return JsonResponse({'message': 'Found theme', 'theme': theme_data}, status=200)
-
-@login_required(login_url='/login/')
-@require_GET
-def get_theme_by_session(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
-
-    theme, created = Theme.objects.get_or_create(artisan=artisan)
-
-    theme_data = {
-        'text_color': theme.text_color,
-        'text_color_secondary': theme.text_color_secondary,
-        'background_color': theme.background_color,
-        'accent_color': theme.accent_color,
-        'link_hover_color': theme.link_hover_color,
-        'ttl': theme.ttl
-    }
-
-    message = 'Created Theme' if created else 'found theme'
-
-    return JsonResponse({'message': message, 'theme': theme_data}, status=200)
-
-@login_required(login_url='/login/')
-@csrf_protect
-@require_POST
-def update_theme(request):
-    artisan = request.user
-
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
-
-    theme, created = Theme.objects.get_or_create(artisan=artisan)
-
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({'error': "Invalid JSON"})
+class ThemeCustomerView(APIView):
+    """
+    Customer-only view to get merchant theme by slug
+    """
     
-    # Validate fields exist
-    required_fields = ['text_color', 'text_color_secondary', 'background_color', 'accent_color', 'link_hover_color']
-    if not all(field in data for field in required_fields):
-        return JsonResponse({'error': "Missing required field(s)"}, status=400)
+    def get(self, request, slug):
+        try:
+            artisan = get_object_or_404(Artisan, slug=slug)
+            theme = get_object_or_404(Theme, artisan=artisan)
 
-    theme.text_color = data['text_color']
-    theme.text_color_secondary = data['text_color_secondary']
-    theme.background_color = data['background_color']
-    theme.accent_color = data['accent_color']
-    theme.link_hover_color = data['link_hover_color']
+            data_fields = [ 'text_color', 'text_color_secondary', 'background_color', 
+                           'accent_color','link_hover_color', 'ttl' ]
 
-    theme.save()
+            theme_data = {key: getattr(theme, key) for key in data_fields}
 
-    if created:
-        return JsonResponse({'message': 'Created theme'}, status=200)
-    return JsonResponse({'message': "updated theme"}, status=200)
+            return Response({'message': "found theme", 'theme': theme_data}, status=STATUS_200)
+        except Exception as e:
+            return Response({'error': f"Couldn't get theme: {str(e)}"}, status=STATUS_500)
 
-@login_required(login_url='/login/')
-@require_POST
-def update_hero(request):
-    artisan = request.user
+class ThemeMerchantView(APIView):
+    """
+    Merchant-only view for getting and updating theme elements.
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
-    if not artisan.is_authenticated:
-        return JsonResponse({'error': "Not authenticated"}, status=401)
+    def get(self, request):
+        try:
+            artisan = request.user
 
-    # Check if a file was uploaded
-    if 'hero' not in request.FILES:
-        return JsonResponse({'error': "No hero file provided"}, status=400)
-    uploaded_file = request.FILES['hero']
+            theme, created = Theme.objects.get_or_create(artisan=artisan)
 
-    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
-    if uploaded_file.content_type not in allowed_types:
-        return JsonResponse({'error': "Invalid file type. Please upload an image file."}, status=400)
-    
-    # Optional: Validate file size
-    max_size = 5 * 1024 * 1024 # 5MB
-    max_in_mb = max_size // 1024 // 1024
-    if uploaded_file.size > max_size:
-        return JsonResponse({'error': f"File too large. Max size is {max_in_mb}MB"}, status=400)
+            data_fields = [ 'text_color', 'text_color_secondary', 'background_color', 
+                           'accent_color','link_hover_color', 'ttl' ]
 
-    # Get or create a HeroImage for this artisan
-    hero_image, created = HeroImage.objects.get_or_create(artisan=artisan)
+            theme_data = {key: getattr(theme, key) for key in data_fields}
 
-    # Delete the old image file if it exists (only if we're updating, not creating)
-    if not created and hero_image.image:
-        hero_image.image.delete(save=False)
+            message = 'Created theme' if created else "Found theme"
 
-    # Save the new image
-    hero_image.image = uploaded_file
-    hero_image.save()
+            return Response({'message': message, 'theme': theme_data}, status=STATUS_200)
+        except Artisan.DoesNotExist:
+            return ARTISAN_NOT_FOUND
+        except Exception as e:
+            return Response({'error': f"Couldn't get theme: {str(e)}"}, status=STATUS_500)
+        
+    def post(self, request):
+        try:
+            artisan = request.user
 
-    return JsonResponse({'message': "Hero image updated successfully"}, status=200)
+            theme, created = Theme.objects.get_or_create(artisan=artisan)
+
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return Response({'error': "Invalid JSON"}, status=STATUS_400)
+            
+            # Validate fields
+            required_fields = ['text_color', 'text_color_secondary', 'background_color', 'accent_color', 'link_hover_color']
+            if not all(field in data for field in required_fields):
+                return JsonResponse({'error': "Missing required field(s)"}, status=400)
+            
+            for field in required_fields:
+                setattr(theme, field, data.get(field))
+
+            theme.save()
+
+            message = 'Created theme' if created else 'Found theme'
+
+            return Response({'message': message}, status=STATUS_200)
+        except Artisan.DoesNotExist:
+            return ARTISAN_NOT_FOUND
+        except Exception as e:
+            return Response({'error': f"Couldn't update Theme: {str(e)}"}, status=STATUS_500)
 
 class TextContentCustomerView(APIView):
     """
@@ -1446,9 +1425,9 @@ class TextContentCustomerView(APIView):
             text_content = get_object_or_404(TextContent, artisan=artisan)
 
             text_content_data = model_to_dict(text_content)
-            return Response({'message': "Found Text Content", 'text_content': text_content_data}, status=status.HTTP_200_OK)
+            return Response({'message': "Found Text Content", 'text_content': text_content_data}, status=STATUS_200)
         except Exception as e:
-            return Response({'error': f"Couldn't get text content: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't get text content: {str(e)}"}, status=STATUS_500)
 
 class TextContentMerchantView(APIView):
     """
@@ -1468,11 +1447,11 @@ class TextContentMerchantView(APIView):
             # Convert model instance to dict to JSON serialize it
             text_content_data = model_to_dict(text_content)
 
-            return Response({'message': message, 'text_content': text_content_data}, status=status.HTTP_200_OK)
+            return Response({'message': message, 'text_content': text_content_data}, status=STATUS_200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Couldn't get Text Content: ${str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't get Text Content: ${str(e)}"}, status=STATUS_500)
         
     def post(self, request):
         try:
@@ -1487,12 +1466,12 @@ class TextContentMerchantView(APIView):
             text_content.project_description_placeholder = data['project_description_placeholder']
 
             text_content.save()
-            return Response({'message': "Updated Text Content"}, status=status.HTTP_200_OK)
+            return Response({'message': "Updated Text Content"}, status=STATUS_200)
 
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Couldn't update Text Content: ${str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't update Text Content: ${str(e)}"}, status=STATUS_500)
 
 class ShopSettingsCustomerView(APIView):
     """
@@ -1507,9 +1486,9 @@ class ShopSettingsCustomerView(APIView):
 
             message = "Created shop settings" if created else "Found shop settings"
 
-            return Response({'message': message, 'shop_settings': shop_settings_data}, status=status.HTTP_200_OK)
+            return Response({'message': message, 'shop_settings': shop_settings_data}, status=STATUS_200)
         except Exception as e:
-            return Response({'error': f"Couldn't get shop settings: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't get shop settings: {str(e)}"}, status=STATUS_500)
 
 class ShopSettingsMerchantView(APIView):
     """
@@ -1527,11 +1506,11 @@ class ShopSettingsMerchantView(APIView):
             shop_settings_data = model_to_dict(shop_settings)
             message = 'created new shop settings' if created else 'found shop settings'
 
-            return Response({'message': message, 'shop_settings': shop_settings_data, 'slug': artisan.slug}, status=status.HTTP_200_OK)
+            return Response({'message': message, 'shop_settings': shop_settings_data, 'slug': artisan.slug}, status=STATUS_200)
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Couldn't get Shop settings: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't get Shop settings: {str(e)}"}, status=STATUS_500)
 
     def post(self, request):
         try:
@@ -1566,10 +1545,10 @@ class ShopSettingsMerchantView(APIView):
             shop_settings.save()
             policies.save()
 
-            return Response({'message': "Updated shop settings and policies"}, status=status.HTTP_200_OK)
+            return Response({'message': "Updated shop settings and policies"}, status=STATUS_200)
         
         except Exception as e:
-            return Response({'error': f"Couldn't create or update Shop Settings: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Couldn't create or update Shop Settings: {str(e)}"}, status=STATUS_500)
 
 class PolicyView(APIView):
     """
@@ -1584,12 +1563,12 @@ class PolicyView(APIView):
             policies, _ = Policies.objects.get_or_create(artisan=artisan)
 
             policies_data = model_to_dict(policies)
-            return Response({'message': "Found policies", "policies": policies_data}, status=status.HTTP_200_OK)
+            return Response({'message': "Found policies", "policies": policies_data}, status=STATUS_200)
         
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
-            return Response({'error': f"Policies error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Policies error: {str(e)}"}, status=STATUS_500)
 
 class PolicyBySlugView(APIView):
     """
@@ -1601,11 +1580,11 @@ class PolicyBySlugView(APIView):
             policies, _ = Policies.objects.get_or_create(artisan=artisan)
 
             policies_data = model_to_dict(policies)
-            return Response({'message': "Found Policies", "policies": policies_data}, status=status.HTTP_200_OK)
+            return Response({'message': "Found Policies", "policies": policies_data}, status=STATUS_200)
         except Artisan.DoesNotExist:
             return Response({'error': "Artisan not found"})
         except Exception as e:
-            return Response({'error': f"Policies Couldn't be found, error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f"Policies Couldn't be found, error: {str(e)}"}, status=STATUS_500)
 
 class SessionView(APIView):
     """
@@ -1618,9 +1597,9 @@ class SessionView(APIView):
         try:
             logout(request)
             request.session.flush() # Clears session data
-            return Response({'message': "Session cleared"}, status=status.HTTP_200_OK)
+            return Response({'message': "Session cleared"}, status=STATUS_200)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=STATUS_500)
 
 @ensure_csrf_cookie
 def get_csrf_token(request):

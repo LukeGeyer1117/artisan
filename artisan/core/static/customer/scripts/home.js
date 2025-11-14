@@ -86,7 +86,7 @@ function GetAndDisplayText() {
 }
 
 function GetAndDisplayFeaturedProducts() {
-  fetch(`${API_BASE_URL}/${slug}/products-limit/`, {
+  fetch(`${API_BASE_URL}/products/${slug}/limit/`, {
     method: 'GET',
   })
   .then(response => {

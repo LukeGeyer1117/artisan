@@ -63,9 +63,9 @@ urlpatterns = [
     path('api/artisan/pfp/', views.ArtisanPFPView.as_view()),
     path('api/artisan/<slug:slug>/', views.ArtisanBySlugView.as_view()),
     # Product
-    path('api/product/', views.product),
+    path('api/products/', views.product),
     path('api/product/<str:product_id>/', views.get_product),
-    path('api/products/', views.get_all_products),
+    path('api/product/', views.ProductMerchantView.as_view()),
     path('api/products/<slug:slug>/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
     path('api/products/<slug:slug>/limit/', views.get_products_by_artisan_slug_limited),
     path('api/product/images/<int:product_id>/', views.get_gallery_images_by_product_id),
@@ -98,9 +98,8 @@ urlpatterns = [
     # Imagery
     path('api/logo/<slug:slug>/', views.LogoImageCustomerView.as_view()),
     path('api/logo/', views.LogoImageMerchantView.as_view()),
-    path('api/hero/<slug:slug>/', views.get_hero_image_by_slug),
+    path('api/hero/<slug:slug>/', views.HeroImageCustomerView.as_view()),
     path('api/hero/', views.HeroImageMerchantView.as_view()),
-    path('api/update/hero/', views.update_hero),
     # Gallery
     path('api/gallery/upload/', views.upload_image, name='upload_image'),
     path('api/gallery/save-order/', views.save_gallery_order, name='save_gallery_order'),
@@ -108,9 +107,8 @@ urlpatterns = [
     path('api/gallery/<slug:slug>/', views.get_gallery_images_by_slug),
     path('api/gallery/delete/<int:image_id>/', views.delete_image, name='delete_image'),
     # Theme
-    path('api/theme/<slug:slug>/', views.get_theme_by_slug),
-    path('api/theme/', views.get_theme_by_session),
-    path('api/update/theme/', views.update_theme, name='update_theme'),
+    path('api/theme/<slug:slug>/', views.ThemeCustomerView.as_view()),
+    path('api/theme/', views.ThemeMerchantView.as_view()),
     # Payments  
     path('api/checkout/', views.api_checkout, name="checkout"),
     path('api/process_payment/', views.process_payment, name="process_payment"),

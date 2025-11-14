@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const shopGrid = document.querySelector('.shop-grid');
   const slug = document.body.dataset.slug;
 
-  fetch(`${API_BASE_URL}/${slug}/products/`, {
+  fetch(`${API_BASE_URL}/products/${slug}/`, {
     method: 'GET',
   })
   .then(response => {

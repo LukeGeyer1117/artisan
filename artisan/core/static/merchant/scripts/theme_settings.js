@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       const newAccentColor = document.getElementById('accentColor').value;
       const newLinkHoverColor = document.getElementById('linkHoverColor').value;
 
-      fetch(`${API_BASE_URL}/update/theme/`, {
+      fetch(`${API_BASE_URL}/theme/`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const formData = new FormData();
         formData.append('hero', file);
 
-        fetch(`${API_BASE_URL}/update/hero/`, {
+        fetch(`${API_BASE_URL}/hero/`, {
           method: 'POST',
           credentials: 'include',
           body: formData, 
