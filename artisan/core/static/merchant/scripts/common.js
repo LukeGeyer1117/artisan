@@ -143,7 +143,7 @@ function renderResults(filteredData, searchTerm = '') {
         tableBody.innerHTML = filteredData.map(item => `
           <tr class='inventory-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
-            <td class='name-td'><img src='/media/${item.image}' alt='${item.name}'> <div>${highlightText(item.name, searchTerm)}</div></td>
+            <td class='name-td'><img src='${item.image}' alt='${item.name}'> <div>${highlightText(item.name, searchTerm)}</div></td>
             <td class='price-td'>${highlightText(String(item.price), searchTerm)}</td>
             <td class='stock-td'>${highlightText(String(item.quantity), searchTerm)}</td>
           </tr>

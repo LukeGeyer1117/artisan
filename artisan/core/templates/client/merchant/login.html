@@ -8,38 +8,310 @@
 {% endblock %}
 
 {% block content %}
-  <main class="auth-container">
-    <div class="auth-card">
-      <h2>Welcome, Merchant</h2>
-      <p class="auth-subtitle">Log in or sign up to start managing your online shop.</p>
+  <main class="split-container">
+    
+    <!-- Form Section -->
+    <section class="form-side">
+      <div class="form-wrapper">
+        <!-- Login Form -->
+        <form class="auth-form" id="login-form" novalidate>
+          <h2>Welcome Back</h2>
+          <p class="subtitle">Please enter your details.</p>
+          
+          <div class="form-group">
+            <input 
+              type="email" 
+              placeholder="Email" 
+              required 
+              id="login-email"
+              name="email"
+              autocomplete="email"
+              aria-label="Email address">
+            <span class="error-message" role="alert"></span>
+          </div>
+          
+          <div class="form-group">
+            <input 
+              type="password" 
+              placeholder="Password" 
+              required 
+              id="login-password"
+              name="password"
+              autocomplete="current-password"
+              aria-label="Password">
+            <span class="error-message" role="alert"></span>
+          </div>
+          
+          <button type="submit" class="btn-primary">Log In</button>
+          
+          <div class="form-footer">
+            <a href="" class="link-secondary">Reset Password</a>
+            <p>Don't have an account? <a href="#" class="link-primary" data-toggle-form="signup">Sign Up</a></p>
+          </div>
+        </form>
 
-      <form class="auth-form" id="login-form">
-        <input type="email" placeholder="Email" required id="email1">
-        <input type="password" placeholder="Password" required id="password1">
-        <button type="submit">Log In</button>
-        <p class="auth-toggle">Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></p>
-      </form>
+        <!-- Signup Form -->
+        <form class="auth-form hidden" id="signup-form" novalidate>
+          <h2>Create Account</h2>
+          <p class="subtitle">Start your merchant journey.</p>
 
-      <form class="auth-form hidden" id="signup-form">
-        <input type="text" placeholder="Full Name" required id="name">
-        <input type="text" placeholder="Username" required id="username">
-        <input type="email" placeholder="Email" required id="email2">
-        <input type="tel" placeholder="Phone #" required id="phone">
-        <input type="password" placeholder="Password" required id="password2">
-        <input type="text" placeholder="Shop Name" required id="shop-name">
-        <button type="submit">Sign Up</button>
-        <p class="auth-toggle">Already have an account? <a href="#" onclick="toggleForm('login')">Log In</a></p>
-      </form>
-    </div>
+          <div class="form-group">
+            <input 
+              type="text" 
+              placeholder="Full Name" 
+              required 
+              id="signup-name"
+              name="name"
+              autocomplete="name"
+              aria-label="Full name">
+            <span class="error-message" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="text" 
+              placeholder="Username" 
+              required 
+              id="signup-username"
+              name="username"
+              autocomplete="username"
+              aria-label="Username">
+            <span class="error-message" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="email" 
+              placeholder="Email" 
+              required 
+              id="signup-email"
+              name="email"
+              autocomplete="email"
+              aria-label="Email address">
+            <span class="error-message" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="tel" 
+              placeholder="Phone Number" 
+              required 
+              id="signup-phone"
+              name="phone"
+              autocomplete="tel"
+              aria-label="Phone number">
+            <span class="error-message" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="password" 
+              placeholder="Password" 
+              required 
+              id="signup-password"
+              name="password"
+              autocomplete="new-password"
+              minlength="8"
+              aria-label="Password">
+            <span class="error-message" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="text" 
+              placeholder="Shop Name" 
+              required 
+              id="signup-shop-name"
+              name="shop_name"
+              autocomplete="organization"
+              aria-label="Shop name">
+            <span class="error-message" role="alert"></span>
+          </div>
+          
+          <button type="submit" class="btn-primary">Sign Up</button>
+          
+          <div class="form-footer">
+            <p>Already have an account? <a href="#" class="link-primary" data-toggle-form="login">Log In</a></p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Image/Slideshow Section -->
+    <section class="image-side">
+      <div class="slideshow-container">
+        <div class="slides-wrapper">
+          <img src="{% static 'images/slides/slide1.jpg' %}" class="slide active" alt="Merchant dashboard overview">
+          <img src="{% static 'images/slides/slide2.jpg' %}" class="slide" alt="Sales analytics">
+          <img src="{% static 'images/slides/slide3.jpg' %}" class="slide" alt="Product management">
+          <img src="{% static 'images/slides/slide4.jpg' %}" class="slide" alt="Customer engagement">
+        </div>
+        
+        <div class="slide-content">
+          <h3 id="slide-title">Grow your Business</h3>
+          <p id="slide-description">Join thousands of merchants today.</p>
+        </div>
+
+        <!-- Slideshow Controls -->
+        <div class="slide-controls">
+          <button class="slide-dot" data-slide="0" aria-label="Go to slide 1"></button>
+          <button class="slide-dot" data-slide="1" aria-label="Go to slide 2"></button>
+          <button class="slide-dot" data-slide="2" aria-label="Go to slide 3"></button>
+          <button class="slide-dot" data-slide="3" aria-label="Go to slide 4"></button>
+        </div>
+      </div>
+    </section>
+
   </main>
 {% endblock %}
 
 {% block extra_scripts %}
   <script>
-    function toggleForm(form) {
-      document.getElementById('login-form').classList.toggle('hidden', form === 'signup');
-      document.getElementById('signup-form').classList.toggle('hidden', form === 'login');
-    }
+    // Form Toggle Logic
+    (function() {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const toggleLinks = document.querySelectorAll('[data-toggle-form]');
+
+      toggleLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetForm = this.getAttribute('data-toggle-form');
+          
+          if (targetForm === 'signup') {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            signupForm.querySelector('input').focus();
+          } else {
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            loginForm.querySelector('input').focus();
+          }
+        });
+      });
+    })();
+
+    // Enhanced Slideshow Logic
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      const dots = document.querySelectorAll('.slide-dot');
+      const slideTitle = document.getElementById('slide-title');
+      const slideDescription = document.getElementById('slide-description');
+      
+      let currentSlide = 0;
+      let slideInterval;
+      const SLIDE_DURATION = 5000; // 5 seconds
+
+      // Slide content data
+      const slideData = [
+        { title: 'Grow your Business', description: 'Join thousands of merchants today.' },
+        { title: 'Track Your Sales', description: 'Real-time analytics and insights.' },
+        { title: 'Manage Inventory', description: 'Effortless product management.' },
+        { title: 'Engage Customers', description: 'Build lasting relationships.' }
+      ];
+
+      function goToSlide(index) {
+        // Remove active class from current slide and dot
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide]?.classList.remove('active');
+        
+        // Update current slide
+        currentSlide = index;
+        
+        // Add active class to new slide and dot
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide]?.classList.add('active');
+        
+        // Update slide content with fade effect
+        if (slideData[currentSlide]) {
+          slideTitle.style.opacity = '0';
+          slideDescription.style.opacity = '0';
+          
+          setTimeout(() => {
+            slideTitle.textContent = slideData[currentSlide].title;
+            slideDescription.textContent = slideData[currentSlide].description;
+            slideTitle.style.opacity = '1';
+            slideDescription.style.opacity = '1';
+          }, 300);
+        }
+      }
+
+      function nextSlide() {
+        const next = (currentSlide + 1) % slides.length;
+        goToSlide(next);
+      }
+
+      function startSlideshow() {
+        slideInterval = setInterval(nextSlide, SLIDE_DURATION);
+      }
+
+      function stopSlideshow() {
+        clearInterval(slideInterval);
+      }
+
+      // Initialize dots
+      if (slides.length > 0) {
+        dots[0]?.classList.add('active');
+        
+        // Dot click handlers
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            stopSlideshow();
+            goToSlide(index);
+            startSlideshow();
+          });
+        });
+
+        // Pause on hover
+        const slideshowContainer = document.querySelector('.slideshow-container');
+        slideshowContainer.addEventListener('mouseenter', stopSlideshow);
+        slideshowContainer.addEventListener('mouseleave', startSlideshow);
+
+        // Start slideshow
+        startSlideshow();
+      }
+
+      // Preload images for smoother transitions
+      slides.forEach(slide => {
+        const img = new Image();
+        img.src = slide.src;
+      });
+    })();
+
+    // Form Validation Enhancement (basic example)
+    (function() {
+      const forms = document.querySelectorAll('.auth-form');
+      
+      forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Clear previous errors
+          const errorMessages = form.querySelectorAll('.error-message');
+          errorMessages.forEach(msg => msg.textContent = '');
+          
+          // Basic validation
+          let isValid = true;
+          const inputs = form.querySelectorAll('input[required]');
+          
+          inputs.forEach(input => {
+            if (!input.value.trim()) {
+              isValid = false;
+              const errorSpan = input.parentElement.querySelector('.error-message');
+              if (errorSpan) {
+                errorSpan.textContent = 'This field is required';
+              }
+            }
+          });
+          
+          if (isValid) {
+            // Form is valid, proceed with submission
+            console.log('Form is valid, submitting...');
+            // Your actual form submission logic will go in login.js
+          }
+        });
+      });
+    })();
   </script>
   <script type="module" src="{% static 'merchant/scripts/login.js' %}"></script>
 {% endblock %}

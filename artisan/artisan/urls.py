@@ -63,9 +63,9 @@ urlpatterns = [
     path('api/artisan/pfp/', views.ArtisanPFPView.as_view()),
     path('api/artisan/<slug:slug>/', views.ArtisanBySlugView.as_view()),
     # Product
-    path('api/products/', views.product),
-    path('api/product/<str:product_id>/', views.get_product),
+    path('api/products/', views.ProductsMerchantView.as_view()),
     path('api/product/', views.ProductMerchantView.as_view()),
+    path('api/product/<int:product_id>/', views.get_product),
     path('api/products/<slug:slug>/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
     path('api/products/<slug:slug>/limit/', views.get_products_by_artisan_slug_limited),
     path('api/product/images/<int:product_id>/', views.get_gallery_images_by_product_id),

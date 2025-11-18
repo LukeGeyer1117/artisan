@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     showModal(detailsModal);
 
     // Populate modal with product data
-    document.querySelector('#product-details img').src = '/media/' + product.image;
+    document.querySelector('#product-details img').src = product.image;
     document.getElementById('product-title').innerHTML = product.name;
     document.getElementById('product-price').innerHTML = product.price;
     if (product.quantity == '0') {
@@ -177,14 +177,15 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/inventory/`, {
+    const response = await fetch(`${API_BASE_URL}/products/`, {
       method: 'GET',
       credentials: 'include'
     });
 
     if (!response.ok) throw new Error('Failed to fetch inventory products.');
 
-    const products = await response.json();
+    const data = await response.json();
+    const products = data.products;
     searchAndFilter(searchInput, products);
 
     searchInput.addEventListener('input', function () {

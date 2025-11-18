@@ -593,7 +593,22 @@ class ProductsMerchantView(APIView):
         try:
             artisan = request.user
 
-            inventory, _ = Inventory.objects.get_or_create(artisan=artisa)
+            inventory, _ = Inventory.objects.get_or_create(artisan=artisan)
+
+            products = Product.objects.filter(inventory=inventory)
+            products_data = []
+
+            for product in products:
+                p = model_to_dict(product)
+                if product.image and product.image.url:
+                    p['image'] = product.image.url
+                products_data.append(p)
+
+            return Response({'message': "Found products", 'products': products_data})
+        except Artisan.DoesNotExist:
+            return ARTISAN_NOT_FOUND
+        except Exception as e:
+            return Response({'error': str(e)}, status=STATUS_500)
 
             
 
@@ -730,8 +745,9 @@ class ProductMerchantView(APIView):
         try:
             # Load the product from request
             artisan = request.user
+            print('here')
             inventory = get_object_or_404(Inventory, artisan=artisan)
-            data = json.load(request.body)
+            data = json.loads(request.body)
             product_id = data['id']
 
             if not product_id:
@@ -740,6 +756,8 @@ class ProductMerchantView(APIView):
             # Make sure the product belongs to the user
             product = Product.objects.get(id=product_id, inventory=inventory)
 
+            print(model_to_dict(product))
+
             # See if the product has a unique troute id and delete it first
             if product.troute_unique_id and product.troute_registered:
                 response_from_php = call_php_delete_product(
@@ -747,11 +765,6 @@ class ProductMerchantView(APIView):
                     artisan.troute_key,
                     product.troute_unique_id
                 )
-
-                parsed = sanitize_troute_resp(response_from_php)
-
-                if parsed['result'] != 'success':
-                    return Response({'error': "Product could not be deleted at this time. Troute err"}, status=STATUS_500)
                 
             product.delete()
             return Response({'message': "Product deleted"}, status=STATUS_200)

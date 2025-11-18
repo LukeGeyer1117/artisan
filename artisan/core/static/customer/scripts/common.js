@@ -126,6 +126,7 @@ async function GetProduct(item_id) {
   if (!response.ok) throw new Error("Couldn't get product");
 
   const data = await response.json();
+  console.log(data);
   return data.product;
 }
 
