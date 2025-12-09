@@ -29,7 +29,7 @@ INSTALLED_APPS = [
   'core',
   'tailwind',
   'theme',
-  'django_brower_reloads'
+  'django_browser_reload'
 ]
 
 REST_FRAMEWORK = {
