@@ -27,7 +27,9 @@ INSTALLED_APPS = [
   'corsheaders',
   'rest_framework',
   'core',
-  'tailwind'
+  'tailwind',
+  'theme',
+  'django_brower_reload'
 ]
 
 REST_FRAMEWORK = {
@@ -50,6 +52,7 @@ MIDDLEWARE = [
   'django.contrib.auth.middleware.AuthenticationMiddleware',
   'django.contrib.messages.middleware.MessageMiddleware',
   'django.middleware.clickjacking.XFrameOptionsMiddleware',
+  "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'artisan.urls'
@@ -121,3 +124,9 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+  "127.0.0.1"
+]
