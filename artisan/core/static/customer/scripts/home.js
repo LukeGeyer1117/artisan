@@ -1,12 +1,8 @@
 // Initialize this page. 
 // Includes Getting the Hero Image, Display Text, and Featured Products
 document.addEventListener("DOMContentLoaded", function () {
-  const toggle = document.querySelector(".menu-toggle");
+  const toggle = document.getElementById("menu-toggle");
   const links = document.querySelector(".nav-links");
-
-  toggle.addEventListener("click", () => {
-    links.classList.toggle("open");
-  });
 
   GetAndDisplayHero();
   GetAndDisplayText();
@@ -42,19 +38,6 @@ function openProductModal(product) {
   modal.style.display = 'block';
 }
 
-// Close modal on button click
-document.querySelector('.close-button').addEventListener('click', () => {
-  document.getElementById('product-modal').style.display = 'none';
-});
-
-// Optional: close modal if user clicks outside the modal content
-window.addEventListener('click', (e) => {
-  const modal = document.getElementById('product-modal');
-  if (e.target === modal) {
-    modal.style.display = 'none';
-  }
-});
-
 function GetAndDisplayHero() {
   fetch(`${API_BASE_URL}/hero/${slug}/`, {
     method: 'GET'
@@ -70,23 +53,31 @@ function GetAndDisplayHero() {
   })
 }
 
-function GetAndDisplayText() {
-  fetch(`${API_BASE_URL}/text/${slug}/`, {
+async function GetAndDisplayText() {
+  const text_response = await fetch(`${API_BASE_URL}/text/${slug}/`, {
+    method: 'GET'
+  });
+
+  if (!text_response.ok) throw new Error("Couldn't get Text Content");
+
+  const text_data = await text_response.json();
+  const text_content = text_data.text_content;
+
+  const artisan_response = await fetch(`${API_BASE_URL}/artisan/${slug}/`, {
     method: 'GET'
   })
-  .then(response => {
-    if (!response.ok) throw new Error("Could not get text content");
-    return response.json();
-  })
-  .then(data => {
-    const text_content = data.text_content;
-    document.getElementById('hero-sentence-draw').innerHTML = text_content.hero_sentence_draw;
-    document.getElementById('hero-header-draw').innerHTML = text_content.hero_header_draw;
-  })
+
+  if (!artisan_response.ok) throw new Error("Couldn't get Artisan");
+  const artisan_data = await artisan_response.json();
+  const artisan = artisan_data.artisan;
+
+  console.log(text_content, artisan_data);
+
+  document.getElementById('hero-merchant-name').innerHTML = artisan.shop_name;
 }
 
 function GetAndDisplayFeaturedProducts() {
-  fetch(`${API_BASE_URL}/products/${slug}/limit/`, {
+  fetch(`${API_BASE_URL}/products/${slug}/featured/`, {
     method: 'GET',
   })
   .then(response => {
@@ -94,35 +85,83 @@ function GetAndDisplayFeaturedProducts() {
     return response.json();
   })
   .then(result => {
-    result.forEach(element => {
-      // Select the parent section
-      const section = document.getElementById('products-available');
+    // Select the parent section
+    const carousel = document.getElementById('product-carousel');
 
-      // Create the product container
-      const productDiv = document.createElement('div');
-      productDiv.className = 'product';
-      productDiv.innerHTML = `
-        <img src='/media/${element.image}'>
-        <div class='product-info'>
-          <div class='info-subdiv'></div>
-          <h2 class='product-name'>${element.name}</h2>
-          <div class='info-subdiv' id='price-subdiv'>
-            <h4 class='price'>$${element.price}</h4>
+    const total = result.length;
+
+    result.forEach((product, index) => {
+
+      const pony = document.createElement('div');
+      pony.id = `slide${index + 1}`
+      pony.className = 
+      `
+      carousel-item 
+      w-full md:w-1/2 lg:w-1/3 max-h-[80vh] 
+      flex items-center justify-center p-2 
+      transform transition
+      `;
+
+      // Calculate the next/prev slid
+      const cur = index + 1;
+      const prev = cur === 1 ? total : cur - 1;
+      const next = cur === total ? 1 : cur + 1;
+      
+      pony.innerHTML = `
+        <div class="relative w-full h-full overflow-hidden group flex items-center justify-center">
+          <!-- Product image -->
+          <img 
+            src="/media/${product.image}" 
+            alt="${product.name}"
+            class="w-full max-h-full h-auto md:h-full object-contain md:object-cover rounded-md shadow-md"
+          />
+
+          <!-- overlay -->
+          <div class="
+            absolute inset-0 
+            bg-black/70 
+            text-white 
+            flex flex-col justify-between 
+            p-8 pt-12 pb-12
+            translate-y-full 
+            transition-transform duration-500 ease-out
+            group-hover:translate-y-0
+          ">
+            <!-- Top content: Name + Price -->
+            <div class="text-center">
+              <p class="text-4xl font-semibold">${product.name}</p>
+              <p class="text-2xl font-medium mt-1">$${product.price}</p>
+            </div>
+
+            <!-- Middle content: truncated description -->
+            <div class="mt-2 flex-1 flex items-center justify-center">
+              <p class="text-xl line-clamp-4 overflow-hidden">${product.description}</p>
+            </div>
+
+            <div class="text-center mt-2">
+              <button class="btn btn-square btn-lg w-full border-none transform translate hover:bg-amber-300">
+                Learn More
+              </button>
+            </div>
           </div>
         </div>
       `;
 
-      productDiv.addEventListener('click', function () {
-        window.location.href = `/item/${slug}/${element.id}/`;
+
+
+
+      // Click event to go to product page
+      pony.addEventListener('click', () => {
+        window.location.href = `/item/${slug}/${product.id}/`;
+      });
+
+      carousel.appendChild(pony);
       })
 
-      // Insert before the "See All Products" link
-      const seeMoreSection = section.querySelector('.scroll-see-more');
-      section.insertBefore(productDiv, seeMoreSection);
-      new ProductScroller();
-    });
   })
+  .catch(error => console.error('Error fetching featured products:', error));
 }
+
 
 class ProductScroller {
   constructor() {

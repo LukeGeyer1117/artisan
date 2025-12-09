@@ -274,8 +274,9 @@ class OrderView(APIView):
 
     def post(self, request):
         try:
+
             # Get the values from the data
-            data = json.loads(request.body)
+            data = request.data
             keys = ['full_name', 'email', 'phone', 'shipping_addr', 'city', 'state', 'zip_code', 'slug', 'total_price']
             values = {}
             for key in keys:
@@ -432,8 +433,9 @@ class OrdersMerchantView(APIView):
 
             orders = Order.objects.filter(artisan=artisan).order_by('created_at')
             orders_data = [ model_to_dict(order) for order in orders ]
+            print(orders_data)
 
-            return Response({'message': "Found Orders", 'orders': orders_data}, status=status.HTTP_200+OK)
+            return Response({'message': "Found Orders", 'orders': orders_data}, status=STATUS_200)
         except Artisan.DoesNotExist:
             return Response({'error': "Artisan not found"}, status=STATUS_404)
         except Exception as e:
@@ -645,7 +647,7 @@ class ProductMerchantView(APIView):
             # Make sure we actually want to create a new product
             if request.POST.get('_method') != 'PATCH':
                 try:
-                    fields = ['name', 'price', 'description', 'quantity']
+                    fields = ['name', 'price', 'description', 'quantity', 'is_featured']
                     data = {field: request.POST.get(field) for field in fields}
                     data['image'] = request.FILES.get('image')
 
@@ -689,7 +691,7 @@ class ProductMerchantView(APIView):
                     product = get_object_or_404(Product, inventory=inventory, id=product_id)
 
                     # Get all the required fields for the request
-                    fields = ['name', 'price', 'quantity', 'description', 'category']
+                    fields = ['name', 'price', 'quantity', 'description', 'category', 'is_featured']
                     data = {}
                     for field in fields:
                         data[field] = request.POST.get(field)
@@ -726,6 +728,8 @@ class ProductMerchantView(APIView):
                         product.image = data['image']
                     if data['category']:
                         product.category_id = data['category']
+                    if data['is_featured']:
+                        product.is_featured = True if data['is_featured'] == 'true' else False
 
                     product.save()
 
@@ -821,6 +825,19 @@ def get_products_by_artisan_slug(request, slug):
 
 @csrf_exempt
 @require_GET
+def get_featured_products_by_slug(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+
+    inventory = Inventory.objects.filter(artisan=artisan).first()
+    if not inventory:
+        return JsonResponse({'error': "Inventory not found"}, status=404)
+    
+    products = Product.objects.filter(inventory=inventory, is_featured=True).order_by('price').values()
+    return JsonResponse(list(products), safe=False)
+
+
+@csrf_exempt
+@require_GET
 def get_products_by_artisan_slug_limited(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
 
@@ -828,7 +845,7 @@ def get_products_by_artisan_slug_limited(request, slug):
     if not inventory:
         return JsonResponse({'error': "Inventory not found"}, status=404)
     
-    products = Product.objects.filter(inventory=inventory).order_by('price').values()[:20]
+    products = Product.objects.filter(inventory=inventory, is_featured=True).order_by('price').values()[:20]
     return JsonResponse(list(products), safe=False)
 
 @csrf_exempt    
@@ -1185,6 +1202,8 @@ class LogoImageCustomerView(APIView):
             if not logo.image:
                 return Response({'error': "Image not found"}, status=STATUS_404)
             
+            print(logo.image.url)
+
             return Response({'message': "Found logo image", 'image_url': logo.image.url}, status=STATUS_200)
         except Exception as e:
             return Response({'error': f"Couldn't get logo image: {str(e)}"}, status=STATUS_500)
@@ -1406,7 +1425,7 @@ class ThemeMerchantView(APIView):
             theme, created = Theme.objects.get_or_create(artisan=artisan)
 
             try:
-                data = json.loads(request.body)
+                data = request.data
             except json.JSONDecodeError:
                 return Response({'error': "Invalid JSON"}, status=STATUS_400)
             

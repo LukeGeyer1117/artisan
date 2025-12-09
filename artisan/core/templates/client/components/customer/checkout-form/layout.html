@@ -1,0 +1,298 @@
+{% load static %}
+
+<!-- STEP 0 -->
+<div id="customer-tab" class="step-card card p-6">
+
+  <h2 class="text-xl font-bold mb-4">Customer Information</h2>
+
+  <div class="form-control">
+
+    <!-- FIRST NAME -->
+    <label class="input w-full">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-[1em] opacity-50 min-w-[1rem]"
+      >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <input id="first-name" type="text" placeholder="First Name" required />
+      <input id="last-name" type="text" placeholder="Last Name" required />
+    </label>
+
+    <!-- EMAIL -->
+    <label class="input validator mt-3 w-full">
+      <svg
+        class="h-[1em] opacity-50"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <g
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          stroke-width="2.5"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </g>
+      </svg>
+      <input id="email" type="email" placeholder="Email Address" required />
+    </label>
+    <div class="validator-hint hidden">Enter valid email address</div>
+
+    <!-- PHONE -->
+    <label class="input validator mt-3 w-full">
+      <svg
+        class="h-[1em] opacity-50"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <g
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          stroke-width="2.5"
+          fill="none"
+          stroke="currentColor"
+        >
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12.01" y2="18"/>
+        </g>
+      </svg>
+      <input
+        id="phone"
+        type="tel"
+        class="tabular-nums"
+        placeholder="Phone"
+        required
+        pattern="[0-9]*"
+        minlength="10"
+        maxlength="10"
+        title="Must be 10 digits"
+      />
+    </label>
+    <p class="validator-hint">Must be 10 digits</p>
+
+  </div>
+
+  <!-- NEXT BUTTON -->
+  <button class="next-btn btn btn-outline w-full mt-2">Next</button>
+
+</div>
+
+<!-- STEP 1 -->
+<div id="shipping-tab" class="step-card card p-6 hidden">
+  <h2 class="text-xl font-bold mb-4">Shipping Information</h2>
+
+  <div class="form-control space-y-3">
+
+    <!-- STREET ADDRESS -->
+    <label class="input w-full flex items-center gap-2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+      <input id="street-address" type="text" class="grow" placeholder="Street Address" required />
+    </label>
+      
+    <div class="flex flex-col md:flex-row gap-3">
+      <!-- CITY -->
+      <label class="input w-full md:w-1/2 flex items-center gap-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50">
+          <path fill="#000000" d="m2 1.5l8 3.333V10h12v12H2V1.5ZM10 12v8h2v-5h6v5h2v-8H10Zm6 8v-3h-2v3h2Zm-8 0V6.167L4 4.5V20h4Z"/></svg>
+        <input id="city" type="text" class="grow" placeholder="City" required />
+      </label>
+
+      <!-- STATE -->
+      <label class="input w-full md:w-1/2 flex items-center gap-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+          <line x1="8" y1="2" x2="8" y2="18"></line>
+          <line x1="16" y1="6" x2="16" y2="22"></line>
+        </svg>
+        <select name="state" id="state" class="select select-ghost font-normal px-0 grow h-auto min-h-0 focus:bg-transparent focus:outline-none" required>
+          <option value="" disabled selected>State</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- ZIP CODE -->
+    <label class="input validator w-full flex items-center gap-2" id="zip-label" for="zip-code-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+      <input 
+          id="zip-code" 
+          type="text" 
+          class="grow tabular-nums" 
+          placeholder="Zip" 
+          pattern="\d{5}" 
+          inputmode="numeric" 
+          required 
+      />
+    </label>
+    <div id="zip-error-hint" class="validator-hint hidden text-xs text-error mt-1">Enter a valid 5 or 9-digit ZIP Code</div>
+
+  </div>
+  <button class="btn btn-outline w-full mt-2">Next</button>
+</div>
+
+<!-- STEP 2 -->
+<div id="billing-tab" class="step-card card p-6 hidden flex flex-col justify-between">
+  <h2 class="text-xl font-bold mb-4">Payment Information</h2>
+
+  <!-- FOR ATLAS -->
+  <div id="gateway-card-container"></div>
+
+  <form class="form-control space-y-4">
+
+    <!-- CC NUMBER -->
+    <label class="input validator w-full flex items-center gap-2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
+      </svg>
+      <input 
+        id="card-number"
+        type="text" 
+        class="grow" 
+        placeholder="Card Number" 
+        pattern="^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2}|4[4-9][0-9])[0-9]{12})$" 
+        maxlength="19" 
+        required 
+        title="Format: 0000 0000 0000 0000"
+      />
+    </label>
+    <div class="validator-hint hidden text-xs text-error mt-1">Enter a valid CC#</div>
+
+    <!-- EXP DATE -->
+    <div class="flex gap-3">
+      <div class="w-1/2">
+        <label class="input validator w-full flex flex-row justify-start gap-2">
+          <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </g>
+          </svg>
+          <input 
+            id="exp-date"
+            type="text" 
+            class="w-8"
+            placeholder="MM" 
+            pattern="\d{2}" 
+            maxlength="2" 
+            required 
+            title="Format: MM"
+          />
+          <input 
+            id="exp-year"
+            type="text"
+            class="w-12"
+            placeholder="YYYY"
+            pattern="\d{4}"
+            maxlength="4"
+            required
+            title="Format: YYYY"
+          />
+        </label>
+        <div class="validator-hint hidden text-xs text-error mt-1">Enter valid Expiration (MM/YYYY)</div>
+      </div>
+
+      <!-- CVV -->
+      <div class="w-1/2">
+        <label class="input validator w-full flex items-center gap-2">
+          <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </g>
+          </svg>
+          <input 
+            id="cvv"
+            type="text" 
+            class="tabular-nums grow" 
+            placeholder="CVV" 
+            required 
+            pattern="\d{3,4}" 
+            minlength="3" 
+            maxlength="4" 
+            inputmode="numeric"
+            title="3 or 4 digit security code" 
+          />
+        </label>
+        <div class="validator-hint hidden text-xs text-error mt-1">3 or 4 digits required</div>
+      </div>
+    </div>
+
+    <div class="divider my-2"></div>
+
+    <!-- BILLING NAME -->
+    <div id="container-billing-name" class="transition-all duration-300 flex flex-col justify-start gap-2">
+      <label class="input w-full flex items-center gap-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50 min-w-[1rem]">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <input 
+          id="billing-fname"
+          type="text" 
+          class="grow" 
+          placeholder="Billing First Name" 
+          required 
+        />
+        <input 
+          id="billing-lname"
+          type="text"
+          class="grow"
+          placeholder="Billing Last Name"  
+          required
+        />
+      </label>
+
+      <div class="form-control">
+        <label class="label cursor-pointer justify-start gap-3">
+          <input type="checkbox" id="check-billing-name" class="checkbox checkbox-xs" />
+          <span class="label-text">same as consumer</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- BILLING ADDRESS -->
+    <div id="container-billing-zip" class="transition-all duration-300 flex flex-col justify-start gap-2">
+      <label class="input validator w-full flex items-center gap-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-[1em] opacity-50">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        <input 
+          id="billing-zip"
+          type="text" 
+          class="grow" 
+          placeholder="Billing Zip Code" 
+          pattern="[0-9]{5}" 
+          inputmode="numeric"
+          maxlength="5"
+          required 
+        />
+      </label>
+      <div class="validator-hint hidden text-xs text-error mt-1">Enter valid 5-digit Zip</div>
+      <div class="form-control">
+        <label class="label cursor-pointer justify-start gap-3">
+          <input type="checkbox" id="check-billing-zip" class="checkbox checkbox-xs" />
+          <span class="label-text">same as shipping address</span>
+        </label>
+      </div>
+    
+    </div>
+  </form>
+</div>

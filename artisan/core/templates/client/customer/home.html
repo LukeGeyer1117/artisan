@@ -4,54 +4,40 @@
 {% block title %}Home{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'customer/styles/home.css' %}">
 {% endblock %}
 
 {% block content %}
 
     {% block nav %}
-        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug%}
+        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %}
     {% endblock nav %}
-    <main>
 
-        <section id="home-hero-section">
-            <div id="home-cta-div">
-                <p id="hero-sentence-draw">Each guitar is a dialogue between wood, touch, and tone. Custom-built for those who seek purity in every note.</p>
-                <h2 id="hero-main-draw">{{ artisan.shop_name }}</h2>
-                <h3 id="hero-header-draw">Bespoke classical guitars made hand by hand, one at a time.</h3>
-                <a class="action-button" id="hero-cta-button" href="{% url 'shop' artisan.slug %}">Shop Now</a>
-            </div>
-        </section>
+    <main class="space-y-12 flex flex-col items-center">
 
-        <div class="subsection-header">Products Available</div>
-        <div id="products-and-custom-button-holder">
-            <section id="products-available" class="homepage-scroll-section">
-                <section class="scroll-see-more">
-                </section>
-            </section>
-            <div id="scroller-buttons-div">
-                <button class="scroll-button" id="scroll-left-button">‹</button>
-                <button class="scroll-button" id="scroll-right-button">›</button>
-            </div>
-            <div class="scroll-indicator" id="indicator-container"></div>
-            <a id="custom-order-portal-button" href="{% url 'custom' artisan.slug %}">Custom Orders</a>
-        </div>
-
-        <!-- Product Info Modal -->
-        <div id="product-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-button">&times;</span>
-                <img id="modal-product-image" src="" alt="Product Image">
-                <h2 id="modal-product-title">Product Title</h2>
-                <p id="modal-product-price">$0.00</p>
-                <p id="modal-product-description">Description Goes here.</p>
-                <p id="modal-product-quantity">In stock: 0</p>
-                <label for="quantity-desired">Quantity:</label>
-                <input type="number" id="quantity-desired" value="1">
-                <button id="modal-add-to-cart-btn">Add to Cart</button>
+        <div id="home-hero-section" class="hero min-h-screen">
+        <div class="hero-overlay"></div>
+        <div class="hero-content text-neutral-content text-center">
+            <div class="max-w-md">
+            <h1 id="hero-merchant-name" class="hero-merchant-name mb-5 text-7xl font-bold"></h1>
+            <p id="hero-sentence-cta" class="mb-5">
+            </p>
+            <button class="hero-cta-btn btn btn-xl btn-wide btn-square transform transition hover:bg-amber-300">Shop Now</button>
             </div>
         </div>
+        </div>
+
+        <!-- Products Section -->
+        <h2 class="subsection-header text-5xl font-semibold text-center">Featured Works</h2>
+        <p class="subsection-text text-xl font-normal italic text-center max-w-3/4 lg:max-w-1/2">
+            See the beauty of modern creativity at work. Our artists pour 
+            love, soul, and passion into each work to ensure that no piece 
+            matches another.
+        </p>
+        
+        <div id="product-carousel" class="flex flex-row w-full overflow-x-auto"></div>
+
     </main>
+
     {% block footer %}
         {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
     {% endblock footer %}

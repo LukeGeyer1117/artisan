@@ -13,11 +13,13 @@
     <link rel="stylesheet" href="{% static 'customer/styles/common.css' %}">
     <link rel="stylesheet" href="{% static 'components/nav/style.css' %}">
     <link rel="stylesheet" href="{% static 'components/footer/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
     {% block extra_head %}{% endblock %}
     <script>
 
         (function() {
             const slug = "{{ artisan.slug }}";
+            window.slug = slug;
             const cacheKey = `theme_${slug}`;
             const cached = localStorage.getItem(cacheKey);
 
@@ -48,55 +50,53 @@
 
             // Option 2: Apply * selector styles directly
             const globalStyle = document.createElement('style');
-            globalStyle.innerHTML = `
-                * {
-                color: var(--text-color);
-                background-color: var(--background-color);
-                }
+            // globalStyle.innerHTML = `
+            //     * {
+            //     }
 
-                a {
-                color: var(--text-color);
-                }
+            //     a {
+            //     color: var(--text-color);
+            //     }
 
-                a:hover {
-                color: var(--link-hover-color);
-                }
+            //     a:hover {
+            //     color: var(--link-hover-color);
+            //     }
 
-                .action-button {
-                background-color: var(--accent-color);
-                }
+            //     .action-button {
+            //     background-color: var(--accent-color);
+            //     }
 
-                .add-to-cart-button {
-                color: var(--text-color);
-                background-color: var(--accent-color);
-                }
+            //     .add-to-cart-button {
+            //     color: var(--text-color);
+            //     background-color: var(--accent-color);
+            //     }
 
-                .checkout-btn:hover {
-                background-color: var(--accent-color);
-                }
+            //     .checkout-btn:hover {
+            //     background-color: var(--accent-color);
+            //     }
 
-                .edit-btn:hover, .remove-btn:hover {
-                background-color: var(--accent-color);
-                }
+            //     .edit-btn:hover, .remove-btn:hover {
+            //     background-color: var(--accent-color);
+            //     }
 
-                svg {
-                fill: var(--text-color);
-                transition: all .15s ease-in-out;
-                }
+            //     svg {
+            //     fill: var(--text-color);
+            //     transition: all .15s ease-in-out;
+            //     }
 
-                svg:hover {
-                fill: var(--accent-color);
-                }
+            //     svg:hover {
+            //     fill: var(--accent-color);
+            //     }
 
-                .nav-links.menu-item-1.show {
-                background-color: var(--background-color);
-                }
-            `;
-            document.head.appendChild(globalStyle);
+            //     .nav-links.menu-item-1.show {
+            //     background-color: var(--background-color);
+            //     }
+            // `;
+            // document.head.appendChild(globalStyle);
             }
     </script>
 </head>
-<body data-slug="{{ artisan.slug }}">
+<body data-slug="{{ artisan.slug }}" class="lg:text-lg md:text-xl">
     {% block content %}
     {% endblock %}
 
@@ -106,6 +106,7 @@
     {% endblock %}
 
     {% block extra_scripts %}{% endblock %}
-    <script src="{% static 'customer/scripts/common.js' %}"></script>
+    <script type="module" src="{% static 'customer/scripts/common.js' %}"></script>
+    <script type="module" src="{% static 'components/nav/nav.js' %}"></script>
 </body>
 </html>

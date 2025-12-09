@@ -22,12 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const categorySelect = document.querySelector('#categories-select');
   const budgetLow = document.getElementById('budget-low');
   const budgetHigh = document.getElementById('budget-high');
-  const toggle = document.querySelector(".menu-toggle");
-  const links = document.querySelector(".nav-links");
-
-  toggle.addEventListener("click", () => {
-    links.classList.toggle("open");
-  });
 
   // Do a fetch to get all the products for the merchant to make pretty product listings
   // Select all inventory items to populate the home screen

@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // Get the categories tied to this merchant
-  let categories = await get_categories();
+  let categories = await getCategories();
 
   // Add Item Button
   let addItemButton = document.getElementById('add-item-button');
@@ -102,12 +102,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Edit button handler (add once)
   document.getElementById('edit-button').addEventListener('click', function () {
-    handle_edit_modal(currentProduct, categories);
+    handleEditModal(currentProduct, categories);
   });
 
   // Edit form submit handler (add once)
   document.querySelector('#product-edit-modal form').addEventListener('submit', function (e) {
-    handle_product_edit(e, currentProduct, categories, extraImageFiles);
+    handleProductEdit(e, currentProduct, categories, extraImageFiles);
   });
 
   // Delete button handler (add once)
@@ -186,6 +186,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const data = await response.json();
     const products = data.products;
+
+    console.log(products);
+
     searchAndFilter(searchInput, products);
 
     searchInput.addEventListener('input', function () {
@@ -206,7 +209,7 @@ function setupCategoryList(categories, API_BASE_URL) {
 
     // Create a listener for category delete
     category_row.querySelector('.delete-category-button').addEventListener('click', function () {
-      DeleteCategory(category, category_row);
+      deleteCategory(category, category_row);
     });
 
     // Append the actual element
@@ -221,7 +224,7 @@ function setupCategoryList(categories, API_BASE_URL) {
 }
 
 // Get the merchant's categories
-async function get_categories() {
+async function getCategories() {
   return await fetch(`${API_BASE_URL}/categories/`, {
     method: 'GET',
     credentials: 'include'
@@ -245,7 +248,7 @@ function clearActiveRows() {
 }
 
 // Handle edit modal
-function handle_edit_modal(currentProduct, categories) {
+function handleEditModal(currentProduct, categories) {
   // First, listen for close-modal button to be pressed
   const close_button = document.querySelector('#edit-details .close-modal-btn');
   close_button.addEventListener('click', function () {
@@ -265,6 +268,7 @@ function handle_edit_modal(currentProduct, categories) {
   document.getElementById('edit-price').value = currentProduct.price;
   document.getElementById('edit-stock').value = currentProduct.quantity;
   document.getElementById('edit-description').value = currentProduct.description;
+  document.getElementById('edit-featured').checked = !!currentProduct.is_featured;
   const selector = document.getElementById('edit-category');
 
   // Clear existing options (if needed)
@@ -284,7 +288,7 @@ function handle_edit_modal(currentProduct, categories) {
 }
 
 // Handle when the edit form is submitted
-function handle_product_edit(e, currentProduct, categories, extraImageFiles) {
+function handleProductEdit(e, currentProduct, categories, extraImageFiles) {
   e.preventDefault();
   if (!currentProduct) return;
 
@@ -296,6 +300,7 @@ function handle_product_edit(e, currentProduct, categories, extraImageFiles) {
   formData.append('price', form.querySelector('#edit-price').value);
   formData.append('description', form.querySelector('#edit-description').value);
   formData.append('quantity', form.querySelector('#edit-stock').value);
+  formData.append('is_featured', form.querySelector('#edit-featured').checked);
 
   const mainImageFile = form.querySelector('#edit-image').files[0];
   if (mainImageFile) {
@@ -381,7 +386,7 @@ function CreateCategory() {
   }
 }
 
-function DeleteCategory(category, category_row) {
+function deleteCategory(category, category_row) {
   // Ask for confirmation
   const confirmed = window.confirm(`Are you sure you want to permanently delete the category "${category.name}"?`);
   

@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const quantityInput = document.querySelector('.number-input');
   quantityInput.addEventListener('input', function () {
     let value = parseInt(quantityInput.value);
-    let currentProduct = productInfo;
+    let currentProduct = product;
     if (value > currentProduct.quantity) {
       quantityInput.value = currentProduct.quantity
     } else if (value < 0) {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Increment button
   plusBtn.addEventListener('click', function () {
     let value = parseInt(quantityInput.value) || 0;
-    let currentProduct = productInfo;
+    let currentProduct = product;
     if (value < currentProduct.quantity) {
       quantityInput.value = value + 1;
       quantityInput.dispatchEvent(new Event('input', { bubbles: true }));
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   document.querySelector('.add-to-cart-button').addEventListener('click', function () {
     const quantityDesired = quantityInput.value;
     if (quantityDesired > 0) {
-      addItemToCart(productInfo, quantityDesired);
+      addItemToCart(product, quantityDesired);
     } else {
       showToast("Cannot add 0 items to cart");
     }

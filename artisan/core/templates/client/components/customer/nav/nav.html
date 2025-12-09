@@ -1,23 +1,36 @@
 {% load static %}
 
-<!-- nav.html -->
-<nav class="navbar">
-  <div id="central-navbar-section">
-    <div class="nav-header">
-      <a href="{% url 'home' slug %}">
-        <img class="nav-logo-image" alt="nav logo white text">
-      </a>
+<div class="navbar bg-base-100 shadow-sm p-4">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
+      </div>
+      <ul
+        tabindex="-1"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+        <li><a href="{% url 'home' slug %}">HOME</a></li>
+        <li><a href="{% url 'shop' slug %}">SHOP</a></li>
+        <li><a href="{% url 'gallery' slug %}">GALLERY</a></li>
+        <li><a href="{% url 'policies' slug %}">TERMS & CONDITIONS</a></li>
+      </ul>
     </div>
-    <div class="nav-links">
-      <a href="{% url 'home' slug %}">HOME</a>
-      <a href="{% url 'shop' slug %}">SHOP</a>
-      <a href="{% url 'gallery' slug %}">GALLERY</a>
-      <a href="{% url 'policies' slug %}">TERMS & CONDITIONS</a>
-    </div>
-    <a href="{% url 'cart' slug %}">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8D8D8D"><path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
+    <a class="btn btn-ghost btn-xl" href="{% url 'home' slug %}"><img id="nav-logo-image" class="h-16 w-auto" alt="nav logo white text"></a>
+  </div>
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1 text-lg">
+      <li><a href="{% url 'home' slug %}">HOME</a></li>
+      <li><a href="{% url 'shop' slug %}">SHOP</a></li>
+      <li><a href="{% url 'gallery' slug %}">GALLERY</a></li>
+      <li><a href="{% url 'policies' slug %}">TERMS & CONDITIONS</a></li>
+    </ul>
+  </div>
+  <div class="navbar-end">
+    <a href="{% url 'cart' slug %}" class="btn-ghost">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-4 8h16" />
+      </svg>
     </a>
   </div>
-  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
-  <script src="{% static 'components/nav/nav.js' %}"></script>
-</nav>
+</div>
+

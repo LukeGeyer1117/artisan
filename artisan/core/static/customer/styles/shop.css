@@ -1,7 +1,3 @@
-* {
-  color: white;
-}
-
 .shop-section {
   width: 100%;
   box-sizing: border-box;
@@ -52,7 +48,6 @@
 }
 
 .shop-item {
-  color: white;
   display: flex;
   flex-direction: column;
   width: fit-content;

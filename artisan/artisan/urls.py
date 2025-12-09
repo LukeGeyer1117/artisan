@@ -69,6 +69,7 @@ urlpatterns = [
     path('api/products/<slug:slug>/', views.get_products_by_artisan_slug, name="get_products_by_artisan_slug"),
     path('api/products/<slug:slug>/limit/', views.get_products_by_artisan_slug_limited),
     path('api/product/images/<int:product_id>/', views.get_gallery_images_by_product_id),
+    path('api/products/<slug:slug>/featured/', views.get_featured_products_by_slug),
     # Orders
     path('api/order/', views.OrderView.as_view(), name="order"),
     path('api/order/status/', views.UpdateOrderStatusView.as_view()),

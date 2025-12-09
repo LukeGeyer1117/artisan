@@ -13,12 +13,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     let total = 0;
     const products = cart_data.products;
 
-    // Listen for hemburger menu click
-    const toggle = document.querySelector(".menu-toggle");
-    toggle.addEventListener("click", () => {
-    links.classList.toggle("open");
-    });
-
     // Build the product divs in the cart
     products.forEach(product => {
         const cartItem = document.createElement('div');

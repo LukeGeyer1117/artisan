@@ -3,6 +3,8 @@ let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
+const slug = window.slug;
+
 // Assuming `slug` is already defined somewhere in your script
 document.addEventListener('DOMContentLoaded', async function () {
   try {
@@ -53,51 +55,49 @@ function applyGlobalTheme(theme) {
 
   // Option 2: Apply * selector styles directly
   const globalStyle = document.createElement('style');
-  globalStyle.innerHTML = `
-    * {
-      color: var(--text-color);
-      background-color: var(--background-color);
-    }
+  // globalStyle.innerHTML = `
+  //   * {
+  //   }
 
-    a {
-      color: var(--text-color);
-    }
+  //   a {
+  //     color: var(--text-color);
+  //   }
 
-    a:hover {
-      color: var(--link-hover-color);
-    }
+  //   a:hover {
+  //     color: var(--link-hover-color);
+  //   }
 
-    .action-button {
-      background-color: var(--accent-color);
-    }
+  //   .action-button {
+  //     background-color: var(--accent-color);
+  //   }
 
-    .add-to-cart-button {
-      color: var(--text-color);
-      background-color: var(--accent-color);
-    }
+  //   .add-to-cart-button {
+  //     color: var(--text-color);
+  //     background-color: var(--accent-color);
+  //   }
 
-    .checkout-btn:hover {
-      background-color: var(--accent-color);
-    }
+  //   .checkout-btn:hover {
+  //     background-color: var(--accent-color);
+  //   }
 
-    .edit-btn:hover, .remove-btn:hover {
-      background-color: var(--accent-color);
-    }
+  //   .edit-btn:hover, .remove-btn:hover {
+  //     background-color: var(--accent-color);
+  //   }
 
-    svg {
-      fill: var(--text-color);
-      transition: all .15s ease-in-out;
-    }
+  //   svg {
+  //     fill: var(--text-color);
+  //     transition: all .15s ease-in-out;
+  //   }
 
-    svg:hover {
-      fill: var(--accent-color);
-    }
+  //   svg:hover {
+  //     fill: var(--accent-color);
+  //   }
 
-    .nav-links.show.menu-item-1 {
-      background-color: var(--background-color);
-    }
-  `;
-  document.head.appendChild(globalStyle);
+  //   .nav-links.show.menu-item-1 {
+  //     background-color: var(--background-color);
+  //   }
+  // `;
+  // document.head.appendChild(globalStyle);
 }
 
 async function GetShopSettingsSlug() {
@@ -140,3 +140,48 @@ async function GetProductImages(item_id) {
   const data = await response.json();
   return data.product_images;
 }
+
+/**
+ * Displays a DaisyUI toast notification.
+ * @param {string} message - The text to display
+ * @param {string} type - 'success', 'error', 'info', or 'warning'
+ * @param {number} duration - Time in ms before removal (default 3000)
+ */
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toast');
+    
+    // 1. Create the alert element
+    const alert = document.createElement('div');
+    
+    // 2. Add DaisyUI classes
+    // Base class: 'alert'
+    // Type class: 'alert-success', 'alert-error', etc.
+    alert.className = `alert alert-${type} shadow-lg mb-2 transition-all duration-500 opacity-0 translate-x-full`;
+    
+    // 3. Add inner content (icon + message)
+    // You can customize icons here based on type if you want
+    alert.innerHTML = `
+        <span>${message}</span>
+    `;
+
+    // 4. Append to container
+    container.appendChild(alert);
+
+    // 5. Trigger animation in (small delay to allow DOM to render for transition)
+    requestAnimationFrame(() => {
+        alert.classList.remove('opacity-0', 'translate-x-full');
+    });
+
+    // 6. Remove after duration
+    setTimeout(() => {
+        // Fade out
+        alert.classList.add('opacity-0', 'translate-x-full');
+        
+        // Remove from DOM after transition finishes (500ms matches Tailwind duration-500)
+        setTimeout(() => {
+            alert.remove();
+        }, 500);
+    }, duration);
+}
+
+export {showToast};
