@@ -120,5 +120,11 @@ urlpatterns = [
     path('api/login/', views.login_artisan),
     path('api/cart/', views.add_product_to_cart),
     path('api/session/', views.SessionView.as_view()),
+    path('api/proxy/gateway/', views.gateway_proxy),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+  urlpatterns += [
+    path("__reload__/", include("django_browser_reload.urls")),
+  ]

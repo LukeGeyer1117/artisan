@@ -1,24 +1,35 @@
 import { getCookie } from "./csrf.js";
-import { showToast } from "./common.js";
+import { GetProduct, showToast } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
+
+let API_BASE_URL;
+if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
+else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
 let paymentTotal = 0;
 const slug = document.body.dataset.slug;
 const STATES = {'AL':'ALABAMA','AK':'ALASKA','AZ':'ARIZONA','AR':'ARKANSAS','CA':'CALIFORNIA','CO':'COLORADO','CT':'CONNECTICUT','DE':'DELAWARE','FL':'FLORIDA','GA':'GEORGIA','HI':'HAWAII','ID':'IDAHO','IL':'ILLINOIS','IN':'INDIANA','IA':'IOWA','KS':'KANSAS','KY':'KENTUCKY','LA':'LOUISIANA','ME':'MAINE','MD':'MARYLAND','MA':'MASSACHUSETTS','MI':'MICHIGAN','MN':'MINNESOTA','MS':'MISSISSIPPI','MO':'MISSOURI','MT':'MONTANA','NE':'NEBRASKA','NV':'NEVADA','NH':'NEW HAMPSHIRE','NJ':'NEW JERSEY','NM':'NEW MEXICO','NY':'NEW YORK','NC':'NORTH CAROLINA','ND':'NORTH DAKOTA','OH':'OHIO','OK':'OKLAHOMA','OR':'OREGON','PA':'PENNSYLVANIA','RI':'RHODE ISLAND','SC':'SOUTH CAROLINA','SD':'SOUTH DAKOTA','TN':'TENNESSEE','TX':'TEXAS','UT':'UTAH','VT':'VERMONT','VA':'VIRGINIA','WA':'WASHINGTON','WV':'WEST VIRGINIA','WI':'WISCONSIN','WY':'WYOMING'};
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Get the slug from URL, used for redirect back to cart.
+document.addEventListener("DOMContentLoaded", async function () {
+    // Get the total amount from the session info
+    let response = await fetch(`${API_BASE_URL}/checkout/`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrftoken
+        }
+    })
 
-    // Process the checkout
-    // checkout();
+    if (!response.ok) throw new Error("Couldn't get checkout total");
 
-    // Listen for form submission
-    // document.getElementById("payment-form").addEventListener('submit', async function (event) {
-    //     event.preventDefault();
-    //     // Process the payment
-    //     process_payment()
-    // })
+    let data = await response.json();
+
+    const total = data.total;
+    const products = data.products;
+
+    summarize(total, products)
+
+    document.getElementById('amount').value = total;
 
     // Handle navigation between form tabs
     const tabs = document.querySelectorAll('.tabs a');
@@ -44,7 +55,7 @@ function formListen() {
     const checkout_field_ids = [
         'first-name', 'last-name', 'email', 'phone', 'street-address',
         'city', 'state', 'zip-code', 'card-number', 'exp-date', 'exp-year', 
-        'cvv'
+        'cvc'
     ];
 
     const submitBtn = document.getElementById('checkout-btn');
@@ -159,7 +170,7 @@ function checkout() {
     const checkout_field_ids = {
         'first-name': '', 'last-name': '', 'email': '', 'phone': '', 'street-address': '',
         'city': '', 'state': '', 'zip-code': '', 'card-number': '', 'exp-date': '', 'exp-year': '', 
-        'cvv': '', 'billing-fname': '', 'billing-lname': '', 'billing-zip': '' 
+        'cvc': '', 'billing-fname': '', 'billing-lname': '', 'billing-zip': '' 
     }
 
     for (const field in checkout_field_ids) {
@@ -175,104 +186,69 @@ function checkout() {
     }
     if (!ok) { return; }
 
-    // Validate the inputs
-    if (!validateInputs()) { return; }
-    const validateInputs = () => {
-        let ok = true;
-        const cc_number     = checkout_field_ids['card-number'];
-        const month         = checkout_field_ids['exp-date'];
-        const year          = checkout_field_ids['exp-year'];
-        const cvc           = checkout_field_ids['cvv'];
+    window.addEventListener('gw:token-ready', function () {
+        const billing = {
+            "first_name": checkout_field_ids['first-name'],
+            "last_name": checkout_field_ids['last-name'],
+            "address": checkout_field_ids['street-address'],
+            "city": checkout_field_ids['city'],
+            "state": checkout_field_ids['state'],
+            "zip": checkout_field_ids['billing-zip'],
+            "country": 'USA',
+            "email": checkout_field_ids['email'],
+        }
 
-        if (!cc_number || cc_number == '') { showToast(`Missing Field: Card Number`, 'error'); }
-        if (!month || month == '') { showToast(`Missing Field: Expiration Month`, 'error'); }
-        if (!year || year == '') { showToast(`Missing Field: Expiration Year`, 'error'); }
-        if (!cvc || cvc == '') { showToast(`Missing Field: CVV`, 'error'); }
+        const payload = {
+            "token": document.getElementById('gw-token').value,
+            "amount": document.getElementById('amount').value,
+            "merchant": document.getElementById('gw-merchant').value,
+            "x_login": document.getElementById('gw-login').value,
+            "x_tran_key": document.getElementById('gw-trankey').value,
+            "billing": billing
+        }
 
-        const patterns = {
-            cc_number: /^\d{16}$/,
-            month: /^(0[1-9]|1[0-2])$/,
-            year: /^\d{2}$/,
-            cvc: /^\d{3,4}$/
-        };
-        if (cc_number && !patterns.cc_number.test(cc_number)) { showToast(`Invalid Field: Card Number`, 'error'); }
-        if (month && !patterns.month.test(month)) { showToast(`Invalid Field: Expiration Month`, 'error'); }
-        if (year && !patterns.year.test(year)) { showToast(`Invalid Field: Expiration Year`, 'error'); }
-        if (cvc && !patterns.cvc.test(cvc)) { showToast(`Invalid Field: CVV`, 'error'); }
+        console.log(payload);
 
-        return ok;
-    }
-
-    // // Create a checkout item. If receives a good status, calls an order view.
-    // fetch(`${API_BASE_URL}/checkout/`, {
-    //     method: "GET",
-    //     credentials: "include",
-    // })
-    // .then(response => {
-    //     if (!response.ok) throw new Error("Failed to get checkout data.");
-    //     return response.json();
-    // })
-    // .then(data => {
-    //     paymentTotal = data.total;
-    //     document.getElementById("checkout-btn").innerHTML = "Secure Checkout - Total: $" + data.total;
-    // })
-}
-
-async function process_payment() {
-    const fname = document.getElementById("first-name").value;
-    const lname = document.getElementById("last-name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const shipping_addr = document.getElementById("address").value;
-    const city = document.getElementById("city").value;
-    const state = document.getElementById("state").value;
-    const zip_code = document.getElementById("zip").value;
-
-   // Call a fetch to process the payment, passing in the amount.
-    const paymentResponse = await fetch(`${API_BASE_URL}/process_payment/`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({"total": paymentTotal})
-    });
-
-    if (!paymentResponse.ok) throw new Error("Payment could not be processed at this time.");
-
-    const paymentData = await paymentResponse.json();
-    console.log(paymentData);
-
-    if (paymentData.payment_status === "SUCCEED") {
-        const body = JSON.stringify({
-            full_name: `${fname} ${lname}`,
-            email: email,
-            phone: phone,
-            shipping_addr: shipping_addr,
-            city: city,
-            state: state,
-            zip_code: zip_code,
-            slug: slug,
-            total_price: paymentTotal
-        })
-        console.log(body)
-
-        const orderResponse = await fetch(`${API_BASE_URL}/order/`, {
-            method: "POST",
-            credentials: 'include',
+        fetch(`https://develop.expitrans.com/atlas/transact_token.php`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
+                'X-App-Source': 'dixie.gallery/checkout.html'
             },
-            body: body
-        });
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Couldnt transact payment");
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+    })
+}
+
+async function summarize(total, products) {
+    const order_items_list = document.getElementById('order-items-list');
+    for (const [id, quantity] of Object.entries(products)) {
+
+        const product_object = await GetProduct(id);
         
-        if (!orderResponse.ok) throw new Error("Could not create an Order!");
-        
-        const orderData = await orderResponse.json();
-        console.log(orderData);
-        
-        window.location.href = `/order-complete/${slug}`;
+        const prod = document.createElement('div');
+        prod.className = `flex items-center gap-4`;
+        prod.innerHTML = `
+            <img src='${product_object.image}' style="width: 5rem; height: 5rem; object-fit: cover;">
+
+            <div class="flex-1">
+                <p class="font-medium text-lg">${product_object.name}</p>
+                <p class="text-sm opacity-60">QTY: ${quantity}</p>
+            </div>
+
+            <p class="font-semibold text-lg text-right">$${product_object.price * quantity}</p>
+        `
+
+        order_items_list.appendChild(prod);
+
+        document.getElementById('subtotal').textContent = `$${total}`;
+
     }
 }

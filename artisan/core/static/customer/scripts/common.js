@@ -184,4 +184,4 @@ function showToast(message, type = 'info', duration = 3000) {
     }, duration);
 }
 
-export {showToast};
+export {showToast, GetProduct, GetProductImages};

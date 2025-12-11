@@ -3,6 +3,10 @@ import { getCookie } from "./csrf.js";
 
 const csrftoken = getCookie('csrftoken');
 
+let API_BASE_URL;
+if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
+else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
+
 // Toggle nav on small screens
 document.addEventListener("DOMContentLoaded", async function () {
     const slug = document.body.dataset.slug;
@@ -134,9 +138,11 @@ function edit_item_in_cart(cartItem, product_id) {
 
 function checkout(total, slug, products_and_quantities) {
     if (total == 0) {
-        alert("Please add items to cart before checkout!");
+        alert("Cannot process $0 checkout");
         return;
     }
+
+    total = total.toFixed(2);
 
     fetch(`${API_BASE_URL}/checkout/`, {
         method: 'POST',

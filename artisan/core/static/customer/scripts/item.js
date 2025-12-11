@@ -1,4 +1,9 @@
 import { showToast } from "../../merchant/scripts/common.js";
+import { GetProduct, GetProductImages } from "./common.js";
+
+let API_BASE_URL;
+if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
+else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
 // Get the product information
 document.addEventListener('DOMContentLoaded', async function () {

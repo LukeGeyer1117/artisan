@@ -15,69 +15,69 @@
     }
 
     // Build URL to tokenize.php relative to gateway.js
-    const apiPath = new URL('tokenize.php', scriptBase).href;
+    const apiPath = `https://develop.expitrans.com/atlas/tokenize.php`
 
     const container = document.getElementById('gateway-card-container');
     if(!container) return;
 
     // Build inputs wrapped in divs, each with a dedicated class and HTML5 validation
-    container.innerHTML = `
-        <div class="gw-field gw-field-card-number">
-            <label for="gw-card-number">Card Number</label>
-         <input type="text"
-                   id="gw-card-number"
-                   class="gw-input gw-card-number"
-                   inputmode="numeric"
-                   autocomplete="cc-number"
-             pattern="^\\d{16}$"
-                   maxlength="16"
-                   required
-                   oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,16)">
-         <small class="gw-error" id="gw-card-number-error" hidden>Enter a 16-digit card number.</small>
-        </div>
-        <div class="gw-field gw-field-exp-month">
-            <label for="gw-exp-month">Exp Month</label>
-            <input type="text"
-                   id="gw-exp-month"
-                   class="gw-input gw-exp-month"
-                   inputmode="numeric"
-                   autocomplete="cc-exp-month"
-                   pattern="^(0[1-9]|1[0-2])$"
-                   maxlength="2"
-                   required
-                   oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
-            <small class="gw-error" id="gw-exp-month-error" hidden>Use 01â€“12.</small>
-        </div>
-        <div class="gw-field gw-field-exp-year">
-            <label for="gw-exp-year">Exp Year</label>
-            <input type="text"
-                   id="gw-exp-year"
-                   class="gw-input gw-exp-year"
-                   inputmode="numeric"
-                   autocomplete="cc-exp-year"
-                   pattern="^\\d{2}$"
-                   maxlength="2"
-                   required
-                   oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
-            <small class="gw-error" id="gw-exp-year-error" hidden>Two digits (YY).</small>
-        </div>
-        <div class="gw-field gw-field-cvc">
-            <label for="gw-cvc">CVC</label>
-            <input type="text"
-                   id="gw-cvc"
-                   class="gw-input gw-cvc"
-                   inputmode="numeric"
-                   autocomplete="cc-csc"
-                   pattern="^\\d{3,4}$"
-                   maxlength="4"
-                   required
-                   oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
-            <small class="gw-error" id="gw-cvc-error" hidden>3â€“4 digits.</small>
-        </div>
-        <div class="gw-field gw-field-messages">
-            <small class="gw-error" id="gw-form-error" hidden></small>
-        </div>
-    `;
+    // container.innerHTML = `
+    //     <div class="gw-field gw-field-card-number">
+    //         <label for="gw-card-number">Card Number</label>
+    //      <input type="text"
+    //                id="gw-card-number"
+    //                class="gw-input gw-card-number"
+    //                inputmode="numeric"
+    //                autocomplete="cc-number"
+    //          pattern="^\\d{16}$"
+    //                maxlength="16"
+    //                required
+    //                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,16)">
+    //      <small class="gw-error" id="gw-card-number-error" hidden>Enter a 16-digit card number.</small>
+    //     </div>
+    //     <div class="gw-field gw-field-exp-month">
+    //         <label for="gw-exp-month">Exp Month</label>
+    //         <input type="text"
+    //                id="gw-exp-month"
+    //                class="gw-input gw-exp-month"
+    //                inputmode="numeric"
+    //                autocomplete="cc-exp-month"
+    //                pattern="^(0[1-9]|1[0-2])$"
+    //                maxlength="2"
+    //                required
+    //                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
+    //         <small class="gw-error" id="gw-exp-month-error" hidden>Enter a 16-digit card number.</small>
+    //     </div>
+    //     <div class="gw-field gw-field-exp-year">
+    //         <label for="gw-exp-year">Exp Year</label>
+    //         <input type="text"
+    //                id="gw-exp-year"
+    //                class="gw-input gw-exp-year"
+    //                inputmode="numeric"
+    //                autocomplete="cc-exp-year"
+    //                pattern="^\\d{2}$"
+    //                maxlength="2"
+    //                required
+    //                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
+    //         <small class="gw-error" id="gw-exp-year-error" hidden>Two digits (YY).</small>
+    //     </div>
+    //     <div class="gw-field gw-field-cvc">
+    //         <label for="gw-cvc">CVC</label>
+    //         <input type="text"
+    //                id="gw-cvc"
+    //                class="gw-input gw-cvc"
+    //                inputmode="numeric"
+    //                autocomplete="cc-csc"
+    //                pattern="^\\d{3,4}$"
+    //                maxlength="4"
+    //                required
+    //                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
+    //         <small class="gw-error" id="gw-cvc-error" hidden>3â€“4 digits.</small>
+    //     </div>
+    //     <div class="gw-field gw-field-messages">
+    //         <small class="gw-error" id="gw-form-error" hidden></small>
+    //     </div>
+    // `;
 
     const form = container.closest('form');
     if(!form) return;
@@ -112,10 +112,10 @@
 
     const validateInputs = () => {
         let ok = true;
-        const number = document.getElementById('gw-card-number');
-        const month  = document.getElementById('gw-exp-month');
-        const year   = document.getElementById('gw-exp-year');
-        const cvc    = document.getElementById('gw-cvc');
+        const number = document.querySelector('.gw-field-card-number');
+        const month  = document.querySelector('.gw-field-exp-month');
+        const year   = document.querySelector('.gw-field-exp-year');
+        const cvc    = document.querySelector('.gw-field-cvc');
 
         // Reset
         ['gw-card-number','gw-exp-month','gw-exp-year','gw-cvc'].forEach(id => {
@@ -154,6 +154,8 @@
         if (!ok) {
             showError('gw-form-error', 'Please correct the highlighted fields.');
         }
+
+        console.log("OK");
         return ok;
     };
 
@@ -169,10 +171,10 @@
         }
 
         const cardData = {
-            number: document.getElementById('gw-card-number').value,
-            month: document.getElementById('gw-exp-month').value,
-            year: document.getElementById('gw-exp-year').value,
-            cvc: document.getElementById('gw-cvc').value
+            number: document.querySelector('.gw-field-card-number').value,
+            month: document.querySelector('.gw-field-exp-month').value,
+            year: document.querySelector('.gw-field-exp-year').value,
+            cvc: document.querySelector('.gw-field-cvc').value
         };
 
         // Build same-origin path to tokenizer relative to this script (/.../atlas/tokenize.php)
@@ -204,6 +206,7 @@
         const merchantEl = document.getElementById('gw-merchant');
 
         // Dispatch an event so the host page can continue the flow (e.g., call transact endpoint)
+
         window.dispatchEvent(new CustomEvent('gw:token-ready', {
             detail: {
                 token: data.token,

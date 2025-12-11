@@ -24,6 +24,7 @@ from .helper import *
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.contrib.auth import login
 from django.db import transaction
 
@@ -946,9 +947,15 @@ def api_checkout(request):
     elif request.method == "GET":
         try:
             total = request.session.get('checkout-total', 0)
+            products = request.session.get('products_and_quantities')
+
+            products_json = {}
+            for p in products:
+                products_json[f'{p[0]}'] = p[1]
+
             if total == 0:
                 return JsonResponse({'error': 'No Checkout Total'})
-            return JsonResponse({'message': 'Found total', 'total': total})
+            return JsonResponse({'message': 'Found total', 'total': total, 'products': products_json})
         except Exception as e:
             return JsonResponse({'error': f'Failed to retrieve a checkout: {e}'}, status=500)
     return JsonResponse({"error": 'Method not allowed'}, status=405)
@@ -1636,3 +1643,9 @@ class SessionView(APIView):
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return JsonResponse({'detail': "CSRF cookie set"})
+
+def gateway_proxy(request):
+    r = requests.get('https://develop.expitrans.com/atlas/gateway.js')
+    response = HttpResponse(r.text, content_type="application/javascript")
+    response["Access-Control-Allow-Origin"] = "*"
+    return response

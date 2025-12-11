@@ -9,11 +9,11 @@
 
 {% block content %}
   <main>
-    <div class="checkout-container">
+    <div class="checkout-container flex flex-col md:flex-row">
 
-      <div class="max-w-xl mx-auto">
+      <div class="card w-full md:w-2/3 items-center">
 
-        <div class="flex flex-col justify-between h-screen p-6">
+        <div class="flex flex-col justify-between h-screen p-6 w-full max-w-xl">
           <div role="tablist" class="tabs tabs-border flex flex-row justify-center">
             <a id="customer-tab-nav" role="tab" class="tab tab-active text-lg">Customer</a>
             <a id="shipping-tab-nav" role="tab" class="tab text-lg">Shipping</a>
@@ -22,16 +22,25 @@
 
           <!-- THIS IS THE CHECKOUT FORM - INCLUDES STEPS, INPUTS, AND VALIDATORS -->
           {% block checkout_form %}
-            {% include 'client/components/customer/checkout-form/layout.html' %}
+            {% include 'client/components/customer/checkout-form/form.html' %}
           {% endblock %}
           
-          <button id="checkout-btn" class="btn btn-neutral btn-lg w-auto mx-4" disabled>Complete Payment</button>
+          <button id="checkout-btn" class="btn btn-neutral btn-lg w-auto mx-4" form="checkout-form" type="submit" disabled>Complete Payment</button>
         </div>
+
+        <!-- Displays the result of the transaction -->
+        <div id="result"></div>
       </div>
+
+      {% block summary %}
+        {% include 'client/components/customer/checkout-form/summary.html' %}
+      {% endblock %}
+
     </div>
   </main>
 {% endblock %}
 
 {% block extra_scripts %}
     <script type="module" src="{% static 'customer/scripts/checkout.js' %}"></script>
+    <script type="module" src="{% static 'customer/scripts/gateway.js' %}"></script>
 {% endblock %}
