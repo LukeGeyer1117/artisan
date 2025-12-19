@@ -690,6 +690,8 @@ class ProductMerchantView(APIView):
 
                     response_body = json.loads(response.text)
 
+                    print(response_body)
+
                     if response_body['result'] != "success":
                         return JsonResponse({'error': "Troute product couldn't be created"}, status=STATUS_500)
                     
