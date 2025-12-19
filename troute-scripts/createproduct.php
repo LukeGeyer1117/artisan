@@ -3,20 +3,26 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// Load .env if it exists
+$dotenvPath = __DIR__;
+if (file_exists($dotenvPath . '/.env')) {
+    $dotenv = Dotenv::createImmutable($dotenvPath);
+    $dotenv->load();
+} else {
+    error_log(".env file not found in $dotenvPath");
+}
 
-// URL of your query endpoint
+// Use getenv() to work with PHP-FPM env
+$trouteDomain = getenv('TROUTE_DOMAIN');
 
-$trouteDomain = $_ENV['TROUTE_DOMAIN'] ?? null;
+error_log("TROUTE_DOMAIN = " . $trouteDomain);
 
 if (!$trouteDomain) {
     die("TROUTE_DOMAIN env variable is not set");
 }
 
-echo "<script>console.log(" . json_encode($trouteDomain) . ");</script>";
+$url = "https://{$trouteDomain}/query?action=expiproduct";
 
-$url = "https://{$trouteDomain}/query?action=expiproduct"; // adjust if needed
 
 // Your merchant credentials
 $merchantName = $_POST['x_login'];

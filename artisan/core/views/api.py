@@ -613,7 +613,31 @@ class ProductsMerchantView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=STATUS_500)
 
-            
+
+def create_troute_product(troute_login, troute_key, name, description, price):
+    troute_domain = os.environ.get("TROUTE_DOMAIN", "develop.expitrna.com")
+
+    print(troute_domain)
+
+    url = f"https://{troute_domain}/query?action=expiproduct"
+
+    payload = {
+        "product": {
+            "uniqueID": None,
+            "name": name,
+            "description": description,
+            "price": price
+        }
+    }
+
+    auth = (troute_login, troute_key)
+
+    try:
+        response = requests.post(url, json=payload, auth=auth, timeout=10)
+        response.raise_for_status()
+        return response
+    except requests.RequestException as e:
+        return response
 
 class ProductMerchantView(APIView):
     """
@@ -655,7 +679,7 @@ class ProductMerchantView(APIView):
                     print(artisan.troute_login)
 
                     # Call troute script to make a product
-                    response_from_php = call_php_create_product(
+                    response = create_troute_product(
                         artisan.troute_login,
                         artisan.troute_key,
                         data['name'],
@@ -663,10 +687,10 @@ class ProductMerchantView(APIView):
                         data['price'],
                     )
 
-                    parsed = sanitize_troute_resp(response_from_php)
+                    response_body = json.loads(response.text)
 
-                    if parsed['result'] != 'success':
-                        return Response({'error': "Troute product creation error"}, status=STATUS_500)
+                    if response_body['result'] != "success":
+                        return JsonResponse({'error': "Troute product couldn't be created"}, status=STATUS_500)
                     
                     Product.objects.create(
                         inventory=inventory,
@@ -675,7 +699,7 @@ class ProductMerchantView(APIView):
                         quantity=data['quantity'],
                         description=data['description'],
                         image=data['image'],
-                        troute_unique_id=parsed['product']['uniqueID'],
+                        troute_unique_id=response_body['product']['uniqueID'],
                         troute_registered=True
                     )
 
