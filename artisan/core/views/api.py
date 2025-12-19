@@ -676,7 +676,8 @@ class ProductMerchantView(APIView):
                     data = {field: request.POST.get(field) for field in fields}
                     data['image'] = request.FILES.get('image')
 
-                    print(artisan.troute_login)
+                    print(f'Artisan Login: {artisan.troute_login}')
+                    print(f'Artisan Key: {artisan.troute_key}')
 
                     # Call troute script to make a product
                     response = create_troute_product(
