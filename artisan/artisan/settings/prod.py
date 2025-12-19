@@ -1,4 +1,9 @@
 from .base import *
+from dotenv import load_dotenv
+
+load_dotenv("/home/ubuntu/artisan/artisan/.env")
+
+TROUTE_DOMAIN = os.getenv("TROUTE_DOMAIN")
 
 DEBUG = env('DEBUG', default=False)
 
