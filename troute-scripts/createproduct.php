@@ -1,6 +1,22 @@
 <?php
+require __DIR__ . '/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 // URL of your query endpoint
-$url = "https://develop.expitrans.com/query?action=expiproduct"; // adjust if needed
+
+$trouteDomain = $_ENV['TROUTE_DOMAIN'] ?? null;
+
+if (!$trouteDomain) {
+    die("TROUTE_DOMAIN env variable is not set");
+}
+
+echo "<script>console.log(" . json_encode($trouteDomain) . ");</script>";
+
+$url = "https://{$trouteDomain}/query?action=expiproduct"; // adjust if needed
 
 // Your merchant credentials
 $merchantName = $_POST['x_login'];
