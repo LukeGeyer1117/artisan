@@ -144,7 +144,7 @@ function checkout(total, slug, products_and_quantities) {
 
     total = total.toFixed(2);
 
-    fetch(`${API_BASE_URL}/checkout/`, {
+    fetch(`${API_BASE_URL}/checkout/${slug}/`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -158,7 +158,7 @@ function checkout(total, slug, products_and_quantities) {
         return response.json();
     })
     .then(data => {
-        console.log(data);
+        localStorage.setItem('payment_id', data.payment_id);
         window.location.href = `/checkout/${slug}/`;
     })
 }

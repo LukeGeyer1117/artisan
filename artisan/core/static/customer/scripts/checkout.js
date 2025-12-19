@@ -3,17 +3,36 @@ import { GetProduct, showToast } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
 
+let gwTokenResolve;
+let gwTokenReject;
+
+const gwTokenPromise = new Promise((resolve, reject) => {
+    gwTokenResolve = resolve;
+    gwTokenReject = reject;
+})
+
 let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
-let paymentTotal = 0;
 const slug = document.body.dataset.slug;
 const STATES = {'AL':'ALABAMA','AK':'ALASKA','AZ':'ARIZONA','AR':'ARKANSAS','CA':'CALIFORNIA','CO':'COLORADO','CT':'CONNECTICUT','DE':'DELAWARE','FL':'FLORIDA','GA':'GEORGIA','HI':'HAWAII','ID':'IDAHO','IL':'ILLINOIS','IN':'INDIANA','IA':'IOWA','KS':'KANSAS','KY':'KENTUCKY','LA':'LOUISIANA','ME':'MAINE','MD':'MARYLAND','MA':'MASSACHUSETTS','MI':'MICHIGAN','MN':'MINNESOTA','MS':'MISSISSIPPI','MO':'MISSOURI','MT':'MONTANA','NE':'NEBRASKA','NV':'NEVADA','NH':'NEW HAMPSHIRE','NJ':'NEW JERSEY','NM':'NEW MEXICO','NY':'NEW YORK','NC':'NORTH CAROLINA','ND':'NORTH DAKOTA','OH':'OHIO','OK':'OKLAHOMA','OR':'OREGON','PA':'PENNSYLVANIA','RI':'RHODE ISLAND','SC':'SOUTH CAROLINA','SD':'SOUTH DAKOTA','TN':'TENNESSEE','TX':'TEXAS','UT':'UTAH','VT':'VERMONT','VA':'VIRGINIA','WA':'WASHINGTON','WV':'WEST VIRGINIA','WI':'WISCONSIN','WY':'WYOMING'};
 
 document.addEventListener("DOMContentLoaded", async function () {
+    // Immediately attach the token-ready event listener
+    window.addEventListener('gw:token-ready', () => {
+        const token = document.getElementById('gw-token')?.value;
+
+        if (!token) {
+            gwTokenReject(new Error('gw:token-ready fired but token missing'));
+            return;
+        }
+
+        gwTokenResolve(token);
+    }, { once: true });
+
     // Get the total amount from the session info
-    let response = await fetch(`${API_BASE_URL}/checkout/`, {
+    let response = await fetch(`${API_BASE_URL}/checkout/${slug}/`, {
         method: 'GET',
         headers: {
             'X-CSRFToken': csrftoken
@@ -26,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const total = data.total;
     const products = data.products;
+    const payment_id = data.payment;
 
     summarize(total, products)
 
@@ -47,7 +67,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const checkout_button = document.getElementById('checkout-btn');
     formListen(checkout_button);
     checkout_button.addEventListener('click', function () {
-        checkout();
+        checkout_button.setAttribute('disabled', true);
+        checkout_button.innerHTML = `<span class="loading loading-spinner loading-sm"></span>`;
+        checkout(payment_id);
     })
 })
 
@@ -166,27 +188,47 @@ function addStates() {
     }
 }
 
-function checkout() {
-    const checkout_field_ids = {
-        'first-name': '', 'last-name': '', 'email': '', 'phone': '', 'street-address': '',
-        'city': '', 'state': '', 'zip-code': '', 'card-number': '', 'exp-date': '', 'exp-year': '', 
-        'cvc': '', 'billing-fname': '', 'billing-lname': '', 'billing-zip': '' 
+async function checkout(payment_id) {
+
+    const gatewayForm =
+        document.getElementById('gateway-card-container')?.closest('form');
+
+    if (!gatewayForm) {
+        throw new Error('Gateway form not found');
     }
 
-    for (const field in checkout_field_ids) {
-        checkout_field_ids[field] = document.getElementById(field).value;
-    }
+    // 🔥 This is the missing piece
+    gatewayForm.requestSubmit();
 
-    let ok = true;
-    for (const field in checkout_field_ids) {
-        if (checkout_field_ids[field] == '') {
-            showToast(`Missing field: ${field}`, 'error');
-            ok = false;
+    try {
+        const checkout_field_ids = {
+            'first-name': '', 'last-name': '', 'email': '', 'phone': '', 'street-address': '',
+            'city': '', 'state': '', 'zip-code': '', 'card-number': '', 'exp-date': '', 'exp-year': '', 
+            'cvc': '', 'billing-fname': '', 'billing-lname': '', 'billing-zip': '' 
         }
-    }
-    if (!ok) { return; }
 
-    window.addEventListener('gw:token-ready', function () {
+        for (const field in checkout_field_ids) {
+            checkout_field_ids[field] = document.getElementById(field).value;
+        }
+
+        let ok = true;
+        for (const field in checkout_field_ids) {
+            if (checkout_field_ids[field] == '') {
+                showToast(`Missing field: ${field}`, 'error');
+                ok = false;
+                const checkout_button = document.getElementById('checkout-btn');
+                checkout_button.removeAttribute('disabled');
+                checkout_button.innerHTML = `Complete Payment`;
+            }
+        }
+        if (!ok) { return; }
+
+        console.log('here1');
+
+        const token = await withTimeout(gwTokenPromise, 10000);
+
+        // Once the token has been created, create the payload and 
+        // request that the server attempt the payment
         const billing = {
             "first_name": checkout_field_ids['first-name'],
             "last_name": checkout_field_ids['last-name'],
@@ -198,33 +240,51 @@ function checkout() {
             "email": checkout_field_ids['email'],
         }
 
-        const payload = {
-            "token": document.getElementById('gw-token').value,
-            "amount": document.getElementById('amount').value,
-            "merchant": document.getElementById('gw-merchant').value,
-            "x_login": document.getElementById('gw-login').value,
-            "x_tran_key": document.getElementById('gw-trankey').value,
-            "billing": billing
+        const order = {
+            "full_name": `${checkout_field_ids["first-name"]} ${checkout_field_ids["last-name"]}`,
+            "email": checkout_field_ids['email'],
+            "phone": checkout_field_ids['phone'],
+            "shipping_addr": checkout_field_ids['street-address'],
+            "city": checkout_field_ids['city'],
+            "state": checkout_field_ids['state'],
+            "zip_code": checkout_field_ids['zip-code'],
         }
 
-        console.log(payload);
+        const payload = {
+            "payment_id": localStorage.getItem('payment_id'),
+            "token": token,
+            "billing": billing,
+            "order": order,
+            "slug": slug
+        }
 
-        fetch(`https://develop.expitrans.com/atlas/transact_token.php`, {
-            method: 'POST',
+        console.log('here2');
+
+        const response = await fetch(`${API_BASE_URL}/checkout/${slug}/`, {
+            method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
-                'X-App-Source': 'dixie.gallery/checkout.html'
+                'X-CSRFToken': csrftoken
             },
             body: JSON.stringify(payload)
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Couldnt transact payment");
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-        })
-    })
+        });
+
+        if (!response.ok) {
+            showToast("Payment Failed", 'error');
+            throw new Error("Couldn't process payment.");
+        } else {
+            window.location.href = `/order-complete/${slug}/`;
+        }
+
+
+
+    } catch (err) {
+        console.error(err);
+        showToast(err.message, 'error');
+
+        const checkout_button = document.getElementById('checkout-btn');
+        checkout_button.disabled = false;
+        checkout_button.innerText = 'Complete Payment';
+    }
 }
 
 async function summarize(total, products) {
@@ -251,4 +311,11 @@ async function summarize(total, products) {
         document.getElementById('subtotal').textContent = `$${total}`;
 
     }
+}
+
+function withTimeout(promise, ms=10000) {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Tokenization timed out')), ms))
+    ]);
 }

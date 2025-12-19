@@ -162,6 +162,8 @@
     form.addEventListener('submit', async (e)=>{
         e.preventDefault();
 
+        console.log('Payment form submitted');
+
         if (!validateInputs()) {
             // Dispatch a custom event when validation fails
             window.dispatchEvent(new CustomEvent('token-null', {

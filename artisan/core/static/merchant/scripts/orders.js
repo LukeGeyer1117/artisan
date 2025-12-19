@@ -38,6 +38,7 @@ async function fetchOrders() {
   if (!response.ok) throw new Error("Could not get orders.");
 
   const data = await response.json();
+  console.log(data);
   return data.orders;
 }
 
@@ -105,7 +106,6 @@ async function restockOrder(orderId) {
 function populateOrderDetails(order) {
   document.getElementById('order-name').innerHTML = order.customer_name;
   document.getElementById('order-contact').innerHTML = `${order.customer_phone} / ${order.customer_email}`;
-  document.getElementById('order-date').innerHTML = formatTimestamp(order.created_at);
   document.getElementById('order-total').innerHTML = order.total_price;
   document.getElementById('order-status').value = order.status;
 }
@@ -118,7 +118,7 @@ function createOrderItemElement(product, quantity) {
   const orderProduct = document.createElement('div');
   orderProduct.className = 'order-product';
   orderProduct.innerHTML = `
-    <img src='/media/${product.image}' alt='${product.name}'>
+    <img src='${product.image}' alt='${product.name}'>
     <div class="order-product-details">
       <div>
         <h4>Name:</h4>

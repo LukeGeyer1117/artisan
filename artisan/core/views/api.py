@@ -1,4 +1,4 @@
-import os, json
+import os, json, requests
 from datetime import datetime, timedelta
 
 from django.db import transaction
@@ -278,7 +278,7 @@ class OrderView(APIView):
 
             # Get the values from the data
             data = request.data
-            keys = ['full_name', 'email', 'phone', 'shipping_addr', 'city', 'state', 'zip_code', 'slug', 'total_price']
+            keys = ['first_name', 'last_name', 'address', 'city', 'state', 'zip', 'country', 'email']
             values = {}
             for key in keys:
                 values[key] = data.get(key)
@@ -652,6 +652,8 @@ class ProductMerchantView(APIView):
                     data = {field: request.POST.get(field) for field in fields}
                     data['image'] = request.FILES.get('image')
 
+                    print(artisan.troute_login)
+
                     # Call troute script to make a product
                     response_from_php = call_php_create_product(
                         artisan.troute_login,
@@ -915,7 +917,6 @@ def add_product_to_cart(request):
 
             # Get the current cart list from the session
             cart = request.session.get('cart-product-ids', {})
-            print(cart)
 
             # Try to remove the product ID if it exists
             if product_id in cart:
@@ -931,16 +932,32 @@ def add_product_to_cart(request):
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 @csrf_protect
-def api_checkout(request):
+def api_checkout(request, slug=None):
+    artian = Artisan.objects.get(slug=slug)
+
     # Create the session checkout data
     if request.method == "POST":
+        artisan = Artisan.objects.get(slug=slug)
+        if not artisan:
+            return JsonResponse({'error': 'Artisan not found'}, status=404)
+
         try:
             data = json.loads(request.body)
             request.session['checkout-total'] = data['total']
             request.session['products_and_quantities'] = data['products_and_quantities']
-            print(request.session['products_and_quantities'])
 
-            return JsonResponse({'message': "Checkout Created"}, status=200)
+            subtotal = 0
+
+            for lst in request.session['products_and_quantities']:
+                product = Product.objects.get(id=lst[0])
+                subtotal += product.price * lst[1]
+
+            payment = Payment.objects.create(subtotal=subtotal, artisan=artisan)
+
+            payment.save()
+            request.session['payment-id'] = payment.id
+
+            return JsonResponse({'message': "Checkout Created", 'payment_id': payment.id}, status=200)
         except Exception as e:
             return JsonResponse({'error': f'Failed to create a checkout: {e}'}, status=500)
     # Get the session checkout data
@@ -948,6 +965,7 @@ def api_checkout(request):
         try:
             total = request.session.get('checkout-total', 0)
             products = request.session.get('products_and_quantities')
+            payment_id = request.session.get('payment-id')
 
             products_json = {}
             for p in products:
@@ -955,17 +973,159 @@ def api_checkout(request):
 
             if total == 0:
                 return JsonResponse({'error': 'No Checkout Total'})
-            return JsonResponse({'message': 'Found total', 'total': total, 'products': products_json})
+            return JsonResponse({'message': 'Found total', 'total': total, 'products': products_json, 'payment': payment_id})
         except Exception as e:
             return JsonResponse({'error': f'Failed to retrieve a checkout: {e}'}, status=500)
+        
+    # PATCH should only be used to add the tokenized card info to the checkout.
+    elif request.method == 'PATCH':
+        artisan = Artisan.objects.get(slug=slug)
+        if not artisan:
+            return JsonResponse({'error': 'Artisan not found'}, status=404)
+        
+        try:
+            data = json.loads(request.body)
+
+            payment_id = data['payment_id']
+
+            if not payment_id:
+                return JsonResponse({'error': "Bad Request: no payment_id provided"}, 400)
+            
+            payment = Payment.objects.get(id=payment_id)
+
+            # Attempt to set the payment's token field
+            token = data['token']
+
+            if not token:
+                return JsonResponse({'error': "Bad Request: no token included"}, status=400)
+
+            payment.token = token
+
+            # Before processing the payment, we need to create an order, which will be set to pending
+            # Update the order status based on payment result
+            order = data['order']
+            if not order:
+                return JsonResponse({'error': "Bad Request: No order information attached"}, status=400)
+            
+            order_obj = Order.objects.create(
+                customer_name=order['full_name'],
+                customer_email = order['email'],
+                customer_phone=order['phone'],
+                shipping_addr=order['shipping_addr'],
+                city=order['city'],
+                state=order['state'],
+                zip_code=order['zip_code'],
+                artisan=artisan
+            )
+
+            # Get the billing information, and send the tokenized CC to Troute
+            billing = data['billing']
+            if not billing:
+                return JsonResponse({'error': "Bad Request: No billing information attached"}, status=400)
+            
+            payment.billing = billing
+
+            # As the last moment before paying, calculate the total by adding up subtotal, tax, and fees
+            payment.total = payment.subtotal + payment.tax + payment.processing_fees
+            payment.save()
+
+            processed, result, status = process_payment(payment.id)
+
+            if not processed:
+                payment.status = "failed"
+                return JsonResponse({'message': f"Payment Not Processed: {result}"}, status=status)
+            
+            payment.status = "succeeded"
+
+            # After a successful payment, update the order status and total
+            order_obj.status='approved'
+            order_obj.total_price = payment.total
+            order_obj.save()
+
+            order_items = request.session['cart-product-ids']
+            for (key) in order_items:
+                product = Product.objects.get(id=int(key))
+                quantity = int(order_items[key])
+
+                order_item = OrderItems.objects.create(
+                    order = order_obj,
+                    product = product,
+                    quantity = quantity
+                )
+
+                product.quantity -= quantity
+                product.save()
+
+
+            return JsonResponse({'message': f"Processed Payment: {result}"}, status=status)
+                        
+        except Exception as e:
+            return JsonResponse({'error': "Couldn't patch payment"}, status=500)
+
     return JsonResponse({"error": 'Method not allowed'}, status=405)
 
-# This is just a throwaway endpoint to simulate processing a payment.
-# This will always return a success.
-@csrf_protect
-@require_POST
-def process_payment(request):
-    return JsonResponse({'message': 'Payment Processed Successfully', 'payment_status': "SUCCEED"}, status=200)
+def process_payment(payment_id=None):
+    if not payment_id:
+        return (False, "No payment id provided", 400)
+    
+    payment = Payment.objects.get(id=payment_id)
+    if not payment:
+        return (False, "No payment matching id provided", 404)
+    
+    # Validate that all needed parts of the Payment are provided
+    # - Token
+    # - Total
+    token, total = payment.token, payment.total
+
+    if not token or not total:
+        return (False, "No token or total found", 400)
+    
+    # Get the merchant's troute key and login
+    artisan = payment.artisan
+    if not artisan:
+        return (False, "No Artisan attached to payment", 500)
+    
+    merchant, x_login = artisan.troute_login, artisan.troute_login
+    x_tran_key = artisan.troute_key
+
+    if not merchant or not x_login or not x_tran_key:
+        return (False, "Merchant not registered with gateway", 400)
+    
+
+    url = "https://develop.expitrans.com/atlas/transact_token.php"
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-App-Source": "dixie.gallery/checkout/",
+    }
+
+    payload = {
+        "token"     : payment.token,
+        "amount"    : payment.total,
+        "merchant"  : merchant,
+        "x_login"   : x_login,
+        "x_tran_key": x_tran_key,
+        "transtype" : payment.transtype,
+        "billing"   : payment.billing
+    }
+
+    response = requests.post(
+        url,
+        json=payload,
+        headers=headers,
+        timeout=15,
+    )
+
+    response.raise_for_status()
+    data = response.json()    
+
+    transaction = data['transaction']
+    
+    if transaction['status'] == 1 and transaction['status_text'] == 'Success':
+        return (True, "Success", 200)
+
+
+    return (False, transaction['status_text'], 400)
 
 
 @login_required(login_url='/login/')

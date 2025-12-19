@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, ProductImage, GalleryImage, LogoImage, HeroImage, Category, Theme, TextContent, ShopSettings, Policies
+from .models import Artisan, Inventory, Product, Order, OrderItems, CustomRequest, ProductImage, GalleryImage, LogoImage, HeroImage, Category, Theme, TextContent, ShopSettings, Policies, Payment
 
 admin.site.register(Artisan)
 admin.site.register(Inventory)
@@ -16,5 +16,6 @@ admin.site.register(Theme)
 admin.site.register(TextContent)
 admin.site.register(ShopSettings)
 admin.site.register(Policies)
+admin.site.register(Payment)
 
 # Register your models here.

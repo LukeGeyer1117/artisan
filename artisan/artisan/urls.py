@@ -111,8 +111,7 @@ urlpatterns = [
     path('api/theme/<slug:slug>/', views.ThemeCustomerView.as_view()),
     path('api/theme/', views.ThemeMerchantView.as_view()),
     # Payments  
-    path('api/checkout/', views.api_checkout, name="checkout"),
-    path('api/process_payment/', views.process_payment, name="process_payment"),
+    path('api/checkout/<slug:slug>/', views.api_checkout, name="checkout"),
 
     # MISCELLANEOUS
     path('api/csrf/', views.get_csrf_token), 

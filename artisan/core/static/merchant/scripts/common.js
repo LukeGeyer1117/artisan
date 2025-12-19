@@ -163,7 +163,6 @@ function renderResults(filteredData, searchTerm = '') {
           <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
             <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
-            <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
             <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
             <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
           </tr>
@@ -180,7 +179,6 @@ function renderResults(filteredData, searchTerm = '') {
           <tr class='order-row' data-item='${JSON.stringify(item).replace(/'/g, '&apos;')}'>
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
             <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
-            <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
             <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
             <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
           </tr>
@@ -198,7 +196,6 @@ function renderResults(filteredData, searchTerm = '') {
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
             <td class='customer-name-td'>${highlightText(String(item.customer_name), searchTerm)}</td>
             <td class='customer-contact-td'>${highlightText(String(item.customer_phone) + ' / ' + String(item.customer_email), searchTerm)}</td>
-            <td class='order-date-td'>${highlightText(String(formatTimestamp(item.created_at)), searchTerm)}</td>
             <td class='order-total-td'>${highlightText(String(item.total_price), searchTerm)}</td>
             <td class='order-status-td'>${highlightText(String(item.status), searchTerm)}</td>
           </tr>
@@ -263,6 +260,7 @@ function renderResults(filteredData, searchTerm = '') {
 }
 
 function formatTimestamp(timestamp) {
+  console.log(timestamp);
   const [datePart, timePart] = timestamp.split(' '); // "2025-06-24", "22:02"
   const [year, month, day] = datePart.split('-');
   const [hour, minute] = timePart.split(':');
@@ -292,8 +290,6 @@ async function get_merchant_information() {
     }
 
     const data = await response.json();
-
-    console.log(`FETCH: `, data.artisan);  
     if (data.artisan.troute_key == "False" || data.artisan.troute_login == "False") {
       showToast("You are not fully registered. Please contact your System Administrator or Agent");
     }

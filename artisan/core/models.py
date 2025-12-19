@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 
+from django.utils import timezone
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, AbstractUser
 
 class ArtisanManager(BaseUserManager):
@@ -348,3 +350,42 @@ class Policies(models.Model):
 
     def __str__(self):
         return f"{self.artisan.username}'s Policies"
+
+class Payment(models.Model):
+    token = models.CharField(default='')
+
+    artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE)
+
+    subtotal = models.IntegerField()
+    tax      = models.IntegerField(default=0)
+    processing_fees = models.IntegerField(default=0)
+
+    total    = models.IntegerField(default=0)
+
+    transtype = models.CharField(default="AUTH_CAPTURE")
+
+    currency = models.CharField(max_length=10, default="usd")
+
+    billing = models.JSONField(default=dict, blank=True)
+
+     # Various states the payment intent can be in
+    STATUS_CHOICES = [
+        ("created", "Created"),
+        ("requires_action", "Requires Action"),
+        ("processing", "Processing"),
+        ("succeeded", "Succeeded"),
+        ("failed", "Failed"),
+        ("canceled", "Canceled"),
+    ]
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="created")
+
+    cart_snapshot = models.JSONField(null=True, blank=True)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id} ({self.status})"
+
+    class Meta:
+        ordering = ["-created_at"]
