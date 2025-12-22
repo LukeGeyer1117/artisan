@@ -46,6 +46,8 @@ STATUS_200 = status.HTTP_200_OK
 # Serialize some common response errors
 ARTISAN_NOT_FOUND = Response({'error': "Artisan not found"}, status=STATUS_404)
 
+TROUTE_DOMAIN = os.environ.get("TROUTE_DOMAIN", "develop.expitrna.com")
+
 ### API VIEWS
 
 @csrf_exempt
@@ -615,11 +617,8 @@ class ProductsMerchantView(APIView):
 
 
 def create_troute_product(troute_login, troute_key, name, description, price):
-    troute_domain = os.environ.get("TROUTE_DOMAIN", "develop.expitrna.com")
 
-    print(troute_domain)
-
-    url = f"https://{troute_domain}/query?action=expiproduct"
+    url = f"https://{TROUTE_DOMAIN}/query?action=expiproduct"
 
     payload = {
         "product": {
@@ -1071,7 +1070,7 @@ def api_checkout(request, slug=None):
                 product = Product.objects.get(id=int(key))
                 quantity = int(order_items[key])
 
-                order_item = OrderItems.objects.create(
+                OrderItems.objects.create(
                     order = order_obj,
                     product = product,
                     quantity = quantity
@@ -1115,8 +1114,9 @@ def process_payment(payment_id=None):
     if not merchant or not x_login or not x_tran_key:
         return (False, "Merchant not registered with gateway", 400)
     
+    print(TROUTE_DOMAIN)
 
-    url = "https://develop.expitrans.com/atlas/transact_token.php"
+    url = f"https://{TROUTE_DOMAIN}/atlas/transact_token.php"
 
     headers = {
         "Content-Type": "application/json",
