@@ -1141,7 +1141,9 @@ def process_payment(payment_id=None):
     )
 
     response.raise_for_status()
-    data = response.json()    
+    data = response.json()  
+
+    print(data)  
 
     transaction = data['transaction']
     
