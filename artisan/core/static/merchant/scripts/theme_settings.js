@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   // Get the Logo Image for this merchant
-  await fetch(`${API_BASE_URL}/logo/`, {
+  fetch(`${API_BASE_URL}/logo/`, {
     method: 'GET',
     credentials: 'include'
   })
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   // Get the Hero Image for this merchant
-  await fetch(`${API_BASE_URL}/hero/`, {
+  fetch(`${API_BASE_URL}/hero/`, {
     method: 'GET',
     credentials: 'include'
   })
@@ -182,7 +182,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   // Now, we can add an event listener to the save button that checks for changes before submitting api call
-  const saveChangeBtn = document.getElementById('save-theme-images-btn');
+  const saveChangeBtn = document.getElementById('save-theme-btn');
+  console.log(saveChangeBtn);
   saveChangeBtn.addEventListener('click', function () {
     // If colors changed
     if (changed) {

@@ -110,44 +110,35 @@ document.addEventListener('DOMContentLoaded', async function () {
     handleProductEdit(e, currentProduct, categories, extraImageFiles);
   });
 
-  // Delete button handler (add once)
-  document.getElementById('delete-button').addEventListener('click', function () {
-    if (!currentProduct) return;
-    document.querySelector('#confirm-delete-modal').style.display = 'flex';
-  });
+  document.getElementById('product-delete-button').addEventListener('click', function() {
+    const confirmed = window.confirm(`Are you sure you want to permanently delete the product "${currentProduct.name}"?`);
 
-  // Delete confirmation handlers (add once)
-  document.getElementById('cancel-delete-button').addEventListener('click', function () {
-    document.querySelector('#confirm-delete-modal').style.display = 'none';
-  });
+    if (!confirmed) return;
 
-  document.getElementById('confirm-delete-button').addEventListener('click', async function () {
     if (!currentProduct) return;
 
-      fetch(`${API_BASE_URL}/product/`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({id: currentProduct.id})
-      })
-      .then(response => {
-        if (!response.ok) {
-          console.error(`HTTP Error: ${response.status}`);
-          return response.text();
-        }
-      })
-      .then(text => {
-        showToast(text);
-        window.location.reload();
-      })
-      .catch(error => {
-        console.error(error);
-      })
-    }
-  )
+    fetch(`${API_BASE_URL}/product`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify({id: currentProduct.id})
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Coulnd't delete product");
+      return response.text();
+    })
+    .then(text => {
+      showToast(text);
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error(error);
+    })
+
+  })
 
   setupCategoryList(categories, API_BASE_URL);
 
@@ -352,7 +343,6 @@ function CreateCategoryRow(category) {
     <td style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
       ${category.name}
       <div>
-        <button class="edit-category-button" style="color: var(--edit-color); border: none; background-color: #00000000">Edit</button>
         <button class="delete-category-button" style="color: var(--error-color); border: none; background-color: #00000000;">Delete</button>
       </div>
     </td>`;

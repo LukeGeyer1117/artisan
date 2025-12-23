@@ -637,6 +637,48 @@ def create_troute_product(troute_login, troute_key, name, description, price):
         return response
     except requests.RequestException as e:
         return response
+    
+def edit_troute_product(troute_login, troute_key, troute_unique_id, name, description, price):
+
+    url = f"https://{TROUTE_DOMAIN}/query?action=expiproduct"
+
+    payload = {
+        "product": {
+            "uniqueID": troute_unique_id,
+            "name": name,
+            "description": description,
+            "price": price
+        }
+    }
+
+    auth = (troute_login, troute_key)
+
+    try:
+        response = requests.patch(url, json=payload, auth=auth, timeout=10)
+
+        response.raise_for_status()
+        return response
+    except requests.RequestException:
+        return response
+    
+def delete_troute_product(troute_login, troute_key, troute_unique_id):
+
+    url = f"https://{TROUTE_DOMAIN}/query?action=expiproduct"
+
+    payload = {
+        "uniqueID": troute_unique_id
+    }
+
+    auth = (troute_login, troute_key)
+
+    try:
+        response = requests.delete(url, json=payload, auth=auth, timeout=10)
+
+        response.raise_for_status()
+        return response
+    except requests.RequestException:
+        return response
+
 
 class ProductMerchantView(APIView):
     """
@@ -727,7 +769,7 @@ class ProductMerchantView(APIView):
                         data[field] = request.FILES.get(field)
 
                     # Try to update in troute first
-                    response_from_php = call_php_edit_product(
+                    response = edit_troute_product(
                         artisan.troute_login,
                         artisan.troute_key,
                         product.troute_unique_id,
@@ -735,11 +777,14 @@ class ProductMerchantView(APIView):
                         data['description'],
                         data['price']
                     )
-                    parsed = sanitize_troute_resp(response_from_php)
-                    print(f"Parsed result: {parsed['result']}")
+                    response_body = json.loads(response.text)
 
-                    if parsed['result'] != "success":
-                        return JsonResponse({'error': "Internal Server Error: Could not edit product due to Troute issue"}, status=500)
+
+                    print(response_body)
+                    print(type(response_body))
+
+                    if response_body['result'] != 'success':
+                        return JsonResponse({'Troute Product could not be edited'}, status=STATUS_500)
                         
                     # Update fields if provided
                     if data['name']:
@@ -764,7 +809,7 @@ class ProductMerchantView(APIView):
                     for image_file in extra_images:
                         ProductImage.objects.create(product=product, image=image_file)
 
-                    return JsonResponse({'message': "Updated Product"}, status=200)
+                    return JsonResponse({'message': "Updated Product"}, status=STATUS_200)
                 except Exception as e:
                     return Response({'error': "Couldn't update product"}, status=STATUS_500)
                 
@@ -775,7 +820,6 @@ class ProductMerchantView(APIView):
         try:
             # Load the product from request
             artisan = request.user
-            print('here')
             inventory = get_object_or_404(Inventory, artisan=artisan)
             data = json.loads(request.body)
             product_id = data['id']
@@ -786,15 +830,18 @@ class ProductMerchantView(APIView):
             # Make sure the product belongs to the user
             product = Product.objects.get(id=product_id, inventory=inventory)
 
-            print(model_to_dict(product))
-
             # See if the product has a unique troute id and delete it first
             if product.troute_unique_id and product.troute_registered:
-                response_from_php = call_php_delete_product(
+                response = delete_troute_product(
                     artisan.troute_login,
                     artisan.troute_key,
                     product.troute_unique_id
                 )
+
+                response_body = json.loads(response.text)
+
+                if response_body['result'] != "success":
+                    return JsonResponse({'error': "Troute product could not be deleted"}, status=STATUS_500)
                 
             product.delete()
             return Response({'message': "Product deleted"}, status=STATUS_200)
@@ -1340,7 +1387,7 @@ class HeroImageMerchantView(APIView):
 
             # Check image
             if not hero.image or not hero.image.url:
-                return Response({'error': "Image not found"}, status=STATUS_404)
+                return Response({'message': "Hero Image not set"}, status=STATUS_200)
             
             return Response({'message': message, 'image_url': hero.image.url}, status=STATUS_200)
         except Artisan.DoesNotExist:
@@ -1420,7 +1467,7 @@ class LogoImageMerchantView(APIView):
 
             # Make sure logo image has valid url
             if not logo.image or not logo.image.url:
-                return Response({'error': "No valid image found"}, status=STATUS_404)
+                return Response({'message': "Logo Image Not Set"}, status=STATUS_200)
             
             return Response({'message': message, 'image_url': logo.image.url}, status=STATUS_200)
         except Artisan.DoesNotExist:
