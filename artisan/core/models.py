@@ -39,7 +39,7 @@ class Artisan(AbstractUser):
     price_range_low = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
     price_range_high = models.DecimalField(max_digits=10, decimal_places=2, default=100, blank=True)
     accepting_custom_orders = models.BooleanField(default=False)
-    image = models.ImageField(upload_to="pfps/", default="")
+    image = models.ImageField(upload_to="pfps/", blank=True)
 
     # Troute Necessities
     troute_login = models.CharField(max_length=100, blank=True, null=True)
@@ -158,7 +158,7 @@ class Order(models.Model):
     artisan = models.ForeignKey(Artisan, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.total_price} - {self.customer_name} - {self.customer_email} - {self.customer_phone} - {self.created_at}"
+        return f"{self.id} - {self.artisan} - {self.customer_name} - {self.created_at}"
     
 class CustomRequest(models.Model):
     customer_name = models.CharField(max_length=100)

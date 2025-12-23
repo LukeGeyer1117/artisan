@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core import views
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Customer URLS
@@ -48,6 +49,28 @@ urlpatterns = [
 
     # Administrator URLS
     path('admin/', admin.site.urls),
+
+    # Password Reset Views
+    path(
+        "password-reset/",
+        auth_views.PasswordResetView.as_view(),
+        name="password_reset"
+    ),
+    path(
+        "password-reset/done/",
+        auth_views.PasswordResetDoneView.as_view(),
+        name="password_reset_done"
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm"
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(),
+        name="password_reset_complete"
+    ),
 
     # Documentation
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
