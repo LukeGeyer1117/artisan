@@ -96,7 +96,7 @@ urlpatterns = [
     path('api/products/<slug:slug>/featured/', views.get_featured_products_by_slug),
     # Orders
     path('api/order/', views.OrderView.as_view(), name="order"),
-    path('api/order/status/', views.UpdateOrderStatusView.as_view()),
+    path('api/order/status/', views.update_order_status),
     path('api/orders/', views.OrdersMerchantView.as_view()),
     path('api/orders/active/', views.ActiveOrdersMerchantView.as_view()),
     path('api/orders/inactive/', views.inactive_orders),

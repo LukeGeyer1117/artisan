@@ -326,53 +326,47 @@ class OrderView(APIView):
             return Response({'error': f"Couldn't create order. Error: {str(e)}"}, status=STATUS_500)
 
 # UPdate an order's status
-class UpdateOrderStatusView(APIView):
+@login_required
+@require_POST
+def update_order_status(request):
     """
-    Merchant only endpoint to change order pipeline status.
+    Merchant-only endpoint to update an order's status.
+    Expects JSON POST body: { "order_id": int, "status": str }
     """
-    permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    try:
+        # Parse JSON body
+        data = json.loads(request.body)
+        order_id = data.get("order_id")
+        new_status = data.get("status")
 
-    @extend_schema(
-        summary="Update order status",
-        description="Update order status as signed in merchant. Must include valid order id and status",
-        request={
-            'application/json': {
-                'type': 'object',
-                'properties': {
-                    'order_id': {'type': 'integer', 'description': 'The order id of the order to be changed.'},
-                    'status': {'type': 'string', 'description': 'The new status we are updating to.'}
-                },
-                'required': ['order_id', 'status']
-            }
-        },
-        responses={
-            200: OpenApiResponse( description="Order updated" ),
-            404: OpenApiResponse( description="No order to change found" ),
-            500: OpenApiResponse( description="Internal server error" )
-        }   
-    )
+        if not order_id or not new_status:
+            return JsonResponse({"error": "order_id and status are required"}, status=400)
 
-    def post(self, request):
-        artisan=request.user
+        # Only allow merchant to update their own orders
+        artisan = request.user
+        order = Order.objects.get(id=order_id, artisan=artisan)
 
-        try:
-            data = json.loads(request.body)
-            order_id = data['order_id']
-            status = data['status']
+        order.status = new_status
+        order.save()
 
-            order = Order.objects.get(id=order_id, artisan=artisan)
-            order.status=status
+        items = OrderItems.objects.filter(order=order)
 
-            order.save()
-            return Response({'message': "Order status updated"}, status=STATUS_200)
-        except Order.DoesNotExist:
-            return Response({'error': "Order not found"}, status=STATUS_404)
-        except Exception as e:
-            return Response({'error': f"Couldn't update order status. Error: {str(e)}"}, status=STATUS_500)
+        # Send email for status change
+        send_order_status_change(order, items, artisan)
+
+        return JsonResponse({"message": "Order status updated"}, status=200)
+
+    except Order.DoesNotExist:
+        return JsonResponse({"error": "Order not found"}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    except Exception as e:
+        return JsonResponse({"error": f"Couldn't update order status: {str(e)}"}, status=500)
     
 @csrf_exempt
-@require_POST
+@require_POST   
 def restock(request):
     artisan_id = request.session.get('artisan_id')
     if not artisan_id:
@@ -441,7 +435,6 @@ class OrdersMerchantView(APIView):
 
             orders = Order.objects.filter(artisan=artisan).order_by('created_at')
             orders_data = [ model_to_dict(order) for order in orders ]
-            print(orders_data)
 
             return Response({'message': "Found Orders", 'orders': orders_data}, status=STATUS_200)
         except Artisan.DoesNotExist:
@@ -1538,7 +1531,7 @@ def create_logo_image(request):
     image_file = request.FILES['image']
     
     # validate file types
-    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']
     if image_file.content_type not in allowed_types:
         return JsonResponse({'error': 'Invalid file type. Only JPEG, PNG, GIF, and WebP allowed'}, status=400)
     
@@ -1895,7 +1888,6 @@ def gateway_proxy(request):
     return response
 
 def send_order_confirmation(order, order_items, artisan):
-    print('here')
     subject = f"Order Confirmation from {artisan.shop_name} - #{order.id}"
 
     context = {
@@ -1921,3 +1913,32 @@ def send_order_confirmation(order, order_items, artisan):
         [order.customer_email],
         html_message=html_message
     )
+
+
+def send_order_status_change(order, order_items, artisan):
+    context = {
+        "order": order,
+        "order_items": order_items,
+        "artisan": artisan
+    }
+
+    subject = ''
+
+    # If the order was canceled, we need to send a different template.
+    if order.status == 'canceled' or order.status == 'denied':
+        subject = f"Order Cancellation from { artisan.shop_name } - #{order.id}"
+        message = render_to_string("emails/order_cancel.txt", context)
+        html_message = render_to_string("emails/order_cancel.html", context)
+    else:
+        subject = f"Order Status Update from {artisan.shop_name} - #{order.id}"
+        message = render_to_string("emails/order_status_change.txt", context)
+        html_message = render_to_string("emails/order_status_change.html", context)
+
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [order.customer_email],
+        html_message=html_message
+    )
+

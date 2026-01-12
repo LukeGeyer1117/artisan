@@ -1,0 +1,13 @@
+<!-- templates/emails/order_cancel.html -->
+
+<h2>Hello {{ order.customer_name }}, your order from {{ artisan.shop_name }} has been canceled.</h2>
+
+<p>
+  <strong>Order #: </strong>{{ order.id }}<br>
+  <strong>Merchant: </strong>{{ artisan.shop_name }}<br>
+  <strong>Total Paid: </strong>{{ order.total_price }}<br>
+</p>
+
+<hr>
+
+<p><strong>A refund will be processed to your original payment method within 1 business week.</strong></p>
