@@ -1,29 +1,40 @@
 :root {
-  --main-bg-color: #f8f3ef;
-  --secondary-bg-color: #fffaf6;
-  --container-bg-color: #fff8f4;
+  --main-bg-color: #f4f7fb;
+  --secondary-bg-color: #f9fbfe;
+  --container-bg-color: #eef3f9;
   --card-bg-color: #ffffff;
-  --text-color-primary: #3c2a23;
-  --text-color-secondary: #805b4c;
-  --border-color: #e4c1a1;
-  --softened-accent-color: #f9d7b8;
-  --active-row-color: #fff1e8;
-  --accent-color: #d96e3b;
-  --accent-color-hover: #b8562a;
-  --button-color: #d96e3b;
-  --button-hover-color: #b8562a;
-  --save-button-bg: #d96e3b;
-  --save-button-hover-bg: #a34724;
-  --edit-color: #eea70f;
-  --error-color: #d04a3c;
-  --shadow-extra-light: 0 2px 3px rgba(90, 40, 20, 0.15);
-  --shadow-light: 0 4px 6px rgba(90, 40, 20, 0.08);
-  --shadow-medium: 0 6px 10px rgba(90, 40, 20, 0.12);
+
+  --text-color-primary: #1f2d3d;
+  --text-color-secondary: #5b6f8c;
+
+  --border-color: #c9d6e6;
+  --table-row-border-color: #dde6f2;
+
+  --softened-accent-color: #cfe2f7;
+  --active-row-color: #e8f1fc;
+
+  --accent-color: #3a7bd5;
+  --accent-color-hover: #2f66b2;
+
+  --button-color: #3a7bd5;
+  --button-hover-color: #2f66b2;
+
+  --save-button-bg: #3a7bd5;
+  --save-button-hover-bg: #25538f;
+
+  --edit-color: #4da3ff;
+  --error-color: #d64545;
+
+  --shadow-extra-light: 0 2px 3px rgba(31, 45, 61, 0.12);
+  --shadow-light: 0 4px 6px rgba(31, 45, 61, 0.08);
+  --shadow-medium: 0 6px 10px rgba(31, 45, 61, 0.12);
+
   --border-radius: 8px;
-  --table-row-border-color: #f1e2d7;
+
   --line-color-1: var(--accent-color);
   --line-color-2: var(--text-color-secondary);
 }
+
 
 * {
   font-family: 'Poppins', sans-serif;
