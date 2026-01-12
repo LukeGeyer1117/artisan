@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Submission{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class="flex items-center justify-center min-h-screen bg-base-200 p-6">
+
+        <button class="btn">
+          Inbox <div class="badge badge-sm badge-secondary">+99</div>
+        </button>
+
+    </main>
+{% endblock %}
+
+{% block extra_scripts %}{% endblock %}

@@ -305,7 +305,7 @@ class OrderView(APIView):
             )
 
             # Create order items, and clear out the cart
-            products = request.session.get('cart-product-ids')
+            products = request.session.get('cart_product_ids')
             orderItems = []
             for p in products:
                 orderitem = OrderItems.objects.create(
@@ -317,7 +317,7 @@ class OrderView(APIView):
                 product.quantity -= int(products[p])
                 product.save()
                 orderItems.append(orderitem)
-            request.session['cart-product-ids'] = {}
+            request.session['cart_product_ids'] = {}
             return Response({'message': "Order Created", "order": order.id, "items": len(orderItems)}, status=STATUS_200)
         
         except Artisan.DoesNotExist:
@@ -935,14 +935,14 @@ def add_product_to_cart(request):
             if not data or 'product_id' not in data or 'quantity' not in data:
                 return JsonResponse({'error': 'No product ID or No quantity'}, status=400)
             try:
-                cart = request.session.get('cart-product-ids', {})
+                cart = request.session.get('cart_product_ids', {})
                 if cart == []: 
                     cart = {}
                 print(cart)
                 cart[data['product_id']] = data['quantity']
-                request.session['cart-product-ids'] = cart
+                request.session['cart_product_ids'] = cart
 
-                print(request.session['cart-product-ids'])
+                print(request.session['cart_product_ids'])
                 return JsonResponse({'message': 'Product ID added to cart'}, status=200)
             except:
                 return JsonResponse({'error': 'Could not add product id to cart'}, status=400)
@@ -951,7 +951,7 @@ def add_product_to_cart(request):
     # Automatically called to get all the customer's cart items
     elif request.method == "GET":
         try:
-            raw_items = request.session.get('cart-product-ids', [])
+            raw_items = request.session.get('cart_product_ids', [])
 
             product_ids = []
             for item in raw_items:
@@ -970,9 +970,9 @@ def add_product_to_cart(request):
             if not data or 'product_id' not in data or 'quantity' not in data:
                 return JsonResponse({'error': 'Invalid Data'})
             try:
-                cart = request.session.get('cart-product-ids')
+                cart = request.session.get('cart_product_ids')
                 cart[data['product_id']] = int(data['quantity'])
-                request.session['cart-product-ids'] = cart
+                request.session['cart_product_ids'] = cart
 
                 return JsonResponse({'message': 'Product Quantity Edited in Cart', 'value': data['quantity']}, status=200)
             except:
@@ -991,12 +991,12 @@ def add_product_to_cart(request):
             product_id = str(product_id)
 
             # Get the current cart list from the session
-            cart = request.session.get('cart-product-ids', {})
+            cart = request.session.get('cart_product_ids', {})
 
             # Try to remove the product ID if it exists
             if product_id in cart:
                 del cart[product_id]
-                request.session['cart-product-ids'] = cart  # Save updated list back to session
+                request.session['cart_product_ids'] = cart  # Save updated list back to session
                 return JsonResponse({'message': 'Product removed from cart'})
             else:
                 return JsonResponse({'error': 'Product not found in cart'}, status=404)
@@ -1117,7 +1117,7 @@ def api_checkout(request, slug=None):
             order_obj.total_price = payment.total
             order_obj.save()
 
-            order_items = request.session['cart-product-ids']
+            order_items = request.session['cart_product_ids']
             items = []
             for (key) in order_items:
                 product = Product.objects.get(id=int(key))
