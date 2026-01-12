@@ -35,6 +35,7 @@ urlpatterns = [
     path('item/<slug:slug>/<int:item_id>/', views.item),
     path('about/<slug:slug>/', views.about, name='about'),
     path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
+    path('test/<slug:slug>/', views.test, name="test"),
 
     # Merchant URLS
     path('login/', views.login_view, name='login'),

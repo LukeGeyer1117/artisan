@@ -14,8 +14,8 @@ def splash(request):
 # ---------------CUSTOMER VIEWS--------------------
 
 def home(request, slug=None):
-    if 'cart-product-ids' not in request.session:
-        request.session['cart-product-ids'] = []
+    if 'cart_product_ids' not in request.session:
+        request.session['cart_product_ids'] = []
     if slug:
         artisan = get_object_or_404(Artisan, slug=slug)
         return render(request, 'client/customer/home.html', {'artisan': artisan})
@@ -62,6 +62,11 @@ def item(request, slug, item_id):
 def about(request, slug):
     artisan = get_object_or_404(Artisan, slug=slug)
     return render(request, 'client/customer/about.html', {'artisan': artisan})
+
+
+def test(request, slug):
+    artisan = get_object_or_404(Artisan, slug=slug)
+    return render(request, 'client/customer/test.html')
 
 # -------------Merchant Views--------------------
 
