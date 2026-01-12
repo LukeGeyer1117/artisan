@@ -28,6 +28,11 @@ from django.http import HttpResponse
 from django.contrib.auth import login
 from django.db import transaction
 
+# emails
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
+
 from rest_framework.views import APIView
 from rest_framework.response import Response  # Use DRF's Response
 from rest_framework import status
@@ -1003,7 +1008,7 @@ def add_product_to_cart(request):
 
 @csrf_protect
 def api_checkout(request, slug=None):
-    artian = Artisan.objects.get(slug=slug)
+    artisan = Artisan.objects.get(slug=slug)
 
     # Create the session checkout data
     if request.method == "POST":
@@ -1113,11 +1118,12 @@ def api_checkout(request, slug=None):
             order_obj.save()
 
             order_items = request.session['cart-product-ids']
+            items = []
             for (key) in order_items:
                 product = Product.objects.get(id=int(key))
                 quantity = int(order_items[key])
 
-                OrderItems.objects.create(
+                item = OrderItems.objects.create(
                     order = order_obj,
                     product = product,
                     quantity = quantity
@@ -1125,6 +1131,11 @@ def api_checkout(request, slug=None):
 
                 product.quantity -= quantity
                 product.save()
+
+                items.append(item)
+
+            # Send the order confirmation email
+            send_order_confirmation(order_obj, items, artisan)
 
 
             return JsonResponse({'message': f"Processed Payment: {result}"}, status=status)
@@ -1189,8 +1200,6 @@ def process_payment(payment_id=None):
 
     response.raise_for_status()
     data = response.json()  
-
-    print(data)  
 
     transaction = data['transaction']
     
@@ -1882,3 +1891,32 @@ def gateway_proxy(request):
     response = HttpResponse(r.text, content_type="application/javascript")
     response["Access-Control-Allow-Origin"] = "*"
     return response
+
+def send_order_confirmation(order, order_items, artisan):
+    print('here')
+    subject = f"Order Confirmation from {artisan.shop_name} - #{order.id}"
+
+    context = {
+        "order": order,
+        "order_items": order_items,
+        "artisan": artisan
+    }
+
+    message = render_to_string(
+        "emails/order_confirmation.txt", 
+        context
+    )
+
+    html_message = render_to_string(
+        "emails/order_confirmation.html",
+        context
+    )
+
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [order.customer_email],
+        html_message=html_message
+    )
+

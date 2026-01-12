@@ -1,0 +1,10 @@
+# templates/emails/order_confirmation.txt
+
+Hi {{ order.customer_name }},
+
+Thanks for your order!
+
+Order #: {{ order.id }}
+Total: ${{ order.total_price }}
+
+We’ll notify you when it ships.
