@@ -1921,4 +1921,3 @@ def send_order_confirmation(order, order_items, artisan):
         [order.customer_email],
         html_message=html_message
     )
-
