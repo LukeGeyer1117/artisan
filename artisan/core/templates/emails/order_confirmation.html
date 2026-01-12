@@ -1,7 +1,62 @@
 <!-- templates/emails/order_confirmation.html -->
-<h2>Thanks for your order, {{ customer.first_name }}!</h2>
 
-<p><strong>Order #:</strong> {{ order.id }}</p>
-<p><strong>Total:</strong> ${{ order.total }}</p>
+<h2>Thanks for your order from {{ artisan.shop_name }}, {{ order.customer_name }}!</h2>
 
-<p>We’ll be in touch when it ships.</p>
+<p>
+  <strong>Order #:</strong> {{ order.id }}<br>
+  <strong>Merchant:</strong> {{ artisan.shop_name }}<br>
+  <strong>Total Paid:</strong> ${{ order.total_price }}
+</p>
+
+<hr>
+
+<h3>Shipping Information</h3>
+
+<p>
+  <strong>Name:</strong> {{ order.customer_name }}<br>
+  <strong>Phone:</strong> {{ order.customer_phone }}<br>
+  <strong>Address:</strong> {{ order.shipping_addr }}<br>
+  {{ order.city }}, {{ order.state }} {{ order.zip_code }}
+</p>
+
+<hr>
+
+<h3>Order Summary</h3>
+
+<table width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+  <tbody>
+    {% for item in order_items %}
+    <tr style="border-bottom: 1px solid #eee;">
+      <!-- Product image -->
+      <td width="80" valign="top">
+        {% if item.product.image %}
+          <img
+            src="{{ SITE_URL }}{{ item.product.image.url }}"
+            alt="{{ item.product.name }}"
+            width="64"
+            height="64"
+            style="object-fit: cover; border-radius: 4px;"
+          >
+        {% endif %}
+      </td>
+
+      <!-- Product info -->
+      <td valign="top">
+        <strong>{{ item.product.name }}</strong><br>
+        Quantity: {{ item.quantity }}<br>
+        Price per item: ${{ item.product.price|floatformat:2 }}<br>
+        Line total: ${{ item.line_total|floatformat:2 }}
+      </td>
+
+      <!-- Optional: line total on the right -->
+      <td align="right" valign="top">
+        <strong>${{ item.line_total|floatformat:2 }}</strong>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>
+  We’ll be in touch when your order ships.
+</p>
