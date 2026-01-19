@@ -4,7 +4,6 @@
 {% block title %}Merchant Dashboard{% endblock %}
 
 {% block extra_head %}
-  <link rel="stylesheet" href="{% static 'merchant/styles/inventory.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -18,58 +17,68 @@
         {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
       {% endblock nav %}
 
-      <main class="dashboard-main">
+      <main class="flex flex-row">
         <!-- Sidebar Links -->
         {% block side-links %}
           {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
         {% endblock side-links %}
 
-        <!-- Help Links -->
-        <div class="dashboard-section" id="inventory-main-section">
+        <div class="flex flex-col w-full m-4 gap-4">
 
-          <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <section class="dashboard-section" id="top-buttons-section">
-              <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
-              </div>
-              <div id="categories-manager"></div>
-              <div>
-                <button class="main-button" id="add-item-button">Add Item &plus;</button>
-              </div>
-            </section>
+          <!-- Search Input and Add Item -->
+          <section id="top-buttons-section" class="flex flex-row justify-between items-center w-full">
+            <label class="input input-bordered flex items-center gap-2">
+              <svg class="h-4 w-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.3-4.3"></path>
+              </svg>
+              <input id="search-input" type="search" class="grow" placeholder="Search" />
+            </label>
+            <div id="categories-manager"></div>
+            <div>
+              <button class="btn btn-outline btn-info" id="add-item-button">Add Item &plus;</button>
+            </div>
+          </section>
 
-            <section class="table-section" id="inventory-table-section">
-              <h3>Products</h3>
-              <table id="inventory-table" class="records-table">
+          <!-- TABLE Inventory -->
+          <section class="" id="inventory-table-section">
+            <h2 class="text-xl mb-2">Inventory</h2>
+            <div class="card bg-base-100 shadow max-h-[300px] overflow-auto">
+              <table id="inventory-table" class="records-table table table-hover table-pin-rows">
                 <thead>
-                  <th id="id-header">ID</th>
-                  <th id="name-header">Name</th>
-                  <th id="price-header">Price</th>
-                  <th id="stock-header">Stock</th>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                  </tr>
                 </thead>
                 <tbody>
                 </tbody>
               </table>
-            </section>
+            </div>
+          </section>
 
-              <div id="category-manager" class="table-section">
-                <h3>Categories</h3>
-                <table id="categories-table" class="records-table">
-                  <thead>
-                    <th id="name-header">Name</th>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-                
-                <div style="padding: 0.5rem 1rem;">
-                  <input type="text" id="new-category-input" placeholder="Add a new category">
-                  <button id="add-category-btn">Add</button>
-                </div>
-              </div>
+          <div id="category-manager" class="table-section">
+            <h3>Categories</h3>
+            <table id="categories-table" class="records-table">
+              <thead>
+                <th id="name-header">Name</th>
+              </thead>
+              <tbody></tbody>
+            </table>
+            
+            <div style="padding: 0.5rem 1rem;">
+              <input type="text" id="new-category-input" placeholder="Add a new category">
+              <button id="add-category-btn">Add</button>
+            </div>
           </div>
         </div>
+
+
         <!-- Product Details Modal -->
-        <div id="product-details-modal" class="side-modal">
+        <div id="product-details-modal" class="side-modal hidden">
             <div id="product-details" class="side-modal-details">
               <h3 class="close-modal-btn">&times;</h3>
               <h3>Preview Product</h3>
@@ -91,7 +100,7 @@
             </div>
         </div>
         <!-- Edit Item Modal -->
-        <div id="product-edit-modal" class="side-modal">
+        <div id="product-edit-modal" class="side-modal hidden">
           <form id="edit-details" enctype="multipart/form-data">
             <h3 class="close-modal-btn">&times;</h3>
             <h3>Edit Product</h3>
@@ -129,7 +138,7 @@
         </div>
 
         <!-- Confirm Delete Product Modal -->
-        <div id="confirm-delete-modal" class="modal">
+        <div id="confirm-delete-modal" class="modal hidden">
           <div id="confirm-delete-content" class="modal-content">
             <h1 id="delete-warning-header">Warning!!!</h1>
             <p id="delete-warning-p">You are about to delete a product. This action cannot be undone. Are you sure you want to continue?</p>
@@ -140,6 +149,65 @@
           </div>
         </div>
       </main>
+    </div>
+
+    <div class="drawer-side">
+      <label for="order-details-drawer" class="drawer-overlay"></label>
+
+      <aside class="w-full sm:w-[420px] bg-base-100 h-full shadow-xl p-6 overflow-y-auto">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">Order Details</h2>
+          <label for="order-details-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
+        </div>
+
+        <!-- DETAILS -->
+        <div class="space-y-3">
+
+          <div class="flex flex-row flex-wrap w-full justify-between">
+            <label class="label-text">Customer Name</label>
+            <p id="order-name" class="font-medium"></p>
+          </div>
+
+          <div class="flex flex-row w-full justify-between flex-wrap">
+            <label class="label-text">Contact Info</label>
+            <p id="order-contact" class="text-sm font-semibold"></p>
+          </div>
+
+          <div class="flex flex-row w-full justify-between flex-wrap">
+            <label class="label-text">Date Placed</label>
+            <p id="order-date" class="font-semibold"></p>
+          </div>
+
+          <div class="flex flex-row flex-wrap w-full justify-between">
+            <label class="label-text">Total</label>
+            <p id="order-total" class="font-semibold"></p>
+          </div>
+
+          <!-- STATUS -->
+          <div class="form-control w-full flex flex-col gap-2">
+            <label class="label-text">Status</label>
+            <select id="order-status" class="select select-bordered w-full">
+              <option value="" selected>--</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="denied">Denied</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Complete</option>
+              <option value="canceled">Canceled</option>
+            </select>
+          </div>
+
+          <div class="divider divider-info">Products</div>
+          <div id="order-products" class="space-y-2"></div>
+          
+          <button id="order-status-change-button" class="btn btn-info w-full text-white">
+            Save
+          </button>
+
+        </div>
+      </aside>
     </div>
   </div>
 {% endblock %}

@@ -119,6 +119,7 @@ class Product(models.Model):
         choices=[
             ('active', 'Active'),
             ('inactive', 'Inactive'),
+            ('out of stock', 'Out of Stock')
         ],
         default='active'
     )
