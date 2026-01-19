@@ -1,6 +1,35 @@
 {% load static %}
 
-<nav class="navbar">
+<div class="navbar bg-base-100 shadow-sm bg-sky-600 sticky top-0 pl-4 pr-4 z-3 w-screen">
+  <div class="flex-1">
+    <a class="text-xl text-white">HiveMade</a>
+  </div>
+  <div class="flex-none">
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <div id="navbar-pfp-container" class="w-10 rounded-full"></div>
+      </div>
+      <ul
+        tabindex="-1"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+        <li>
+          <a href="/settings/">
+            <div id="account-modal-settings-link-div" class="account-modal-link flex flex-row">
+              <h3>Settings</h3>
+            </div>
+          </a>
+        </li>
+        <li>
+          <div id="account-modal-sign-out-link-div" class="account-modal-link flex flex-row">
+            <h3>Sign Out</h3>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- <nav class="navbar">
   <div id="logo">
     <h1 style="margin: 0; padding: 0;"><span style="color: var(--container-bg-color);">Dixie</span><span style="color: var(--text-color-primary);">Gallery</span></h1>
   </div>
@@ -32,4 +61,4 @@
   </div>
 
   <script type="module" src="{% static 'components/merchant/merch-nav/nav.js' %}"></script>
-</nav>
+</nav> -->

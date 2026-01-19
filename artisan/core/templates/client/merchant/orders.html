@@ -4,120 +4,175 @@
 {% block title %}Merchant Dashboard{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{% static 'merchant/styles/orders.css' %}" />{% endblock %}
+<link rel="stylesheet" href="{% static 'merchant/styles/orders.css' %}" />
+{% endblock %}
 
 {% block content %}
-  <!-- NAV -->
-  {% block nav %}
+
+<!-- ORDER DETAILS DRAWER -->
+<div class="drawer drawer-end z-50">
+  <input id="order-details-drawer" type="checkbox" class="drawer-toggle" />
+
+  <!-- PAGE CONTENT -->
+  <div class="drawer-content">
+
+    <!-- NAV -->
+    {% block nav %}
       {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
-  {% endblock nav %}
+    {% endblock nav %}
 
-  <!-- Main Content -->
+    <main class="dashboard-main flex flex-row p-0 min-h-screen">
 
-  <main class="dashboard-main">
-    <!-- Sidebar Links -->
-    {% block side-links %}
-      {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
-    {% endblock side-links %}
+      <!-- SIDEBAR -->
+      {% block side-links %}
+        {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
+      {% endblock side-links %}
 
-    <!-- All The DATA Sections -->
-     <section class="dashboard-sections">
+      <!-- MAIN CONTENT -->
+      <div class="p-4 flex flex-col gap-4 w-full">
 
-      <!-- Help Links -->
-      <section class="dashboard-section" id="orders-main-section">
+        <!-- SEARCH -->
+        <section id="top-buttons-section">
+          <label class="input input-bordered flex items-center gap-2">
+            <svg class="h-4 w-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.3-4.3"></path>
+            </svg>
+            <input id="search-input" type="search" class="grow" placeholder="Search" />
+          </label>
+        </section>
 
-        <div>
-          <section class="dashboard-section" id="top-buttons-section">
-            <div class="search-container">
-              <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
+        <!-- TABLES -->
+        <div class="flex flex-col gap-6">
+
+          <!-- ACTIVE -->
+          <section>
+            <h2 class="text-xl mb-2">Active Orders</h2>
+            <div class="card bg-base-100 shadow max-h-[300px] overflow-auto">
+              <table class="records-table table table-hover table-pin-rows" id="orders-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
           </section>
 
-          <section class="dashboard-section table-section">
-            <h3 style="border-bottom: 1px solid var(--border-color);">Active Orders</h3>
-            <section class="dashboard-section">
-              <table id="orders-table" class="records-table">
+          <!-- INACTIVE -->
+          <section>
+            <h2 class="text-xl mb-2">Inactive Orders</h2>
+            <div class="card bg-base-100 shadow overflow-x-auto">
+              <table class="records-table table table-pin-rows" id="inactive-orders-table">
                 <thead>
-                  <th id="id-header">ID</th>
-                  <th id="customer-header">Customer</th>
-                  <th id="placed-header">Placed</th>
-                  <th id="total-header">Total</th>
-                  <th id="status-header">Status</th>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
               </table>
-            </section>
-            <h3 style="border-bottom: 1px solid var(--border-color);">Inactive Orders</h3>
-            <section class="dashboard-section">
-              <table id="inactive-orders-table" class="records-table">
-                <thead>
-                  <th id="id-header">ID</th>
-                  <th id="customer-header">Customer</th>
-                  <th id="placed-header">Placed</th>
-                  <th id="total-header">Total</th>
-                  <th id="status-header">Status</th>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </section>
-            <h3 style="border-bottom: 1px solid var(--border-color);">Completed Orders</h3>
-            <section class="dashboard-section">
-              <table id="completed-orders-table" class="records-table">
-                <thead>
-                  <th id="id-header">ID</th>
-                  <th id="customer-header">Customer</th>
-                  <th id="contact-header">Contact</th>
-                  <th id="placed-header">Placed</th>
-                  <th id="total-header">Total</th>
-                  <th id="status-header">Status</th>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </section>
+            </div>
           </section>
-        </div>
-      </section>
-    </section>
-    
-    <!-- Order Details Modal -->
-    <div id="order-details-modal" class="side-modal">
-      <div id="order-details" class="side-modal-details">
-        <h3 id="close-modal-btn">&times;</h3>
-        <h3>Order Details</h3>
-        <label for="order-name">Customer Name</label>
-        <p id="order-name">Name</p>
-        <label for="order-contact">Contact Info</label>
-        <p id="order-contact">Contact</p>
-        <label for="order-date">Date Placed</label>
-        <p id="order-date">00/00/0000</p>
-        <label for="order-total">Total</label>
-        <p id="order-total">0</p>
-        <label for="order-status">Status</label>
-        <select name="order-status" id="order-status">
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="denied">Denied</option>
-          <option value="in_progress">In Progress</option>  
-          <option value="completed">Complete</option>
-          <option value="canceled">Canceled</option>
-        </select>
-        <button class="submit-button" id="order-status-change-button">Change Status</button>
-        <h3>Products</h3>
-        <div id="order-products"></div>
-      </div>
-    </div>
 
-  </main>
+          <!-- COMPLETED -->
+          <section>
+            <h2 class="text-xl mb-2">Completed Orders</h2>
+            <div class="card bg-base-100 shadow overflow-x-auto">
+              <table class="records-table table table-pin-rows" id="completed-orders-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- DRAWER PANEL -->
+  <div class="drawer-side">
+    <label for="order-details-drawer" class="drawer-overlay"></label>
+
+    <aside class="w-full sm:w-[420px] bg-base-100 h-full shadow-xl p-6 overflow-y-auto">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Order Details</h2>
+        <label for="order-details-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
+      </div>
+
+      <!-- DETAILS -->
+      <div class="space-y-3">
+
+        <div class="flex flex-row flex-wrap w-full justify-between">
+          <label class="label-text">Customer Name</label>
+          <p id="order-name" class="font-medium"></p>
+        </div>
+
+        <div class="flex flex-row w-full justify-between flex-wrap">
+          <label class="label-text">Contact Info</label>
+          <p id="order-contact" class="text-sm font-semibold"></p>
+        </div>
+
+        <div class="flex flex-row w-full justify-between flex-wrap">
+          <label class="label-text">Date Placed</label>
+          <p id="order-date" class="font-semibold"></p>
+        </div>
+
+        <div class="flex flex-row flex-wrap w-full justify-between">
+          <label class="label-text">Total</label>
+          <p id="order-total" class="font-semibold"></p>
+        </div>
+
+        <!-- STATUS -->
+        <div class="form-control w-full flex flex-col gap-2">
+          <label class="label-text">Status</label>
+          <select id="order-status" class="select select-bordered w-full">
+            <option value="" selected>--</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="denied">Denied</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Complete</option>
+            <option value="canceled">Canceled</option>
+          </select>
+        </div>
+
+        <div class="divider divider-info">Products</div>
+        <div id="order-products" class="space-y-2"></div>
+        
+        <button id="order-status-change-button" class="btn btn-info w-full text-white">
+          Save
+        </button>
+
+      </div>
+    </aside>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_scripts %}
-  <script>
-    const window_location = 'Orders';
-    const active_URL = "/media/icons/active/orders_purple.svg"
-  </script>
-  <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
-  <script type="module" src="{% static 'merchant/scripts/orders.js' %}"></script>
+<script>
+  const window_location = 'Orders';
+  const active_URL = "/media/icons/active/orders_purple.svg";
+</script>
+
+<script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
+<script type="module" src="{% static 'merchant/scripts/orders.js' %}"></script>
 {% endblock %}

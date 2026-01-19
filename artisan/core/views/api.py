@@ -423,24 +423,36 @@ class CustomOrderMerchantView(APIView):
         except Exception as e:
             return Response({'error': f"Custom request patch failed: {str(e)}"}, status=STATUS_500)
 
+from django.forms.models import model_to_dict
+
 class OrdersMerchantView(APIView):
-    """
-    Merchant-only view allowing merchant to get all their orders.
-    """
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
+
     def get(self, request):
         try:
             artisan = request.user
 
-            orders = Order.objects.filter(artisan=artisan).order_by('created_at')
-            orders_data = [ model_to_dict(order) for order in orders ]
+            orders = Order.objects.filter(
+                artisan=artisan
+            ).order_by('-created_at')
 
-            return Response({'message': "Found Orders", 'orders': orders_data}, status=STATUS_200)
+            orders_data = []
+            for order in orders:
+                data = model_to_dict(order)
+                data['created_at'] = order.created_at.isoformat()  # ✅ ADD THIS
+                orders_data.append(data)
+
+            return Response(
+                {'message': 'Found Orders', 'orders': orders_data},
+                status=STATUS_200
+            )
+
         except Artisan.DoesNotExist:
-            return Response({'error': "Artisan not found"}, status=STATUS_404)
+            return Response({'error': 'Artisan not found'}, status=STATUS_404)
         except Exception as e:
             return Response({'error': f"Couldn't get Orders: {str(e)}"})
+
 
 # Get only orders with a 'pending' or 'approved' status
 class ActiveOrdersMerchantView(APIView):
@@ -547,23 +559,49 @@ def order_analytics(request, days: int):
         return JsonResponse({'error': str(e)}, status=500)
         
 
-        
+@require_GET
+def order_items(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
 
+    order_items = (
+        OrderItems.objects
+        .filter(order=order)
+        .values()
+    )
 
-@csrf_exempt
-@require_POST
-def order_items(request):
+    return JsonResponse({
+        "order_id": order.id,
+        "orderItems": list(order_items),
+    })
+
+@login_required(login_url='/login/')
+@require_http_methods(['POST', 'PATCH'])
+def update_order_item(request):
+    artisan = request.user
     try:
         data = json.loads(request.body)
-        order_id = data['order_id']
 
-        order = Order.objects.get(id=order_id)
+        print(data)
 
-        orderItems = OrderItems.objects.filter(order=order).values()
-        print(orderItems)
-        return JsonResponse({'message': 'Found Order Items', 'orderItems': list(orderItems)})
+        item_id = data['item_id']
+        order_item = OrderItems.objects.get(id=item_id)
+        order = Order.objects.get(id=order_item.order.id)
+
+        if not order_item or not order:
+            return JsonResponse({'error': 'Order or order item could not be found'}, status=404)
+
+        if order.artisan != artisan:
+            return JsonResponse({'error': 'Forbidden'}, status=403)
+
+        fulfilled = data['fulfilled']
+
+        order_item.fulfilled = True if fulfilled else False
+    
+        order_item.save()
+        return JsonResponse({'message': 'order item updated'}, status=200)
+
     except Exception as e:
-        return JsonResponse({'error': "Error getting order items " + str(e)})
+        return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_protect
 @require_POST

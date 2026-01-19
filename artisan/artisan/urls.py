@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from core import views
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
     # Customer URLS
@@ -36,6 +38,7 @@ urlpatterns = [
     path('about/<slug:slug>/', views.about, name='about'),
     path('order-complete/<slug:slug>/', views.order_complete, name="order_complete"),
     path('test/<slug:slug>/', views.test, name="test"),
+    path('test-tooltip/', TemplateView.as_view(template_name="test_tooltip.html"), name='test-tooltip'),
 
     # Merchant URLS
     path('login/', views.login_view, name='login'),
@@ -102,7 +105,8 @@ urlpatterns = [
     path('api/orders/inactive/', views.inactive_orders),
     path('api/orders/<int:days>/', views.order_analytics),
     path('api/order/restock/', views.restock),
-    path('api/orderitems/', views.order_items, name="orderitems"),
+    path('api/orders/<int:order_id>/items/', views.order_items, name="orderitems"),
+    path('api/order-item/', views.update_order_item),
     # Custom Request
     path('api/custom/', views.CustomOrderMerchantView.as_view()),
     path('api/custom/status', views.CustomOrderMerchantView.as_view()),

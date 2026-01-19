@@ -1,17 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./templates/**/*.html",       // all HTML templates
-    "./**/templates/**/*.html",    // in apps if using Django app structure
-    "./static/src/**/*.js",        // optional: JS files that might have class names
+    "./templates/**/*.html",       // main Django templates
+    "./**/templates/**/*.html",    // templates in apps like core, theme
+    "./static/src/**/*.js",        // JS files with Tailwind class names
   ],
   theme: {
     extend: {},
   },
-  plugins: [
-    require("daisyui"),           // add DaisyUI plugin
-  ],
+  plugins: [require("daisyui")],
   daisyui: {
-    themes: ["light", "dark"],    // optional: enable light/dark themes
+    themes: ["light", "dark"],
   },
-}
+};

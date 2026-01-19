@@ -8,137 +8,140 @@
 {% endblock %}
 
 {% block content %}
-  <!-- NAV -->
-  {% block nav %}
-    {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
-  {% endblock nav %}
 
-  <main class="dashboard-main">
-    <!-- Sidebar Links -->
-    {% block side-links %}
-      {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
-    {% endblock side-links %}
+  <div class="drawer drawer-end z-50">
+    <input type="checkbox" id="item-details-drawer" class="drawer-toggle">
 
-    <!-- All The DATA Sections -->
-     <section class="dashboard-sections">
+    <div class="drawer-content">
+      <!-- NAV -->
+      {% block nav %}
+        {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
+      {% endblock nav %}
 
-      <!-- Help Links -->
-      <section class="dashboard-section" id="inventory-main-section">
+      <main class="dashboard-main">
+        <!-- Sidebar Links -->
+        {% block side-links %}
+          {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
+        {% endblock side-links %}
 
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-          <section class="dashboard-section" id="top-buttons-section">
-            <div class="search-container">
-              <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
-            </div>
-            <div id="categories-manager"></div>
-            <div>
-              <button class="main-button" id="add-item-button">Add Item &plus;</button>
-            </div>
-          </section>
+        <!-- Help Links -->
+        <div class="dashboard-section" id="inventory-main-section">
 
-          <section class="table-section" id="inventory-table-section">
-            <h3>Products</h3>
-            <table id="inventory-table" class="records-table">
-              <thead>
-                <th id="id-header">ID</th>
-                <th id="name-header">Name</th>
-                <th id="price-header">Price</th>
-                <th id="stock-header">Stock</th>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </section>
-
-            <div id="category-manager" class="table-section">
-              <h3>Categories</h3>
-              <table id="categories-table" class="records-table">
-                <thead>
-                  <th id="name-header">Name</th>
-                </thead>
-                <tbody></tbody>
-              </table>
-              
-              <div style="padding: 0.5rem 1rem;">
-                <input type="text" id="new-category-input" placeholder="Add a new category">
-                <button id="add-category-btn">Add</button>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <section class="dashboard-section" id="top-buttons-section">
+              <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
               </div>
+              <div id="categories-manager"></div>
+              <div>
+                <button class="main-button" id="add-item-button">Add Item &plus;</button>
+              </div>
+            </section>
+
+            <section class="table-section" id="inventory-table-section">
+              <h3>Products</h3>
+              <table id="inventory-table" class="records-table">
+                <thead>
+                  <th id="id-header">ID</th>
+                  <th id="name-header">Name</th>
+                  <th id="price-header">Price</th>
+                  <th id="stock-header">Stock</th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </section>
+
+              <div id="category-manager" class="table-section">
+                <h3>Categories</h3>
+                <table id="categories-table" class="records-table">
+                  <thead>
+                    <th id="name-header">Name</th>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+                
+                <div style="padding: 0.5rem 1rem;">
+                  <input type="text" id="new-category-input" placeholder="Add a new category">
+                  <button id="add-category-btn">Add</button>
+                </div>
+              </div>
+          </div>
+        </div>
+        <!-- Product Details Modal -->
+        <div id="product-details-modal" class="side-modal">
+            <div id="product-details" class="side-modal-details">
+              <h3 class="close-modal-btn">&times;</h3>
+              <h3>Preview Product</h3>
+              <img src="" alt="product image">
+              <label for="product-title">Title</label>
+              <p id="product-title">Product title</p>
+              <label for="product-price">Price</label>
+              <p id="product-price">Product Price</p>
+              <label for="product-stock">Stock</label>
+              <p id="product-stock">0</p>
+              <label for="product-description">Description</label>
+              <p id="product-description">...</p>
+              <label for="product-category">Category</label>
+              <p id="product-category"></p>
+            </div>
+            <div id="product-actions">
+              <button id="edit-button" class="main-button">Edit</button>
+              <button id="product-delete-button" class="main-button">Delete</button>
             </div>
         </div>
-      </section>
-    </section>
-    <!-- Product Details Modal -->
-    <div id="product-details-modal" class="side-modal">
-        <div id="product-details" class="side-modal-details">
-          <h3 class="close-modal-btn">&times;</h3>
-          <h3>Preview Product</h3>
-          <img src="" alt="product image">
-          <label for="product-title">Title</label>
-          <p id="product-title">Product title</p>
-          <label for="product-price">Price</label>
-          <p id="product-price">Product Price</p>
-          <label for="product-stock">Stock</label>
-          <p id="product-stock">0</p>
-          <label for="product-description">Description</label>
-          <p id="product-description">...</p>
-          <label for="product-category">Category</label>
-          <p id="product-category"></p>
+        <!-- Edit Item Modal -->
+        <div id="product-edit-modal" class="side-modal">
+          <form id="edit-details" enctype="multipart/form-data">
+            <h3 class="close-modal-btn">&times;</h3>
+            <h3>Edit Product</h3>
+
+            <!-- Main product image -->
+            <input type="file" id="edit-image" name="product-image" accept="image/*">
+
+            <!-- Extra images input -->
+            <label for="edit-extra-images">Extra Images</label>
+            <input type="file" id="edit-extra-images" name="extra_images" accept="image/*" multiple>
+            
+            <!-- Previews will appear here -->
+            <div id="extra-image-previews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;"></div>
+
+            <label for="edit-title">Title</label>
+            <input type="text" id="edit-title" required>
+
+            <label for="edit-price">Price</label>
+            <input type="number" id="edit-price" step=".01" required>
+
+            <label for="edit-stock">Stock</label>
+            <input type="number" id="edit-stock" required>
+
+            <label for="edit-description">Description</label>
+            <textarea name="description" id="edit-description" required></textarea>
+
+            <label for="edit-category">Category</label>
+            <select name="edit-category" id="edit-category"></select>
+
+            <label for="">Featured Product</label>
+            <input type="checkbox" id="edit-featured">
+
+            <button type="submit" id="submit-edit-button">Complete</button>
+          </form>
         </div>
-        <div id="product-actions">
-          <button id="edit-button" class="main-button">Edit</button>
-          <button id="product-delete-button" class="main-button">Delete</button>
+
+        <!-- Confirm Delete Product Modal -->
+        <div id="confirm-delete-modal" class="modal">
+          <div id="confirm-delete-content" class="modal-content">
+            <h1 id="delete-warning-header">Warning!!!</h1>
+            <p id="delete-warning-p">You are about to delete a product. This action cannot be undone. Are you sure you want to continue?</p>
+            <div id="delete-modal-buttons">
+              <button id="cancel-delete-button">No, Don't Delete</button>
+              <button id="confirm-delete-button">Yes, Delete Product</button>
+            </div>
+          </div>
         </div>
+      </main>
     </div>
-    <!-- Edit Item Modal -->
-    <div id="product-edit-modal" class="side-modal">
-      <form id="edit-details" enctype="multipart/form-data">
-        <h3 class="close-modal-btn">&times;</h3>
-        <h3>Edit Product</h3>
-
-        <!-- Main product image -->
-        <input type="file" id="edit-image" name="product-image" accept="image/*">
-
-        <!-- Extra images input -->
-        <label for="edit-extra-images">Extra Images</label>
-        <input type="file" id="edit-extra-images" name="extra_images" accept="image/*" multiple>
-        
-        <!-- Previews will appear here -->
-        <div id="extra-image-previews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;"></div>
-
-        <label for="edit-title">Title</label>
-        <input type="text" id="edit-title" required>
-
-        <label for="edit-price">Price</label>
-        <input type="number" id="edit-price" step=".01" required>
-
-        <label for="edit-stock">Stock</label>
-        <input type="number" id="edit-stock" required>
-
-        <label for="edit-description">Description</label>
-        <textarea name="description" id="edit-description" required></textarea>
-
-        <label for="edit-category">Category</label>
-        <select name="edit-category" id="edit-category"></select>
-
-        <label for="">Featured Product</label>
-        <input type="checkbox" id="edit-featured">
-
-        <button type="submit" id="submit-edit-button">Complete</button>
-      </form>
-    </div>
-
-    <!-- Confirm Delete Product Modal -->
-    <div id="confirm-delete-modal" class="modal">
-      <div id="confirm-delete-content" class="modal-content">
-        <h1 id="delete-warning-header">Warning!!!</h1>
-        <p id="delete-warning-p">You are about to delete a product. This action cannot be undone. Are you sure you want to continue?</p>
-        <div id="delete-modal-buttons">
-          <button id="cancel-delete-button">No, Don't Delete</button>
-          <button id="confirm-delete-button">Yes, Delete Product</button>
-        </div>
-      </div>
-    </div>
-  </main>
+  </div>
 {% endblock %}
 
 {% block extra_scripts %}
