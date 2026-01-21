@@ -9,7 +9,7 @@
 {% block content %}
 
   <div class="drawer drawer-end z-50">
-    <input type="checkbox" id="item-details-drawer" class="drawer-toggle">
+    <input type="checkbox" id="product-details-drawer" class="drawer-toggle">
 
     <div class="drawer-content">
       <!-- NAV -->
@@ -32,18 +32,18 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="M21 21l-4.3-4.3"></path>
               </svg>
-              <input id="search-input" type="search" class="grow" placeholder="Search" />
+              <input id="search-input" type="search" class="grow" placeholder="Search by ID or Name" />
             </label>
             <div id="categories-manager"></div>
             <div>
-              <button class="btn btn-outline btn-info" id="add-item-button">Add Item &plus;</button>
+              <button class="btn btn-outline btn-info hover:text-white" id="add-item-button">Add Item &plus;</button>
             </div>
           </section>
 
           <!-- TABLE Inventory -->
           <section class="" id="inventory-table-section">
             <h2 class="text-xl mb-2">Inventory</h2>
-            <div class="card bg-base-100 shadow max-h-[300px] overflow-auto">
+            <div class="card bg-base-100 shadow max-h-[400px] overflow-auto">
               <table id="inventory-table" class="records-table table table-hover table-pin-rows">
                 <thead>
                   <tr>
@@ -60,155 +60,108 @@
             </div>
           </section>
 
-          <div id="category-manager" class="table-section">
-            <h3>Categories</h3>
-            <table id="categories-table" class="records-table">
-              <thead>
-                <th id="name-header">Name</th>
-              </thead>
-              <tbody></tbody>
-            </table>
-            
-            <div style="padding: 0.5rem 1rem;">
-              <input type="text" id="new-category-input" placeholder="Add a new category">
-              <button id="add-category-btn">Add</button>
+          <section class="flex flex-col gap-4" id="category-list-section">
+            <div>
+              <h2 class="text-xl mb-2">Categories</h2>
+              <ul id="category-list" class="list bg-base-100 rounded-box shadow-md"></ul>
             </div>
-          </div>
-        </div>
-
-
-        <!-- Product Details Modal -->
-        <div id="product-details-modal" class="side-modal hidden">
-            <div id="product-details" class="side-modal-details">
-              <h3 class="close-modal-btn">&times;</h3>
-              <h3>Preview Product</h3>
-              <img src="" alt="product image">
-              <label for="product-title">Title</label>
-              <p id="product-title">Product title</p>
-              <label for="product-price">Price</label>
-              <p id="product-price">Product Price</p>
-              <label for="product-stock">Stock</label>
-              <p id="product-stock">0</p>
-              <label for="product-description">Description</label>
-              <p id="product-description">...</p>
-              <label for="product-category">Category</label>
-              <p id="product-category"></p>
+            <div class="">
+              <input type="text" class="input" id="new-category-input" placeholder="Add a new category">
+              <button id="add-category-btn" class="btn btn-info btn-outline hover:text-white">Add</button>
             </div>
-            <div id="product-actions">
-              <button id="edit-button" class="main-button">Edit</button>
-              <button id="product-delete-button" class="main-button">Delete</button>
-            </div>
-        </div>
-        <!-- Edit Item Modal -->
-        <div id="product-edit-modal" class="side-modal hidden">
-          <form id="edit-details" enctype="multipart/form-data">
-            <h3 class="close-modal-btn">&times;</h3>
-            <h3>Edit Product</h3>
-
-            <!-- Main product image -->
-            <input type="file" id="edit-image" name="product-image" accept="image/*">
-
-            <!-- Extra images input -->
-            <label for="edit-extra-images">Extra Images</label>
-            <input type="file" id="edit-extra-images" name="extra_images" accept="image/*" multiple>
-            
-            <!-- Previews will appear here -->
-            <div id="extra-image-previews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;"></div>
-
-            <label for="edit-title">Title</label>
-            <input type="text" id="edit-title" required>
-
-            <label for="edit-price">Price</label>
-            <input type="number" id="edit-price" step=".01" required>
-
-            <label for="edit-stock">Stock</label>
-            <input type="number" id="edit-stock" required>
-
-            <label for="edit-description">Description</label>
-            <textarea name="description" id="edit-description" required></textarea>
-
-            <label for="edit-category">Category</label>
-            <select name="edit-category" id="edit-category"></select>
-
-            <label for="">Featured Product</label>
-            <input type="checkbox" id="edit-featured">
-
-            <button type="submit" id="submit-edit-button">Complete</button>
-          </form>
-        </div>
-
-        <!-- Confirm Delete Product Modal -->
-        <div id="confirm-delete-modal" class="modal hidden">
-          <div id="confirm-delete-content" class="modal-content">
-            <h1 id="delete-warning-header">Warning!!!</h1>
-            <p id="delete-warning-p">You are about to delete a product. This action cannot be undone. Are you sure you want to continue?</p>
-            <div id="delete-modal-buttons">
-              <button id="cancel-delete-button">No, Don't Delete</button>
-              <button id="confirm-delete-button">Yes, Delete Product</button>
-            </div>
-          </div>
+          </section>
+          
         </div>
       </main>
     </div>
 
     <div class="drawer-side">
-      <label for="order-details-drawer" class="drawer-overlay"></label>
+      <label for="product-details-drawer" class="drawer-overlay"></label>
 
-      <aside class="w-full sm:w-[420px] bg-base-100 h-full shadow-xl p-6 overflow-y-auto">
+      <aside class="w-full sm:w-[600px] bg-base-100 h-full shadow-xl overflow-y-auto">
 
         <!-- HEADER -->
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">Order Details</h2>
-          <label for="order-details-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
+        <div class="flex justify-between items-center p-4 pl-6 pr-6 bg-info">
+          <h2 class="text-xl text-white font-semibold">Product Details</h2>
+          <label for="product-details-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
         </div>
 
-        <!-- DETAILS -->
-        <div class="space-y-3">
-
-          <div class="flex flex-row flex-wrap w-full justify-between">
-            <label class="label-text">Customer Name</label>
-            <p id="order-name" class="font-medium"></p>
+        <!-- CONTENT -->
+        <div class="flex flex-col gap-2 p-6">
+          <!-- PRODUCT IMAGE -->
+          <div class="w-full flex flex-col gap-2">
+            <div class="w-full h-60 rounded-lg overflow-hidden bg-base-200 flex items-center justify-center">
+              <img
+                id="product-drawer-image"
+                src=""
+                alt="Product Image"
+                class="object-contain w-full h-full"
+              />
+            </div>
+            <input type="file" name="image" id="product-drawer-image-input" class="file-input w-full">
           </div>
 
-          <div class="flex flex-row w-full justify-between flex-wrap">
-            <label class="label-text">Contact Info</label>
-            <p id="order-contact" class="text-sm font-semibold"></p>
+          <!-- PRODUCT NAME -->
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend text-base">Product Name</legend>
+            <input type="text" name="name" id="product-drawer-name" class="input" placeholder="--">
+          </fieldset>
+
+          <div class="flex flex-row flex-wrap gap-4">
+            <!-- PRICE -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Price</legend>
+              <label class="input max-w-[200px]">
+                <span class="label">USD</span>
+                <input type="number" name="price" id="product-drawer-price" placeholder="000">
+              </label>
+            </fieldset>
+
+            <!-- STOCK -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Quantity in Stock</legend>
+              <input type="number" name="stock" id="product-drawer-stock" class="input" placeholder="000">
+            </fieldset>
+
+            <!-- CATEGORY -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Category</legend>
+              <select name="category" id="product-drawer-category" class="select"></select>
+            </fieldset>
           </div>
 
-          <div class="flex flex-row w-full justify-between flex-wrap">
-            <label class="label-text">Date Placed</label>
-            <p id="order-date" class="font-semibold"></p>
+          <!-- DESCRIPTION -->
+          <div class="form-control w-full">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Description</legend>
+              <textarea name="description" id="product-drawer-description" class="textarea h-36 w-full" placeholder="Description"></textarea>
+            </fieldset>
           </div>
 
-          <div class="flex flex-row flex-wrap w-full justify-between">
-            <label class="label-text">Total</label>
-            <p id="order-total" class="font-semibold"></p>
+          <!-- FEATURED -->
+          <div class="form-control">
+            <label class="label cursor-pointer flex items-center gap-3">
+              <span class="label-text">Feature this product</span>
+              <input
+                id="product-drawer-featured"
+                type="checkbox"
+                class="checkbox checkbox-info"
+                name="featured"
+              />
+            </label>
           </div>
 
-          <!-- STATUS -->
-          <div class="form-control w-full flex flex-col gap-2">
-            <label class="label-text">Status</label>
-            <select id="order-status" class="select select-bordered w-full">
-              <option value="" selected>--</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="denied">Denied</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Complete</option>
-              <option value="canceled">Canceled</option>
-            </select>
-          </div>
-
-          <div class="divider divider-info">Products</div>
-          <div id="order-products" class="space-y-2"></div>
-          
-          <button id="order-status-change-button" class="btn btn-info w-full text-white">
-            Save
+          <!-- ACTION -->
+          <button
+            id="product-save-button"
+            class="btn btn-info w-full text-white"
+          >
+            Save Changes
           </button>
-
         </div>
       </aside>
     </div>
+
   </div>
 {% endblock %}
 
