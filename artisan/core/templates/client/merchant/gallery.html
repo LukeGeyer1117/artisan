@@ -12,46 +12,64 @@
   {% endblock nav %}
 
   <!-- Main Content -->
-  <main class="dashboard-main">
+  <main class="dashboard-main flex flex-col md:flex-row gap-4">
+
     <!-- Sidebar Links -->
     {% block side-links %}
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
-    <!-- Under Construction -->
-    <div class="content">
-      <div class="gallery-header">
-        <h1>Gallery Setup</h1>
-        <p>Upload and arrange your gallery images in the perfect order</p>
+    <!-- Gallery Content -->
+    <div class="flex-1 bg-base-100 rounded-lg flex flex-col gap-6 m-4">
+
+      <!-- Header -->
+      <div class="gallery-header flex flex-col gap-1">
+        <h1 class="text-2xl font-semibold">Gallery Setup</h1>
+        <p class="text-sm text-base-content/70">Upload and arrange your gallery images in the perfect order</p>
       </div>
 
+      <!-- Upload Area -->
       <div class="upload-section">
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-          <div class="upload-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px"><path d="M450-313v-371L330-564l-43-43 193-193 193 193-43 43-120-120v371h-60ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/></svg>
+        <div 
+          class="upload-area border-2 border-dashed border-base-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:border-info hover:bg-base-200 transition-all"
+          onclick="document.getElementById('fileInput').click()"
+        >
+          <div class="upload-icon mb-2 text-base-content/60">
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px">
+              <path d="M450-313v-371L330-564l-43-43 193-193 193 193-43 43-120-120v371h-60ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/>
+            </svg>
           </div>
-          <div class="upload-text">Click to upload images</div>
-          <div class="upload-subtext">Or drag and drop files here (JPG, PNG, WebP)</div>
-          <input type="file" id="fileInput" multiple accept="image/*">
+          <div class="upload-text font-medium">Click to upload images</div>
+          <div class="upload-subtext text-sm text-base-content/50">Or drag and drop files here (JPG, PNG, WebP)</div>
+          <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
         </div>
       </div>
 
-      <div id="galleryContainer">
-        <div class="gallery-grid" id="galleryGrid">
-          <!-- Gallery items will be inserted here -->
+      <!-- Gallery Grid / Empty State -->
+      <div id="galleryContainer" class="flex flex-col gap-4">
+        <div class="gallery-grid flex flex-wrap gap-4" id="galleryGrid">
+          <!-- JS-inserted gallery items -->
         </div>
         
-        <div class="empty-state" id="emptyState">
-          <div class="empty-state-icon">🖼️</div>
-          <h3>No images uploaded yet</h3>
+        <div class="empty-state flex flex-col items-center justify-center p-12 text-center text-base-content/60 border border-dashed border-base-300 rounded-lg hidden" id="emptyState">
+          <div class="empty-state-icon text-4xl mb-2">🖼️</div>
+          <h3 class="font-semibold text-lg mb-1">No images uploaded yet</h3>
           <p>Upload some images to get started with your gallery</p>
         </div>
       </div>
 
-      <div class="save-section">
-        <button class="save-btn" id="saveBtn" disabled>Save Gallery Order</button>
-        <div class="status-message" id="statusMessage"></div>
+      <!-- Save Section -->
+      <div class="save-section flex flex-col md:flex-row items-center md:justify-between gap-2">
+        <button 
+          class="btn btn-info btn-outline hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          id="saveBtn" 
+          disabled
+        >
+          Save Gallery Order
+        </button>
+        <div class="status-message text-sm text-base-content/70 mt-1 md:mt-0" id="statusMessage"></div>
       </div>
+
     </div>
   </main>
 

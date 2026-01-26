@@ -13,28 +13,30 @@
   {% endblock nav %}
 
   <!-- Main Content -->
-  <main class="dashboard-main">
+  <main class="dashboard-main flex flex-col md:flex-row w-full">
     <!-- Sidebar Links -->
     {% block side-links %}
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
-    <div class="" id="new-product-form-section">
-      <div id="back-button-div">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" style="fill: var(--text-color-primary);"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
-        <h3>Back to Inventory</h3>
+    <div class="flex flex-col gap-4 m-4 w-full" id="new-product-form-section">
+      <div class="w-full lg:w-1/2 flex flex-col gap-2">
+        <button id="back-button-div" class="btn btn-ghost max-w-[200px]">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" style="fill: var(--text-color-primary);"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
+          <span class="text-base">Back to Inventory</span>
+        </button>
+        <form id="new-product-form" class="flex flex-col w-full gap-2">
+            <input class="input w-full" type="text" id="product-name" name="product-name" placeholder="Product Name" required maxlength="100">
+            <input class="file-input w-full" type="file" id="product-image" name="product-image" accept="image/*">
+            <input class="input w-full" type="number" id="product-price" name="product-price" step="0.01" min="0" placeholder="Price" required>
+            <input class="input w-full" type="number" id="product-quantity" name="product-quantity" min="0" placeholder="Stock" required>
+            <textarea class="textarea w-full" id="product-description" name="product-description" rows="4" cols="50" placeholder="Description"></textarea>
+            <div class="flex flex-row w-full gap-4">
+              <button class="btn btn-info btn-outline flex-1 hover:text-white" type="submit">Create Product</button>
+              <button class="btn btn-error btn-outline flex-1 hover:text-white" type="reset">Reset Form</button>
+            </div>
+        </form>
       </div>
-      <form id="new-product-form">
-          <input type="text" id="product-name" name="product-name" placeholder="Product Name" required>
-          <input type="file" id="product-image" name="product-image" accept="image/*">
-          <input type="number" id="product-price" name="product-price" step="0.01" min="0" placeholder="Price" required>
-          <input type="number" id="product-quantity" name="product-quantity" min="0" placeholder="Stock" required>
-          <textarea id="product-description" name="product-description" rows="4" cols="50" placeholder="Description"></textarea>
-          <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap; gap: .5rem;">
-            <button class="form-button" type="submit">Create Product</button>
-            <button class="form-button" type="reset">Reset Form</button>
-          </div>
-      </form>
     </div>
   </main>
 {% endblock %}
