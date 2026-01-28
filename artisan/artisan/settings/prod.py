@@ -8,13 +8,14 @@ TROUTE_DOMAIN = os.getenv("TROUTE_DOMAIN")
 DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = [
-    '54.203.155.156',
+    '44.251.204.187',
     'dixie.gallery',
     'www.dixie.gallery',
 ]
 
 # CORS for production frontend
 CORS_ALLOWED_ORIGINS = [
+    "http://44.251.204.187/",
     "https://dixie.gallery",
     "https://www.dixie.gallery"
 ]
@@ -29,6 +30,7 @@ SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://44.251.204.187/",
     "https://dixie.gallery",
     "https://www.dixie.gallery"
 ]
