@@ -1,4 +1,3 @@
-artisan/static/*
 artisan/core/static/css/tailwindcss
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
