@@ -15,7 +15,7 @@ ALLOWED_HOSTS = [
 
 # CORS for production frontend
 CORS_ALLOWED_ORIGINS = [
-    "http://44.251.204.187/",
+    "http://44.251.204.187",
     "https://dixie.gallery",
     "https://www.dixie.gallery"
 ]
