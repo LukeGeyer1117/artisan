@@ -1,0 +1,13 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+main section {
+  width: 80%;
+}
+
+.about-section p {
+  font-size: 14pt;
+}

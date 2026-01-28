@@ -18,6 +18,6 @@ artisan/media/
 
 node_modules/
 # Ignore static files
-artisan/static/
+artisan/static/css/tailwindcss
 
 .env
