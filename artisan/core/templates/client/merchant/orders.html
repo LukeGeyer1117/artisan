@@ -21,7 +21,7 @@
       {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
     {% endblock nav %}
 
-    <main class="dashboard-main flex flex-row p-0 min-h-screen">
+    <main class="dashboard-main flex flex-col p-0 min-h-screen md:flex-row">
 
       <!-- SIDEBAR -->
       {% block side-links %}
@@ -105,7 +105,7 @@
   </div>
 
   <!-- DRAWER PANEL -->
-  <div class="drawer-side">
+  <div class="drawer-side z-40">
     <label for="order-details-drawer" class="drawer-overlay"></label>
 
     <aside class="w-full sm:w-[420px] bg-base-100 h-full shadow-xl p-6 overflow-y-auto">

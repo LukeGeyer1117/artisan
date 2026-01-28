@@ -1,5 +1,5 @@
-artisan/static/*
 artisan/core/static/css/tailwindcss
+artisan/static/css/tailwindcss
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml

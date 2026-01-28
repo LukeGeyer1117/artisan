@@ -800,6 +800,8 @@ class ProductMerchantView(APIView):
                     for field in fields:
                         data[field] = request.POST.get(field)
 
+                    print(data)
+
                     file_fields = ['image']
                     for field in file_fields:
                         data[field] = request.FILES.get(field)
@@ -834,6 +836,7 @@ class ProductMerchantView(APIView):
                     if data['image']:
                         product.image = data['image']
                     if data['category']:
+                        print(f"Category id provided: {data['category']}")
                         product.category_id = data['category']
                     if data['is_featured']:
                         product.is_featured = True if data['is_featured'] == 'true' else False

@@ -5,32 +5,6 @@
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'merchant/styles/settings.css' %}">
-  <style>
-    /* Basic tab styling */
-    .tabs {
-      display: flex;
-      border-bottom: 2px solid #ccc;
-      margin-bottom: 1rem;
-    }
-    .tab-btn {
-      background: none;
-      border: none;
-      padding: 0.75rem 1.25rem;
-      cursor: pointer;
-      font-weight: bold;
-      border-bottom: 3px solid transparent;
-    }
-    .tab-btn.active {
-      border-bottom-color: var(--accent-color, #6c63ff);
-      color: var(--accent-color, #6c63ff);
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-  </style>
 {% endblock %}
 
 {% block content %}
@@ -38,331 +12,382 @@
       {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
   {% endblock nav %}
 
-  <main class="dashboard-main">
+  <main class="dashboard-main flex flex-col md:flex-row">
     {% block side-links %}
       {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
     {% endblock side-links %}
 
-    <div class="container">
-      <h1>Settings</h1>
+    <div class="flex flex-col w-full">
+      <h1 class="text-3xl m-4">Settings</h1>
 
-      <!-- Tabs -->
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="design">Design</button>
-        <button class="tab-btn" data-tab="account">Account</button>
-        <button class="tab-btn" data-tab="text">Text Content</button>
-        <button class="tab-btn" data-tab="shop">Shop</button>
-      </div>
-
-      <!-- Design Tab -->
-      <div id="design" class="tab-content active">
-
-        <!-- Live Preview Section -->
-        <section class="theme-preview">
-          <h2>Live Preview</h2>
-          <div class="preview-container">
-            <div class="preview-header" id="previewHeader">
-              <img src="" alt="Logo Preview" id="previewLogo" class="preview-logo">
-            </div>
-            <div class="preview-hero" id="previewHero">
-              <img src="" alt="Hero Preview" id="previewHeroImage" class="preview-hero-image">
-            </div>
-            <div class="preview-content">
-              <p id="previewText">This is some sample text to show text color, <span id="inline-secondary-text-color">secondary text color</span>, and <span id="inline-accent-color-text">accent color.</span></p>
-              <a href="#" id="previewLink">This is a link</a>
-            </div>
-          </div>
-        </section>
-
-        <!-- Theme Color Settings -->
-        <section class="color-settings" style="border-bottom: 1px solid var(--border-color);">
-          <h2>Theme Settings</h2>
-          <div class="color-controls" style="display: flex; flex-direction: row; flex-wrap: wrap;">
-            <div class="color-group">
-              <label for="textColor">Text Color</label>
-              <input type="color" id="textColor" name="textColor">
-            </div>
-            <div class="color-group">
-              <label for="textSecondaryColor">Secondary Text Color</label>
-              <input type="color" id="textSecondaryColor" name="textSecondaryColor">
-            </div>
-            <div class="color-group">
-              <label for="backgroundColor">Background Color</label>
-              <input type="color" id="backgroundColor" name="backgroundColor">
-            </div>
-            <div class="color-group">
-              <label for="accentColor">Accent Color</label>
-              <input type="color" id="accentColor" name="accentColor">
-            </div>
-            <div class="color-group">
-              <label for="linkHoverColor">Link Hover Color</label>
-              <input type="color" id="linkHoverColor" name="linkHoverColor">
-            </div>
-          </div>
-          <p>See <a href="https://elementor.com/blog/color-theory-web-design/">here</a> for best practices when picking your colors.</p>
-        </section>
-
-        <!-- Logo Upload -->
-        <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 1rem;">
-          <section class="logo-upload">
-            <h2>Logo Image</h2>
-            <div>
-              <img src="" alt="" class="settings-image" id="currentLogoImage">
-            </div>
-            <div class="upload-group">
-              <label for="logoUpload">Upload Logo</label>
-              <input type="file" id="logoUpload" name="logoUpload" accept="image/*">
+      <div class="tabs tabs-box h-full m-2 p-2">
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Design">
+        <div class="tab-content border-base-300 bg-base-100 p-6">
+          <!-- Live Preview Section -->
+          <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
+            <div class="preview-container flex flex-col border border-base-300 rounded-lg">
+              <div class="preview-header flex justify-center items-center bg-base-100 rounded-md" id="previewHeader">
+                <img src="" alt="Logo Preview" id="previewLogo" class="preview-logo h-16 object-contain">
+              </div>
+              <div class="preview-hero flex justify-center items-center bg-base-100 rounded-md" id="previewHero">
+                <img src="" alt="Hero Preview" id="previewHeroImage" class="preview-hero-image max-h-48 object-cover w-full">
+              </div>
+              <div class="preview-content text-base-content/80">
+                <p id="previewText" class="p-4">
+                  This is some sample text to show text color, 
+                  <span id="inline-secondary-text-color">secondary text color</span>, and 
+                  <span id="inline-accent-color-text">accent color.</span>
+                </p>
+                <a href="#" id="previewLink" class="text-primary p-4 hover:underline">This is a link</a>
+              </div>
             </div>
           </section>
 
-          <!-- Hero Upload -->
-          <section class="hero-upload" style="border-bottom: 1px solid var(--border-color);">
-            <h2>Hero Image</h2>
-            <img src="" alt="" class="settings-image" id="currentHeroImage">
-            <div class="upload-group">
-              <label for="heroUpload">Upload Hero Image</label>
-              <input type="file" id="heroUpload" name="heroUpload" accept="image/*">
+          <!-- Theme Color Settings -->
+          <section class="mb-6 border-b border-base-300 pb-4">
+            <h2 class="text-xl font-semibold mb-4">Theme Settings</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-2">
+              <div class="flex flex-col gap-1">
+                <label for="textColor" class="text-sm font-medium text-base-content/80">Text Color</label>
+                <input type="color" id="textColor" name="textColor" class="w-full h-10 cursor-pointer rounded-md border border-base-300">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="textSecondaryColor" class="text-sm font-medium text-base-content/80">Secondary Text Color</label>
+                <input type="color" id="textSecondaryColor" name="textSecondaryColor" class="w-full h-10 cursor-pointer rounded-md border border-base-300">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="backgroundColor" class="text-sm font-medium text-base-content/80">Background Color</label>
+                <input type="color" id="backgroundColor" name="backgroundColor" class="w-full h-10 cursor-pointer rounded-md border border-base-300">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="accentColor" class="text-sm font-medium text-base-content/80">Accent Color</label>
+                <input type="color" id="accentColor" name="accentColor" class="w-full h-10 cursor-pointer rounded-md border border-base-300">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="linkHoverColor" class="text-sm font-medium text-base-content/80">Link Hover Color</label>
+                <input type="color" id="linkHoverColor" name="linkHoverColor" class="w-full h-10 cursor-pointer rounded-md border border-base-300">
+              </div>
             </div>
+            <p class="text-sm text-base-content/60">See <a href="https://elementor.com/blog/color-theory-web-design/" class="text-primary hover:underline">here</a> for best practices when picking your colors.</p>
           </section>
+
+          <!-- Logo & Hero Upload Section -->
+          <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <!-- Logo Upload -->
+            <section class="flex-1 flex flex-col gap-2 border border-base-300 rounded-lg p-4 bg-base-200">
+              <h2 class="text-lg font-semibold mb-2">Logo Image</h2>
+              <div class="flex justify-center items-center mb-2">
+                <img src="" alt="" class="settings-image max-h-24 object-contain" id="currentLogoImage">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="logoUpload" class="text-sm font-medium text-base-content/80">Upload Logo</label>
+                <input type="file" id="logoUpload" name="logoUpload" accept="image/*" class="file-input file-input-bordered w-full">
+              </div>
+            </section>
+
+            <!-- Hero Upload -->
+            <section class="flex-1 flex flex-col gap-2 border border-base-300 rounded-lg p-4 bg-base-200">
+              <h2 class="text-lg font-semibold mb-2">Hero Image</h2>
+              <div class="flex justify-center items-center mb-2">
+                <img src="" alt="" class="settings-image max-h-48 object-cover w-full rounded-md" id="currentHeroImage">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="heroUpload" class="text-sm font-medium text-base-content/80">Upload Hero Image</label>
+                <input type="file" id="heroUpload" name="heroUpload" accept="image/*" class="file-input file-input-bordered w-full">
+              </div>
+            </section>
+          </div>
+
+          <!-- Save Button -->
+          <div class="flex justify-end">
+            <button type="button" class="btn btn-info btn-outline hover:text-white" id="save-theme-btn">Save Settings</button>
+          </div>
         </div>
-        <button type="button" class="save-button" id="save-theme-btn">Save Settings</button>
+
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Account">
+        <div class="tab-content border-base-300 bg-base-100 p-6">
+          <h2 class="text-xl font-semibold mb-4">Account Settings</h2>
+
+          <!-- Profile Picture Section -->
+          <div class="flex flex-col md:flex-row gap-4 items-center md:items-start mb-6">
+            <div class="profile-avatar-container flex-shrink-0">
+              <div class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center text-xl font-bold text-base-content/70" id="profile-avatar">
+                <span id="profile-initials">FN</span>
+              </div>
+            </div>
+            <div class="profile-info flex-1">
+              <h3 id="profile-display-name" class="text-lg font-semibold">Full Name</h3>
+              <p class="text-sm text-base-content/60 mb-2">Merchant Account</p>
+              <div class="flex gap-2">
+                <button class="btn btn-sm btn-outline btn-info hover:text-white" id="upload-pfp-btn">Upload Photo</button>
+                <button class="btn btn-sm btn-outline btn-error hover:text-white" id="remove-pfp-btn">Remove Photo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Name Display -->
+          <div class="account-section flex flex-col gap-1 md:mb-4">
+            <h3 class="text-sm font-medium text-base-content/80">Full Name</h3>
+            <p class="text-base font-semibold" id="merchant-name">Full Name</p>
+          </div>
+
+          <!-- Account Inputs Row 1 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="merchant-email">Primary Email Address</label>
+              <input type="email" class="input input-bordered w-full" id="merchant-email" value="merchant@example.com">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="merchant-contact-email">Contact Email Address</label>
+              <input type="email" class="input input-bordered w-full" id="merchant-contact-email" value="merchant@example.com">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="merchant-phone">Phone Number</label>
+              <input type="tel" class="input input-bordered w-full" id="merchant-phone" value="">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="merchant-contact-phone">Contact Phone</label>
+              <input type="tel" class="input input-bordered w-full" id="merchant-contact-phone" value="">
+            </div>
+          </div>
+
+          <!-- Account Inputs Row 2 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="merchant-username">Username</label>
+              <input type="text" class="input input-bordered w-full" id="merchant-username" value="merchant_user">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="merchant-password">Password</label>
+              <p class="text-base font-semibold" id="merchant-password">********</p>
+              <span class="text-sm text-info cursor-pointer hover:underline" onclick="window.location.href='/password-reset/'">reset password</span>
+            </div>
+          </div>
+
+          <!-- Social Media Links -->
+          <div class="flex flex-col gap-4 mb-4">
+            <h3 class="text-sm font-medium text-base-content/80">Social Media Links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="flex flex-col gap-1">
+                <label for="facebook-link" class="text-sm font-medium text-base-content/80">Facebook</label>
+                <input type="url" id="facebook-link" placeholder="https://www.facebook.com/your-page" class="input input-bordered w-full">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="youtube-link" class="text-sm font-medium text-base-content/80">YouTube</label>
+                <input type="url" id="youtube-link" placeholder="https://www.youtube.com/your-channel" class="input input-bordered w-full">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="instagram-link" class="text-sm font-medium text-base-content/80">Instagram</label>
+                <input type="url" id="instagram-link" placeholder="https://www.instagram.com/your-profile" class="input input-bordered w-full">
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-end mt-6">
+            <button id="submit-account-change" class="btn btn-info btn-outline hover:text-white">Submit Changes</button>
+          </div>
+
+        </div>
+
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Text Content">
+        <div class="tab-content border-base-300 bg-base-100 p-6">
+          <h2 class="text-xl font-semibold">Text Content Settings</h2>
+          <p class="text-sm text-base-content/60 mb-4">
+          Forms for editing hero text, gallery, custom order prompts, etc.
+          </p>
+
+          <!-- Flexible container -->
+          <div class="text-content-flex grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- Hero Section -->
+            <div class="text-content-input-section flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="hero-sentence-draw">
+                Hero Sentence Draw
+              </label>
+              <input type="text" maxlength="100" class="input input-bordered w-full" id="hero-sentence-draw">
+            </div>
+
+            <div class="text-content-input-section flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="hero-header-draw">
+                Hero Header Draw
+              </label>
+              <input type="text" maxlength="100" class="input input-bordered w-full" id="hero-header-draw">
+            </div>
+
+            <!-- Featured Products -->
+            <div class="text-content-input-section flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="featured-header">
+                Featured Products Header
+              </label>
+              <input type="text" maxlength="50" class="input input-bordered w-full" id="featured-header">
+            </div>
+
+            <div class="text-content-input-section flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="featured-text">
+                Featured Products Flavor Text
+              </label>
+              <input type="text" maxlength="250" class="input input-bordered w-full" id="featured-text">
+            </div>
+
+            <!-- Gallery Section -->
+            <div class="text-content-input-section flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="gallery-subtext">
+              Gallery Subtext
+              </label>
+              <input type="text" maxlength="100" class="input input-bordered w-full" id="gallery-subtext">
+            </div>
+
+            <!-- Project Description Section -->
+            <div class="text-content-input-section flex flex-col gap-1">
+              <label class="text-sm font-medium text-base-content/80" for="project-description-placeholder">
+                Project Description Placeholder
+              </label>
+              <input type="text" maxlength="150" class="input input-bordered w-full" id="project-description-placeholder">
+            </div>
+
+            <!-- Custom Order Section -->
+            <div class="text-content-input-section wide flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="custom-order-prompt">
+              Custom Order Welcome Prompt
+              </label>
+              <textarea id="custom-order-prompt" class="textarea textarea-bordered w-full" rows="4"></textarea>
+            </div>
+
+          </div>
+
+          <!-- Submit -->
+          <div class="flex justify-end mt-6">
+            <button
+            class="w-fit save-button btn btn-info btn-outline hover:text-white"
+            id="submit-text-change"
+            >
+            Save Changes
+            </button>
+          </div>
+        </div>
+
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Shop">
+        <div class="tab-content border-base-300 bg-base-100 p-6">
+          <h2 class="text-xl font-semibold">Shop Settings</h2>
+          <p class="text-sm text-base-content/60 mb-4">
+            Config settings for your shop.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- Shop Name -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="shop-name">Shop Name</label>
+              <input type="text" maxlength="50" id="shop-name" class="input input-bordered w-full">
+              <div class="text-xs text-base-content/60">A modified version of your shop name will be used to build your site URL. Make sure to pick something memorable.</div>
+              <a id="shop-url" class="text-sm font-medium text-info mt-1"></a>
+            </div>
+
+            <!-- Shop Description -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="shop-description">About Merchant</label>
+              <textarea maxlength="500" id="shop-description" rows="4" class="textarea textarea-bordered w-full"></textarea>
+              <div class="text-xs text-base-content/60">Tell customers what makes your shop special. This appears prominently on your shop page.</div>
+            </div>
+
+            <!-- Accept Custom Orders -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="flex items-center gap-2">
+                <input type="checkbox" id="accepting-custom-orders" class="checkbox">
+                Accept Custom Orders
+              </label>
+              <div class="text-xs text-base-content/60 font-semibold">When enabled, customers can request custom work beyond your listed products. Consider your capacity carefully.</div>
+            </div>
+
+            <!-- Maximum Active Orders -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="text-sm font-medium text-base-content/80" for="max-active-orders">Maximum Active Orders</label>
+              <input type="number" min="1" max="100" id="max-active-orders" class="input input-bordered w-full">
+              <div class="text-xs text-base-content/60 font-semibold">This prevents you from getting overwhelmed. Once reached, customers won't be able to place new orders until you complete some.</div>
+            </div>
+
+            <!-- Standard Processing Time -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="text-sm font-medium text-base-content/80" for="processing-time">Standard Processing Time (days)</label>
+              <input type="number" min="1" max="365" id="processing-time" class="input input-bordered w-full">
+              <div class="text-xs text-base-content/60">How long it typically takes you to create and ship an order. Be realistic - customers appreciate accurate timelines.</div>
+            </div>
+
+            <!-- Shop Location -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="text-sm font-medium text-base-content/80" for="shop-location">Shop Location</label>
+              <input type="text" maxlength="100" id="shop-location" placeholder="City, State/Country" class="input input-bordered w-full">
+              <div class="text-xs text-base-content/60">Helps customers understand shipping times and costs. You don't need to be overly specific.</div>
+            </div>
+
+            <!-- Currency -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="text-sm font-medium text-base-content/80" for="currency">Currency</label>
+              <select id="currency" class="select select-bordered w-full">
+                <option value="USD" id="usd">USD ($)</option>
+              </select>
+              <div class="text-xs text-base-content/60">All your product prices will be displayed in this currency. Choose what's most convenient for your customers.</div>
+            </div>
+
+            <!-- Shop Status -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="text-sm font-medium text-base-content/80" for="shop-status">Shop Status</label>
+              <select id="shop-status" class="select select-bordered w-full">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="vacation">Vacation Mode</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+              <div class="text-xs text-base-content/60 font-semibold">Don't forget to switch back to "Active" after vacation! Customers can't order when your shop is inactive.</div>
+            </div>
+
+            <!-- Vacation Message -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="vacation-message">Vacation/Status Message</label>
+              <textarea maxlength="200" id="vacation-message" rows="3" placeholder="Optional message for customers when shop is not active" class="textarea textarea-bordered w-full"></textarea>
+              <div class="text-xs text-base-content/60">Let customers know when you'll be back or why your shop is temporarily closed.</div>
+            </div>
+
+            <!-- Minimum Order -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
+              <label class="text-sm font-medium text-base-content/80" for="minimum-order">Minimum Order Amount</label>
+              <input type="number" min="0" step="0.01" id="minimum-order" class="input input-bordered w-full">
+              <div class="text-xs text-base-content/60">Leave at 0 for no minimum. Useful if you want to encourage larger orders or cover payment processing fees.</div>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="terms-and-conditions">Terms & Conditions</label>
+              <textarea maxlength="1000" id="terms-and-conditions" class="textarea textarea-bordered w-full" rows="6" placeholder="Enter your Terms & Conditions to be visible to the customer."></textarea>
+              <div class="text-xs text-base-content/60 font-semibold">Clear terms & conditions help build customer trust in your service. Be sure to give concise, but clear details.</div>
+            </div>
+
+            <!-- Shipping Policy -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="shipping-policy">Shipping Policy</label>
+              <textarea maxlength="1000" id="shipping-policy" rows="2" placeholder="Describe your shipping methods, costs, and timelines" class="textarea textarea-bordered w-full"></textarea>
+              <div class="text-xs text-base-content/60 font-semibold">Be clear about shipping costs and who pays for them. This prevents confusion and disputes later.</div>
+            </div>
+
+            <!-- Return Policy -->
+            <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
+              <label class="text-sm font-medium text-base-content/80" for="return-policy">Return/Exchange Policy</label>
+              <textarea maxlength="1000" id="return-policy" rows="2" placeholder="Describe your return and exchange policies" class="textarea textarea-bordered w-full"></textarea>
+              <div class="text-xs text-base-content/60 font-semibold">A clear return policy builds customer trust. Consider what works for your type of products (especially custom items).</div>
+            </div>
+
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-end mt-6">
+            <button id="submit-shop-changes" class="btn btn-info btn-outline hover:text-white">Submit Changes</button>
+          </div>
+        </div>
       </div>
-
-      <!-- Account Tab -->
-      <div id="account" class="tab-content">
-      <h2>Account Settings</h2>
-      <div class="account-settings-container">
-          
-          <div class="profile-picture-section">
-              <div class="profile-avatar-container">
-                  <div class="profile-avatar" id="profile-avatar">
-                      <span id="profile-initials">FN</span>
-                  </div>
-              </div>
-              <div class="profile-info">
-                  <h3 id="profile-display-name">Full Name</h3>
-                  <p class="profile-subtitle">Merchant Account</p>
-                  <div class="profile-actions">
-                      <button class="profile-action-btn" id="upload-pfp-btn">
-                          Upload Photo
-                      </button>
-                      <button class="profile-action-btn" id="remove-pfp-btn">
-                          Remove Photo
-                      </button>
-                  </div>
-              </div>
-          </div>
-
-          <div class="account-section">
-            <h3>Full Name</h3>
-            <p class="account-value" id="merchant-name">Full Name</p>
-          </div>
-            
-          <div class="account-section-row">
-            <div class="account-section">
-                <h3>Primary Email Address</h3>
-                <input type="email" class="account-input" id="merchant-email" value="merchant@example.com">
-            </div>
-            <div class="account-section">
-                <h3>Contact Email Address</h3>
-                <input type="email" class="account-input" id="merchant-contact-email" value="merchant@example.com">
-            </div>
-            <div class="account-section">
-                <h3>Phone Number</h3>
-                <input type="tel" class="account-input" id="merchant-phone" value="">
-            </div>
-            <div class="account-section">
-              <h3>Contact Phone</h3>
-              <input type="tel" class="account-input" id="merchant-contact-phone" value="">
-            </div>
-          </div>
-
-          <div class="account-section-row">
-              <div class="account-section">
-                  <h3>Username</h3>
-                  <input type="text" class="account-input" id="merchant-username" value="merchant_user">
-              </div>
-              <div class="account-section">
-                  <h3>Password</h3>
-                  <p class="account-value" id="merchant-password">********</p>
-                  <span class="action-link" onclick="window.location.href='/password-reset/'">reset password</span>
-              </div>
-          </div>
-
-
-          <div class="account-section">
-              <h3>Social Media Links</h3>
-              <div class="social-media-links">
-                  <div class="social-media-input">
-                      <label for="facebook-link">Facebook</label>
-                      <input type="url" id="facebook-link" placeholder="https://www.facebook.com/your-page">
-                  </div>
-                  <div class="social-media-input">
-                      <label for="youtube-link">YouTube</label>
-                      <input type="url" id="youtube-link" placeholder="https://www.youtube.com/your-channel">
-                  </div>
-                  <div class="social-media-input">
-                      <label for="instagram-link">Instagram</label>
-                      <input type="url" id="instagram-link" placeholder="https://www.instagram.com/your-profile">
-                  </div>
-              </div>
-          </div>
-      </div>
-      <button class="save-button" id="submit-account-change" style="margin-top: 1rem;">Submit Changes</button>
-  </div>
-
-
-     <!-- Text Content Tab -->
-    <div id="text" class="tab-content">
-      <h2>Text Content Settings</h2>
-      <p>Forms for editing hero text, gallery, custom order prompts, etc.</p>
-
-      <!-- Flexible container -->
-      <div class="text-content-flex">
-
-        <!-- Hero Section -->
-        <div class="text-content-input-section">
-          <label for="hero-sentence-draw">Hero Sentence Draw</label>
-          <input type="text" maxlength="100" id="hero-sentence-draw">
-        </div>
-
-        <div class="text-content-input-section">
-          <label for="hero-header-draw">Hero Header Draw</label>
-          <input type="text" maxlength="100" id="hero-header-draw">
-        </div>
-
-        <!-- Featured Products -->
-        <div class="text-content-input-section">
-          <label for="featured-header">Featured Products Header</label>
-          <input type="text" maxlength="50" id="featured-header">
-        </div>
-
-        <div class="text-content-input-section">
-          <label for="featured-text">Featured Products Flavor Text</label>
-          <input type="text" maxlength="250" id="featured-text">
-        </div>
-
-        <!-- Gallery Section -->
-        <div class="text-content-input-section">
-          <label for="gallery-subtext">Gallery Subtext</label>
-          <input type="text" maxlength="100" id="gallery-subtext">
-        </div>
-
-        <!-- Custom Order Section -->
-        <div class="text-content-input-section wide">
-          <label for="custom-order-prompt">Custom Order Welcome Prompt</label>
-          <textarea id="custom-order-prompt" rows="4"></textarea>
-        </div>
-
-        <!-- Project Description Section -->
-        <div class="text-content-input-section">
-          <label for="project-description-placeholder">Project Description Placeholder</label>
-          <input type="text" maxlength="150" id="project-description-placeholder">
-        </div>
-
-      </div>
-
-      <button class="save-button" id="submit-text-change">Submit Changes</button>
     </div>
 
-
-      <!-- Shop Settings Tab -->
-      <div id="shop" class="tab-content">
-      <h2>Shop Settings</h2>
-      <p>Config settings for your shop.</p>
-      
-      <div class="shop-input-section">
-        <label for="shop-name">Shop Name</label>
-        <input type="text" maxlength="50" id="shop-name" class="shop-setting-input">
-        <div class="field-tip">A modified version of your shop name will be used to build your site URL. Make sure to pick something memorable.</div>
-        <a id="shop-url"></a>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="shop-description">About Merchant</label>
-        <textarea maxlength="500" id="shop-description" rows="4" class="shop-setting-input"></textarea>
-        <div class="field-tip">Tell customers what makes your shop special. This appears prominently on your shop page.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="accepting-custom-orders">
-          <input type="checkbox" id="accepting-custom-orders" class="shop-setting-input">
-          Accept Custom Orders
-        </label>
-        <div class="field-tip important">When enabled, customers can request custom work beyond your listed products. Consider your capacity carefully.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="max-active-orders">Maximum Active Orders</label>
-        <input type="number" min="1" max="100" id="max-active-orders" class="shop-setting-input">
-        <div class="field-tip important">This prevents you from getting overwhelmed. Once reached, customers won't be able to place new orders until you complete some.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="processing-time">Standard Processing Time (days)</label>
-        <input type="number" min="1" max="365" id="processing-time" class="shop-setting-input">
-        <div class="field-tip">How long it typically takes you to create and ship an order. Be realistic - customers appreciate accurate timelines.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="shop-location">Shop Location</label>
-        <input type="text" maxlength="100" id="shop-location" placeholder="City, State/Country" class="shop-setting-input">
-        <div class="field-tip">Helps customers understand shipping times and costs. You don't need to be overly specific.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="currency">Currency</label>
-        <select id="currency" class="shop-setting-input">
-          <option value="USD" id="usd">USD ($)</option>
-        </select>
-        <div class="field-tip">All your product prices will be displayed in this currency. Choose what's most convenient for your customers.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="shop-status">Shop Status</label>
-        <select id="shop-status" class="shop-setting-input">
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="vacation">Vacation Mode</option>
-          <option value="maintenance">Maintenance</option>
-        </select>
-        <div class="field-tip important">Don't forget to switch back to "Active" after vacation! Customers can't order when your shop is inactive.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="vacation-message">Vacation/Status Message</label>
-        <textarea maxlength="200" id="vacation-message" rows="3" placeholder="Optional message for customers when shop is not active" class="shop-setting-input"></textarea>
-        <div class="field-tip">Let customers know when you'll be back or why your shop is temporarily closed.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="minimum-order">Minimum Order Amount</label>
-        <input type="number" min="0" step="0.01" id="minimum-order" class="shop-setting-input">
-        <div class="field-tip">Leave at 0 for no minimum. Useful if you want to encourage larger orders or cover payment processing fees.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="terms-and-conditions">Terms & Conditions</label>
-        <textarea maxlength="1000" id="terms-and-conditions" class="shop-setting-input" rows="6" placeholder="Enter your Terms & Conditions to be visible to the customer."></textarea>
-        <div class="field-tip important">Clear terms & conditions help build customer trust in your service. Be sure to give concise, but clear details.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="shipping-policy">Shipping Policy</label>
-        <textarea maxlength="1000" id="shipping-policy" rows="2" placeholder="Describe your shipping methods, costs, and timelines" class="shop-setting-input"></textarea>
-        <div class="field-tip important">Be clear about shipping costs and who pays for them. This prevents confusion and disputes later.</div>
-      </div>
-
-      <div class="shop-input-section">
-        <label for="return-policy">Return/Exchange Policy</label>
-        <textarea maxlength="1000" id="return-policy" rows="2" placeholder="Describe your return and exchange policies" class="shop-setting-input"></textarea>
-        <div class="field-tip important">A clear return policy builds customer trust. Consider what works for your type of products (especially custom items).</div>
-      </div>
-
-      <button class="save-button" id="submit-shop-changes">Submit Changes</button>
-      </div>
-
-    </div>
   </main>
 {% endblock %}
 
@@ -443,6 +468,7 @@
     });
   </script>
   <script type="module" src="{% static 'merchant/scripts/common.js' %}"></script>
+  <script type="module" src="{% static 'merchant/scripts/settings.js' %}"></script>
   <script type="module" src="{% static 'merchant/scripts/theme_settings.js' %}"></script>
   <script type="module" src="{% static 'merchant/scripts/account_settings.js' %}"></script>
   <script type="module" src="{% static 'merchant/scripts/text_settings.js' %}"></script>

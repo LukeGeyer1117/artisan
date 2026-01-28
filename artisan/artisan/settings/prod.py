@@ -8,6 +8,7 @@ TROUTE_DOMAIN = os.getenv("TROUTE_DOMAIN")
 DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = [
+    '54.203.155.156',
     'dixie.gallery',
     'www.dixie.gallery',
 ]

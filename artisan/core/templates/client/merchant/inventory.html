@@ -4,13 +4,12 @@
 {% block title %}Merchant Dashboard{% endblock %}
 
 {% block extra_head %}
-  <link rel="stylesheet" href="{% static 'merchant/styles/inventory.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
   <div class="drawer drawer-end z-50">
-    <input type="checkbox" id="item-details-drawer" class="drawer-toggle">
+    <input type="checkbox" id="product-details-drawer" class="drawer-toggle">
 
     <div class="drawer-content">
       <!-- NAV -->
@@ -18,129 +17,172 @@
         {% include 'client/components/merchant/merch-nav/nav.html' with slug=artisan.slug %}
       {% endblock nav %}
 
-      <main class="dashboard-main">
+      <main class="flex flex-col md:flex-row">
         <!-- Sidebar Links -->
         {% block side-links %}
           {% include 'client/components/merchant/side-links/side-links.html' with slug=artisan.slug %}
         {% endblock side-links %}
 
-        <!-- Help Links -->
-        <div class="dashboard-section" id="inventory-main-section">
+        <div class="flex flex-col w-full m-4 gap-4">
 
-          <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <section class="dashboard-section" id="top-buttons-section">
-              <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or ID...">
-              </div>
-              <div id="categories-manager"></div>
-              <div>
-                <button class="main-button" id="add-item-button">Add Item &plus;</button>
-              </div>
-            </section>
+          <!-- Search Input and Add Item -->
+          <section id="top-buttons-section" class="flex flex-row justify-between items-center w-full">
+            <label class="input input-bordered flex items-center gap-2">
+              <svg class="h-4 w-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.3-4.3"></path>
+              </svg>
+              <input id="search-input" type="search" class="grow" placeholder="Search by ID or Name" />
+            </label>
+            <div id="categories-manager"></div>
+            <div>
+              <button class="btn btn-outline btn-info hover:text-white" id="add-item-button">Add Item &plus;</button>
+            </div>
+          </section>
 
-            <section class="table-section" id="inventory-table-section">
-              <h3>Products</h3>
-              <table id="inventory-table" class="records-table">
+          <!-- TABLE Inventory -->
+          <section class="" id="inventory-table-section">
+            <h2 class="text-xl mb-2">Inventory</h2>
+            <div class="card bg-base-100 shadow max-h-[400px] overflow-auto">
+              <table id="inventory-table" class="records-table table table-hover table-pin-rows">
                 <thead>
-                  <th id="id-header">ID</th>
-                  <th id="name-header">Name</th>
-                  <th id="price-header">Price</th>
-                  <th id="stock-header">Stock</th>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                  </tr>
                 </thead>
                 <tbody>
                 </tbody>
               </table>
-            </section>
-
-              <div id="category-manager" class="table-section">
-                <h3>Categories</h3>
-                <table id="categories-table" class="records-table">
-                  <thead>
-                    <th id="name-header">Name</th>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-                
-                <div style="padding: 0.5rem 1rem;">
-                  <input type="text" id="new-category-input" placeholder="Add a new category">
-                  <button id="add-category-btn">Add</button>
-                </div>
-              </div>
-          </div>
-        </div>
-        <!-- Product Details Modal -->
-        <div id="product-details-modal" class="side-modal">
-            <div id="product-details" class="side-modal-details">
-              <h3 class="close-modal-btn">&times;</h3>
-              <h3>Preview Product</h3>
-              <img src="" alt="product image">
-              <label for="product-title">Title</label>
-              <p id="product-title">Product title</p>
-              <label for="product-price">Price</label>
-              <p id="product-price">Product Price</p>
-              <label for="product-stock">Stock</label>
-              <p id="product-stock">0</p>
-              <label for="product-description">Description</label>
-              <p id="product-description">...</p>
-              <label for="product-category">Category</label>
-              <p id="product-category"></p>
             </div>
-            <div id="product-actions">
-              <button id="edit-button" class="main-button">Edit</button>
-              <button id="product-delete-button" class="main-button">Delete</button>
+          </section>
+
+          <section class="flex flex-col gap-4" id="category-list-section">
+            <div>
+              <h2 class="text-xl mb-2">Categories</h2>
+              <ul id="category-list" class="list bg-base-100 rounded-box shadow-md"></ul>
             </div>
-        </div>
-        <!-- Edit Item Modal -->
-        <div id="product-edit-modal" class="side-modal">
-          <form id="edit-details" enctype="multipart/form-data">
-            <h3 class="close-modal-btn">&times;</h3>
-            <h3>Edit Product</h3>
-
-            <!-- Main product image -->
-            <input type="file" id="edit-image" name="product-image" accept="image/*">
-
-            <!-- Extra images input -->
-            <label for="edit-extra-images">Extra Images</label>
-            <input type="file" id="edit-extra-images" name="extra_images" accept="image/*" multiple>
-            
-            <!-- Previews will appear here -->
-            <div id="extra-image-previews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;"></div>
-
-            <label for="edit-title">Title</label>
-            <input type="text" id="edit-title" required>
-
-            <label for="edit-price">Price</label>
-            <input type="number" id="edit-price" step=".01" required>
-
-            <label for="edit-stock">Stock</label>
-            <input type="number" id="edit-stock" required>
-
-            <label for="edit-description">Description</label>
-            <textarea name="description" id="edit-description" required></textarea>
-
-            <label for="edit-category">Category</label>
-            <select name="edit-category" id="edit-category"></select>
-
-            <label for="">Featured Product</label>
-            <input type="checkbox" id="edit-featured">
-
-            <button type="submit" id="submit-edit-button">Complete</button>
-          </form>
-        </div>
-
-        <!-- Confirm Delete Product Modal -->
-        <div id="confirm-delete-modal" class="modal">
-          <div id="confirm-delete-content" class="modal-content">
-            <h1 id="delete-warning-header">Warning!!!</h1>
-            <p id="delete-warning-p">You are about to delete a product. This action cannot be undone. Are you sure you want to continue?</p>
-            <div id="delete-modal-buttons">
-              <button id="cancel-delete-button">No, Don't Delete</button>
-              <button id="confirm-delete-button">Yes, Delete Product</button>
+            <div class="">
+              <input type="text" class="input" id="new-category-input" placeholder="Add a new category">
+              <button id="add-category-btn" class="btn btn-info btn-outline hover:text-white">Add</button>
             </div>
-          </div>
+          </section>
+          
         </div>
       </main>
     </div>
+
+
+    <!-- DRAWER containing product details -->
+    <div class="drawer-side z-40">
+      <label for="product-details-drawer" class="drawer-overlay"></label>
+
+      <aside class="w-full sm:w-[600px] bg-base-100 h-full shadow-xl overflow-y-auto">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center p-4 pl-6 pr-6 bg-info">
+          <h2 class="text-xl text-white font-semibold">Product Details</h2>
+          <label for="product-details-drawer" class="btn btn-sm btn-circle btn-ghost text-white hover:text-black">✕</label>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="flex flex-col gap-2 p-6">
+          <!-- PRODUCT IMAGE -->
+          <div class="w-full flex flex-col gap-2">
+            <div class="w-full h-60 rounded-lg overflow-hidden bg-base-200 flex items-center justify-center">
+              <img
+                id="product-drawer-image"
+                src=""
+                alt="Product Image"
+                class="object-contain w-full h-full"
+              />
+            </div>
+            <input type="file" name="image" id="product-drawer-image-input" class="file-input w-full">
+          </div>
+
+          <!-- PRODUCT NAME -->
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend text-base">Product Name</legend>
+            <input type="text" name="name" id="product-drawer-name" class="input" placeholder="--">
+          </fieldset>
+
+          <div class="flex flex-row flex-wrap gap-4">
+            <!-- PRICE -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Price</legend>
+              <label class="input max-w-[200px]">
+                <span class="label">USD</span>
+                <input type="number" name="price" id="product-drawer-price" placeholder="000">
+              </label>
+            </fieldset>
+
+            <!-- STOCK -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Quantity in Stock</legend>
+              <input type="number" name="stock" id="product-drawer-stock" class="input" placeholder="000">
+            </fieldset>
+
+            <!-- CATEGORY -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Category</legend>
+              <select name="category" id="product-drawer-category" class="select"></select>
+            </fieldset>
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="form-control w-full">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Description</legend>
+              <textarea name="description" id="product-drawer-description" class="textarea h-36 w-full" placeholder="Description"></textarea>
+            </fieldset>
+          </div>
+
+          <!-- FEATURED -->
+          <div class="form-control">
+            <label class="label cursor-pointer flex items-center gap-3">
+              <span class="label-text">Feature this product</span>
+              <input
+                id="product-drawer-featured"
+                type="checkbox"
+                class="checkbox checkbox-info"
+                name="featured"
+              />
+            </label>
+          </div>
+
+          <!-- ACTION -->
+          <div class="flex flex-col gap-2">
+            <button id="product-save-button" class="btn btn-info w-full text-white">Save Changes</button>
+            <button id="product-delete-button" class="btn btn-error w-full text-white">Delete Product</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- MODAL for deleting a product -->
+    <dialog id="deleteModal" class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg text-error">
+          Delete this product?
+        </h3>
+
+        <p class="py-2">
+          Permanently removes product from your inventory.<br>
+          This action cannot be undone.
+        </p>
+
+        <div class="modal-action">
+          <button class="btn btn-info btn-outline hover:text-white">Cancel</button>
+          <button class="btn btn-error btn-outline hover:text-white">Delete</button>
+        </div>
+      </div>
+    </dialog>
+
+
   </div>
 {% endblock %}
 
