@@ -3,9 +3,7 @@
 
 {% block title %}Merchant Dashboard{% endblock %}
 
-{% block extra_head %}
-  <link rel="stylesheet" href="{% static 'merchant/styles/settings.css' %}">
-{% endblock %}
+{% block extra_head %}{% endblock %}
 
 {% block content %}
   {% block nav %}
@@ -136,7 +134,8 @@
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="merchant-email">Primary Email Address</label>
-              <input type="email" class="input input-bordered w-full" id="merchant-email" value="merchant@example.com">
+              <input type="email" class="input input-bordered w-full" id="merchant-email" value="merchant@example.com" disabled>
+              <div class="text-xs">Contact your agent to change</div>
             </div>
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="merchant-contact-email">Contact Email Address</label>
@@ -144,7 +143,8 @@
             </div>
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="merchant-phone">Phone Number</label>
-              <input type="tel" class="input input-bordered w-full" id="merchant-phone" value="">
+              <input type="tel" class="input input-bordered w-full" id="merchant-phone" value="" disabled>
+              <div class="text-xs">Contact your agent to change</div>
             </div>
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="merchant-contact-phone">Contact Phone</label>
@@ -156,7 +156,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="merchant-username">Username</label>
-              <input type="text" class="input input-bordered w-full" id="merchant-username" value="merchant_user">
+              <input type="text" class="input input-bordered w-full" id="merchant-username" value="merchant_user" disabled>
             </div>
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="merchant-password">Password</label>
@@ -206,14 +206,14 @@
               <label class="text-sm font-medium text-base-content/80" for="hero-sentence-draw">
                 Hero Sentence Draw
               </label>
-              <input type="text" maxlength="100" class="input input-bordered w-full" id="hero-sentence-draw">
+              <input type="text" maxlength="100" class="text-content-input input input-bordered w-full" id="hero-sentence-draw">
             </div>
 
             <div class="text-content-input-section flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="hero-header-draw">
                 Hero Header Draw
               </label>
-              <input type="text" maxlength="100" class="input input-bordered w-full" id="hero-header-draw">
+              <input type="text" maxlength="100" class="text-content-input input input-bordered w-full" id="hero-header-draw">
             </div>
 
             <!-- Featured Products -->
@@ -221,14 +221,14 @@
               <label class="text-sm font-medium text-base-content/80" for="featured-header">
                 Featured Products Header
               </label>
-              <input type="text" maxlength="50" class="input input-bordered w-full" id="featured-header">
+              <input type="text" maxlength="50" class="text-content-input input input-bordered w-full" id="featured-header">
             </div>
 
             <div class="text-content-input-section flex flex-col gap-1">
               <label class="text-sm font-medium text-base-content/80" for="featured-text">
                 Featured Products Flavor Text
               </label>
-              <input type="text" maxlength="250" class="input input-bordered w-full" id="featured-text">
+              <input type="text" maxlength="250" class="text-content-input input input-bordered w-full" id="featured-text">
             </div>
 
             <!-- Gallery Section -->
@@ -236,7 +236,7 @@
               <label class="text-sm font-medium text-base-content/80" for="gallery-subtext">
               Gallery Subtext
               </label>
-              <input type="text" maxlength="100" class="input input-bordered w-full" id="gallery-subtext">
+              <input type="text" maxlength="100" class="text-content-input input input-bordered w-full" id="gallery-subtext">
             </div>
 
             <!-- Project Description Section -->
@@ -244,7 +244,7 @@
               <label class="text-sm font-medium text-base-content/80" for="project-description-placeholder">
                 Project Description Placeholder
               </label>
-              <input type="text" maxlength="150" class="input input-bordered w-full" id="project-description-placeholder">
+              <input type="text" maxlength="150" class="text-content-input input input-bordered w-full" id="project-description-placeholder">
             </div>
 
             <!-- Custom Order Section -->
@@ -252,7 +252,7 @@
               <label class="text-sm font-medium text-base-content/80" for="custom-order-prompt">
               Custom Order Welcome Prompt
               </label>
-              <textarea id="custom-order-prompt" class="textarea textarea-bordered w-full" rows="4"></textarea>
+              <textarea id="custom-order-prompt" class="text-content-input textarea textarea-bordered w-full" rows="4"></textarea>
             </div>
 
           </div>
@@ -280,7 +280,8 @@
             <!-- Shop Name -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
               <label class="text-sm font-medium text-base-content/80" for="shop-name">Shop Name</label>
-              <input type="text" maxlength="50" id="shop-name" class="input input-bordered w-full">
+              <input type="text" id="shop-name" class="shop-setting-input input validator input-bordered w-full" pattern=".{0,50}">
+              <div class="validator-hint hidden">shop name is limited to 50 characters</div>
               <div class="text-xs text-base-content/60">A modified version of your shop name will be used to build your site URL. Make sure to pick something memorable.</div>
               <a id="shop-url" class="text-sm font-medium text-info mt-1"></a>
             </div>
@@ -288,44 +289,53 @@
             <!-- Shop Description -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
               <label class="text-sm font-medium text-base-content/80" for="shop-description">About Merchant</label>
-              <textarea maxlength="500" id="shop-description" rows="4" class="textarea textarea-bordered w-full"></textarea>
+              <textarea id="shop-description" rows="4" maxlength="1000" class="shop-setting-input textarea validator textarea-bordered w-full"></textarea>
+              <div class="validator-hint hidden">shop description is limited to 1000 characters</div>
               <div class="text-xs text-base-content/60">Tell customers what makes your shop special. This appears prominently on your shop page.</div>
             </div>
 
             <!-- Accept Custom Orders -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
-              <label class="flex items-center gap-2">
-                <input type="checkbox" id="accepting-custom-orders" class="checkbox">
-                Accept Custom Orders
-              </label>
-              <div class="text-xs text-base-content/60 font-semibold">When enabled, customers can request custom work beyond your listed products. Consider your capacity carefully.</div>
+              <div>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" id="accepting-custom-orders" class="shop-setting-input checkbox checkbox-sm">
+                  Accept Custom Orders
+                </label>
+                <div class="text-xs text-base-content/60 font-semibold">When enabled, customers can request custom work beyond your listed products. Consider your capacity carefully.</div>
+              </div>
+              <div>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" id="cap-maximum-orders" class="shop-setting-input checkbox checkbox-sm">
+                  Cap Maximum Orders
+                </label>
+                <div class="text-xs text-base-content/60 font-semibold">limit the number of active orders your store can receive</div>
+              </div>
             </div>
 
             <!-- Maximum Active Orders -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
               <label class="text-sm font-medium text-base-content/80" for="max-active-orders">Maximum Active Orders</label>
-              <input type="number" min="1" max="100" id="max-active-orders" class="input input-bordered w-full">
-              <div class="text-xs text-base-content/60 font-semibold">This prevents you from getting overwhelmed. Once reached, customers won't be able to place new orders until you complete some.</div>
+              <input type="number" min="1" max="100" id="max-active-orders" class="shop-setting-input input input-bordered w-full">
             </div>
 
             <!-- Standard Processing Time -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
               <label class="text-sm font-medium text-base-content/80" for="processing-time">Standard Processing Time (days)</label>
-              <input type="number" min="1" max="365" id="processing-time" class="input input-bordered w-full">
-              <div class="text-xs text-base-content/60">How long it typically takes you to create and ship an order. Be realistic - customers appreciate accurate timelines.</div>
+              <input type="number" min="1" max="365" id="processing-time" class="shop-setting-input input input-bordered w-full">
+              <div class="text-xs text-base-content/60">Time to process and ship an order.</div>
             </div>
 
             <!-- Shop Location -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
               <label class="text-sm font-medium text-base-content/80" for="shop-location">Shop Location</label>
-              <input type="text" maxlength="100" id="shop-location" placeholder="City, State/Country" class="input input-bordered w-full">
+              <input type="text" maxlength="100" id="shop-location" placeholder="City, State/Country" class="shop-setting-input input input-bordered w-full">
               <div class="text-xs text-base-content/60">Helps customers understand shipping times and costs. You don't need to be overly specific.</div>
             </div>
 
             <!-- Currency -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
               <label class="text-sm font-medium text-base-content/80" for="currency">Currency</label>
-              <select id="currency" class="select select-bordered w-full">
+              <select id="currency" class="shop-setting-input select select-bordered w-full">
                 <option value="USD" id="usd">USD ($)</option>
               </select>
               <div class="text-xs text-base-content/60">All your product prices will be displayed in this currency. Choose what's most convenient for your customers.</div>
@@ -334,7 +344,7 @@
             <!-- Shop Status -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
               <label class="text-sm font-medium text-base-content/80" for="shop-status">Shop Status</label>
-              <select id="shop-status" class="select select-bordered w-full">
+              <select id="shop-status" class="shop-setting-input select select-bordered w-full">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
                 <option value="vacation">Vacation Mode</option>
@@ -346,35 +356,35 @@
             <!-- Vacation Message -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
               <label class="text-sm font-medium text-base-content/80" for="vacation-message">Vacation/Status Message</label>
-              <textarea maxlength="200" id="vacation-message" rows="3" placeholder="Optional message for customers when shop is not active" class="textarea textarea-bordered w-full"></textarea>
+              <textarea maxlength="200" id="vacation-message" rows="3" placeholder="Optional message for customers when shop is not active" class="shop-setting-input textarea textarea-bordered w-full"></textarea>
               <div class="text-xs text-base-content/60">Let customers know when you'll be back or why your shop is temporarily closed.</div>
             </div>
 
             <!-- Minimum Order -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-1">
               <label class="text-sm font-medium text-base-content/80" for="minimum-order">Minimum Order Amount</label>
-              <input type="number" min="0" step="0.01" id="minimum-order" class="input input-bordered w-full">
+              <input type="number" min="0" step="0.01" id="minimum-order" class="shop-setting-input input input-bordered w-full">
               <div class="text-xs text-base-content/60">Leave at 0 for no minimum. Useful if you want to encourage larger orders or cover payment processing fees.</div>
             </div>
 
             <!-- Terms & Conditions -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
               <label class="text-sm font-medium text-base-content/80" for="terms-and-conditions">Terms & Conditions</label>
-              <textarea maxlength="1000" id="terms-and-conditions" class="textarea textarea-bordered w-full" rows="6" placeholder="Enter your Terms & Conditions to be visible to the customer."></textarea>
+              <textarea maxlength="1000" id="terms-and-conditions" class="shop-setting-input textarea textarea-bordered w-full" rows="6" placeholder="Enter your Terms & Conditions to be visible to the customer."></textarea>
               <div class="text-xs text-base-content/60 font-semibold">Clear terms & conditions help build customer trust in your service. Be sure to give concise, but clear details.</div>
             </div>
 
             <!-- Shipping Policy -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
               <label class="text-sm font-medium text-base-content/80" for="shipping-policy">Shipping Policy</label>
-              <textarea maxlength="1000" id="shipping-policy" rows="2" placeholder="Describe your shipping methods, costs, and timelines" class="textarea textarea-bordered w-full"></textarea>
+              <textarea maxlength="1000" id="shipping-policy" rows="2" placeholder="Describe your shipping methods, costs, and timelines" class="shop-setting-input textarea textarea-bordered w-full"></textarea>
               <div class="text-xs text-base-content/60 font-semibold">Be clear about shipping costs and who pays for them. This prevents confusion and disputes later.</div>
             </div>
 
             <!-- Return Policy -->
             <div class="shop-input-section flex flex-col gap-1 md:col-span-2">
               <label class="text-sm font-medium text-base-content/80" for="return-policy">Return/Exchange Policy</label>
-              <textarea maxlength="1000" id="return-policy" rows="2" placeholder="Describe your return and exchange policies" class="textarea textarea-bordered w-full"></textarea>
+              <textarea maxlength="1000" id="return-policy" rows="2" placeholder="Describe your return and exchange policies" class="shop-setting-input textarea textarea-bordered w-full"></textarea>
               <div class="text-xs text-base-content/60 font-semibold">A clear return policy builds customer trust. Consider what works for your type of products (especially custom items).</div>
             </div>
 

@@ -309,6 +309,7 @@ class ShopSettings(models.Model):
     accepting_custom_orders = models.BooleanField(default=False)
     
     # Changed to IntegerField for whole numbers
+    cap_maximum_orders = models.BooleanField(default=False)
     maximum_active_orders = models.IntegerField(default=1000)
     standard_processing_days = models.IntegerField(default=10)
     

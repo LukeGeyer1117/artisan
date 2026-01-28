@@ -1773,6 +1773,7 @@ class TextContentMerchantView(APIView):
             artisan = request.user
             text_content, _ = TextContent.objects.get_or_create(artisan=artisan)
             data = request.data
+            print(data)
 
             text_content.hero_sentence_draw = data['sentence'][:100]
             text_content.hero_header_draw = data['header'][:100]
@@ -1848,7 +1849,7 @@ class ShopSettingsMerchantView(APIView):
 
             # Update the model fields with the data from the JSON
             shop_settings_fields = [
-                'shop_name', 'shop_description', 'accepting_custom_orders', 'maximum_active_orders', 'standard_processing_days',
+                'shop_name', 'shop_description', 'accepting_custom_orders', 'cap_maximum_orders', 'maximum_active_orders', 'standard_processing_days',
                 'shop_location', 'currency', 'shop_status', 'status_message', 'minimum_order_amount'      
             ]
             for field in shop_settings_fields:

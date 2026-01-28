@@ -27,13 +27,24 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Now, if there was a change, submit the shop settings changes
   const save_shop_changes_btn = document.getElementById('submit-shop-changes');
-  save_shop_changes_btn.addEventListener('click', function () {
+  save_shop_changes_btn.addEventListener('click', function (e) {
+    e.preventDefault();
     if (!changed) {
       showToast("No changes detected.", "alert-info");
       return;
     }
 
     save_shop_changes();
+  })
+
+  // Listen for CapMaxOrders to be checked
+  const CapMaxOrders = document.getElementById('cap-maximum-orders');
+  CapMaxOrders.addEventListener('input', function () {
+    if (CapMaxOrders.checked) {
+      document.getElementById('max-active-orders').disabled = '';
+    } else {
+      document.getElementById('max-active-orders').disabled = 'disabled';
+    }
   })
 })
 
@@ -70,8 +81,13 @@ async function save_shop_changes() {
   const shop_name = document.getElementById('shop-name').value;
   const shop_description = document.getElementById('shop-description').value;
   const accepting_custom_orders = document.getElementById('accepting-custom-orders').checked;
+  const cap_maximum_orders = document.getElementById('cap-maximum-orders').checked;
   const maximum_active_orders = document.getElementById('max-active-orders').value;
   const standard_processing_days = document.getElementById('processing-time').value;
+  if (standard_processing_days > 356) {
+    showToast("Standard Processing days must be <= 365", "alert-error");
+    return;
+  }
   const shop_location = document.getElementById('shop-location').value;
   const currency = document.getElementById('currency').value;
   const shop_status = document.getElementById('shop-status').value;
@@ -86,6 +102,7 @@ async function save_shop_changes() {
     shop_name: shop_name,
     shop_description: shop_description,
     accepting_custom_orders: accepting_custom_orders,
+    cap_maximum_orders: cap_maximum_orders,
     maximum_active_orders: maximum_active_orders,
     standard_processing_days: standard_processing_days,
     shop_location: shop_location,
@@ -127,6 +144,7 @@ function populate_fields_initial(shop_settings, policies, slug) {
   document.getElementById('shop-name').value = shop_settings.shop_name;
   document.getElementById('shop-description').value = shop_settings.shop_description;
   document.getElementById('accepting-custom-orders').checked = shop_settings.accepting_custom_orders;
+  document.getElementById('cap-maximum-orders').checked = shop_settings.cap_maximum_orders;
   document.getElementById('max-active-orders').value = shop_settings.maximum_active_orders;
   document.getElementById('processing-time').value = shop_settings.standard_processing_days;
   document.getElementById('shop-location').value = shop_settings.shop_location;
@@ -149,4 +167,9 @@ function populate_fields_initial(shop_settings, policies, slug) {
   shopUrl.textContent = fullUrl;
   shopUrl.href = fullUrl;
   shopUrl.target = '_blank';  
+
+  // Decide if the maximum_orders_input should be disabled
+  if (!shop_settings.cap_maximum_orders) {
+    document.getElementById('max-active-orders').disabled = 'disabled';
+  }
 }
