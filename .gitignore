@@ -19,5 +19,6 @@ artisan/media/
 node_modules/
 # Ignore static files
 artisan/static/css/tailwindcss
+artisan/artisan/staticfiles/
 
 .env
