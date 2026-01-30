@@ -20,5 +20,9 @@ node_modules/
 # Ignore static files
 artisan/static/css/tailwindcss
 artisan/artisan/staticfiles/
+artisan/static/css/output.css
+
+# Production Script
+scripts/deploy_prod.sh
 
 .env

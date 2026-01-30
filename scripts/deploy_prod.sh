@@ -7,8 +7,12 @@ PROJECT_DIR="/home/ubuntu/artisan/artisan"
 VENV_DIR="/home/ubuntu/venv"
 STATIC_DIR="$PROJECT_DIR/static/css"
 GUNICORN_SERVICE="artisan.service"
+ENV_FILE="$PROJECT_DIR/.env"
 
 cd "$PROJECT_DIR"
+
+echo "Exporting environment variables..."
+export $(grep -v '^#' ~/artisan/artisan/.env | xargs)
 
 # GIT PULL
 echo "Pulling updates..."
@@ -23,7 +27,7 @@ $PROJECT_DIR/static/css/tailwindcss -i $PROJECT_DIR/static/css/input.css -o $PRO
 
 # COLLECT STATIC FILES
 echo "Collecting static files..."
-python3 "$PROJECT_DIR/manage.py" collectstatic --noinput
+python3 "$PROJECT_DIR/manage.py" collectstatic --noinput --clear
 
 # APPLY DB MIGRATION
 echo "Applying DB migrations..."
