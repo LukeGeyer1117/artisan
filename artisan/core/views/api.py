@@ -53,7 +53,7 @@ STATUS_200 = status.HTTP_200_OK
 # Serialize some common response errors
 ARTISAN_NOT_FOUND = Response({'error': "Artisan not found"}, status=STATUS_404)
 
-TROUTE_DOMAIN = os.environ.get("TROUTE_DOMAIN", "develop.expitrna.com")
+TROUTE_DOMAIN = os.environ.get("TROUTE_DOMAIN", "develop.expitrans.com")
 
 ### API VIEWS
 
