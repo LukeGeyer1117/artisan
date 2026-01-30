@@ -1,3 +1,5 @@
+import { showToast } from "./common.js";
+
 let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
@@ -283,7 +285,7 @@ class GalleryManager {
       if (response.ok) {
         const data = await response.json();
         console.log('Success response:', data);
-        this.showMessage('Gallery order saved successfully!', 'success');
+        showToast("Gallery Order Saved!", "success")
         
         // Update local images array with the cleaned data
         this.images = validImages;

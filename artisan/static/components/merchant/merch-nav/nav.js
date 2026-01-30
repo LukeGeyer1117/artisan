@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     localStorage.setItem('theme', theme);
   });
 
+  // Use merchant information to fill navbar fields
+
+  document.getElementById('merchant-identifier-shop-name').innerHTML = merchant_information.shop_name;
+
   if (merchant_information.image) {
     avatarContainer.innerHTML = `<img src="/media/${merchant_information.image}" alt="${merchant_information.full_name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
   } else {

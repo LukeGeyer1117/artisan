@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const orders = data.orders;
 
     if (orders.length > 3000) {
-      showToast('Only showing 3000 most recent orders');
+      showToast('Only showing 3000 most recent orders', "info");
     }
 
     renderAnalytics(orders);
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
 
       if (!response.ok) {
-        showToast(`Couldn't get orders. Status: ${response.status}`);
+        showToast(`Couldn't get orders. Status: ${response.status}`, "error");
         throw new Error(`Couldn't get orders!`);
       }
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       return data;
 
     } catch (error) {
-      showToast(`Could not get orders. Abandoning attempt...`);
+      showToast(`Could not get orders. Abandoning attempt...`, "error");
       throw error; // rethrow to let caller handle it
     }
   }

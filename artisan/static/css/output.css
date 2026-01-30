@@ -48,6 +48,7 @@
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
     --tracking-normal: 0em;
     --leading-normal: 1.5;
     --radius-md: 0.375rem;
@@ -4924,6 +4925,12 @@
       color: var(--color-info);
     }
   }
+  .status-primary {
+    @layer daisyui.l1.l2 {
+      background-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+  }
   .bg-base-100 {
     background-color: var(--color-base-100);
   }
@@ -5044,6 +5051,9 @@
   }
   .fill-primary-content {
     fill: var(--color-primary-content);
+  }
+  .stroke-primary {
+    stroke: var(--color-primary);
   }
   .object-contain {
     object-fit: contain;
@@ -5210,6 +5220,10 @@
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
+  }
+  .font-extrabold {
+    --tw-font-weight: var(--font-weight-extrabold);
+    font-weight: var(--font-weight-extrabold);
   }
   .font-medium {
     --tw-font-weight: var(--font-weight-medium);
@@ -5819,6 +5833,11 @@
   .md\:mb-4 {
     @media (width >= 48rem) {
       margin-bottom: calc(var(--spacing) * 4);
+    }
+  }
+  .md\:block {
+    @media (width >= 48rem) {
+      display: block;
     }
   }
   .md\:hidden {

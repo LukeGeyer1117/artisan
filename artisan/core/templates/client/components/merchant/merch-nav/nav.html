@@ -1,21 +1,30 @@
 {% load static %}
 
-<div class="navbar bg-base-100 shadow-sm sticky top-0 pl-4 pr-4 z-21 w-full">
-  <div class="flex-1">
-    <a class="text-xl text-primary font-bold">HiveMade</a>
+<div class="navbar bg-base-100 shadow-sm sticky top-0 pl-4 pr-4 z-21 w-full flex flex-row justify-between">
+  <!-- LOGO -->
+  <div class="">
+    <a class="text-xl text-primary font-extrabold">HiveMade</a>
   </div>
-  <div class="flex-none flex flex-row items-center gap-4">
+
+  <!-- MERCHANT IDENTIFIER -->
+
+  <div class="flex flex-row">
+    <p id="merchant-identifier-shop-name" class="hidden md:block text-primary font-bold"></p>
+  </div>
+
+  <!-- ACCOUNT, THEME, and MENU -->
+  <div class="flex flex-row items-center gap-4">
     <label class="flex cursor-pointer gap-1">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
         height="20"
         viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
+        fill="primary"
         stroke-width="2"
         stroke-linecap="round"
-        stroke-linejoin="round">
+        stroke-linejoin="round"
+        class="stroke-primary">
         <circle cx="12" cy="12" r="5" />
         <path
           d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
@@ -26,11 +35,11 @@
         width="20"
         height="20"
         viewBox="0 0 24 24"
-        fill="none"
         stroke="currentColor"
         stroke-width="2"
         stroke-linecap="round"
-        stroke-linejoin="round">
+        stroke-linejoin="round"
+        class="stroke-primary">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
       </svg>
     </label>

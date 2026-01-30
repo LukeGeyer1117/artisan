@@ -142,7 +142,6 @@ function renderResults(filteredData, searchTerm = '') {
             <td class='price-td'>${highlightText(String(formatCurrency(item.price)), searchTerm)}</td>
             <td class='stock-td'>${highlightText(String(item.quantity), searchTerm)}</td>
             <td class='category-td'>${item.category}</td>
-            <td><div aria-label="status" class="status status-info status-lg"></div></td>
           </tr>
         `).join('');
       } else {
@@ -288,7 +287,7 @@ async function get_merchant_information() {
 
     const data = await response.json();
     if (data.artisan.troute_key == "False" || data.artisan.troute_login == "False") {
-      showToast("You are not fully registered. Please contact your System Administrator or Agent");
+      showToast("You are not fully registered. Please contact your System Administrator or Agent", "error");
     }
 
     return data.artisan;
@@ -302,16 +301,29 @@ function showToast(message, message_type, duration = 3000) {
   }
 
   // Set the new message
-  const alert = toast.querySelector('.alert')
-  alert.querySelector('span').textContent = message;
+  const alert = document.createElement('div');
+  alert.classList.add('alert');
+  const alertMessage = document.createElement('span');
+  alertMessage.classList.add('text-primary-content');
+  alertMessage.innerHTML = message;
 
-  // Show it
-  alert.classList.add(message_type);
+  alert.appendChild(alertMessage);
+  toast.appendChild(alert);
+
+  console.log(message_type);
+
+  if (message_type == "info") {alert.classList.add('alert-info');} 
+  else if (message_type == "success") {alert.classList.add('alert-success');}
+  else if (message_type == "warning") {alert.classList.add('alert-warning');}
+  else if (message_type == "error") {alert.classList.add('alert-error');}
+
   toast.classList.remove('hidden');
+  console.log(toast);
 
   // Hide after duration
   setTimeout(() => {
     toast.classList.add('hidden');
+    alert.remove();
   }, duration);
 }
 

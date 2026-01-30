@@ -408,7 +408,7 @@ async function handleProductDelete(currentProduct) {
     if (!response.ok) throw new Error("Couldn't delete product");
 
     const text = await response.text();
-    showToast(text);
+    showToast(text, "success");
     window.location.reload();
   } catch (err) {
     console.error(err);
