@@ -42,6 +42,8 @@ from rest_framework import serializers
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiRequest, OpenApiResponse
 
+import traceback
+
 # Serialize some status codes
 STATUS_404 = status.HTTP_404_NOT_FOUND
 STATUS_400 = status.HTTP_400_BAD_REQUEST
@@ -740,7 +742,8 @@ class ProductMerchantView(APIView):
         except Artisan.DoesNotExist:
             return Response({'error': ARTISAN_NOT_FOUND})
         except Exception as e:
-            return Response({'error': f"Couldn't get product: {str(e)}"}, status=STATUS_500)
+            traceback.print_exc()
+            return Response({'error': str(e)}, status=STATUS_500)
         
     def post(self, request):
         try:
@@ -782,7 +785,8 @@ class ProductMerchantView(APIView):
 
                     return Response({'message': "Product created"}, status=STATUS_200)
                 except Exception as e:
-                    return Response({'error': "Could not create product"}, status=STATUS_500) 
+                    traceback.print_exc()
+                    return Response({'error': str(e)}, status=STATUS_500) 
 
             else:
                 try:
@@ -853,7 +857,8 @@ class ProductMerchantView(APIView):
                     return Response({'error': "Couldn't update product"}, status=STATUS_500)
                 
         except Exception as e:
-            return Response({'error': "Couldn't update or create product"}, status=STATUS_500)
+            traceback.print_exc()
+            return Response({'error': str(e)}, status=STATUS_500)
         
     def delete(self, request):
         try:
@@ -886,7 +891,8 @@ class ProductMerchantView(APIView):
             return Response({'message': "Product deleted"}, status=STATUS_200)
         
         except Exception as e:
-            return Response({"error": "Could not delete product"}, status=STATUS_500)
+            traceback.print_exc()
+            return Response({'error': str(e)}, status=STATUS_500)
 
 @csrf_exempt
 @require_GET
