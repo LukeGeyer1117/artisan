@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const initialTab = document.querySelector('.tab');
   initialTab.classList.add('tab-active');
-  initialTab.classList.add('text-info');
+  initialTab.classList.add('text-primary');
 
 
   const tabs = document.querySelectorAll('.tab');
@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
     tab.addEventListener('click', function () {
       tabs.forEach(tab => {
         tab.classList.remove('tab-active');
-        tab.classList.remove('text-info');
+        tab.classList.remove('text-primary');
       })
       tab.classList.add('tab-active');
-      tab.classList.add('text-info');
+      tab.classList.add('text-primary');
     })
   })
 })

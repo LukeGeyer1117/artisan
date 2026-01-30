@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!row) return;
 
     row.querySelectorAll('td').forEach(td => {
-      td.style.backgroundColor = "oklch(98.5% 0.002 247.839)";
+      td.classList.add('bg-base-300');
     })
   });
 
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!row) return;
 
     row.querySelectorAll('td').forEach(td => {
-      td.style.backgroundColor = 'white';
+      td.classList.remove('bg-base-300');
     })
   });
 
@@ -183,8 +183,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const data = await response.json();
     const products = data.products;
-
-    console.log(products);
 
     searchAndFilter(searchInput, products);
 

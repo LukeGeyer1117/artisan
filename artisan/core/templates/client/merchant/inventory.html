@@ -36,13 +36,13 @@
             </label>
             <div id="categories-manager"></div>
             <div>
-              <button class="btn btn-outline btn-info hover:text-white" id="add-item-button">Add Item &plus;</button>
+              <button class="btn btn-outline btn-primary hover:text-white" id="add-item-button">Add Item &plus;</button>
             </div>
           </section>
 
           <!-- TABLE Inventory -->
           <section class="" id="inventory-table-section">
-            <h2 class="text-xl mb-2">Inventory</h2>
+            <h2 class="text-xl mb-2 text-primary">Inventory</h2>
             <div class="card bg-base-100 shadow max-h-[400px] overflow-auto">
               <table id="inventory-table" class="records-table table table-hover table-pin-rows">
                 <thead>
@@ -61,14 +61,16 @@
             </div>
           </section>
 
+          <div class="divider"></div>
+
           <section class="flex flex-col gap-4" id="category-list-section">
             <div>
-              <h2 class="text-xl mb-2">Categories</h2>
+              <h2 class="text-xl mb-2 text-primary">Categories</h2>
               <ul id="category-list" class="list bg-base-100 rounded-box shadow-md"></ul>
             </div>
             <div class="">
               <input type="text" class="input" id="new-category-input" placeholder="Add a new category">
-              <button id="add-category-btn" class="btn btn-info btn-outline hover:text-white">Add</button>
+              <button id="add-category-btn" class="btn btn-primary btn-outline hover:text-white">Add</button>
             </div>
           </section>
           
@@ -84,7 +86,7 @@
       <aside class="w-full sm:w-[600px] bg-base-100 h-full shadow-xl overflow-y-auto">
 
         <!-- HEADER -->
-        <div class="flex justify-between items-center p-4 pl-6 pr-6 bg-info">
+        <div class="flex justify-between items-center p-4 pl-6 pr-6 bg-primary">
           <h2 class="text-xl text-white font-semibold">Product Details</h2>
           <label for="product-details-drawer" class="btn btn-sm btn-circle btn-ghost text-white hover:text-black">✕</label>
         </div>
@@ -148,7 +150,7 @@
               <input
                 id="product-drawer-featured"
                 type="checkbox"
-                class="checkbox checkbox-info"
+                class="checkbox checkbox-primary"
                 name="featured"
               />
             </label>
@@ -156,7 +158,7 @@
 
           <!-- ACTION -->
           <div class="flex flex-col gap-2">
-            <button id="product-save-button" class="btn btn-info w-full text-white">Save Changes</button>
+            <button id="product-save-button" class="btn btn-primary w-full text-white">Save Changes</button>
             <button id="product-delete-button" class="btn btn-error w-full text-white">Delete Product</button>
           </div>
         </div>
@@ -176,7 +178,7 @@
         </p>
 
         <div class="modal-action">
-          <button class="btn btn-info btn-outline hover:text-white">Cancel</button>
+          <button class="btn btn-primary btn-outline hover:text-white">Cancel</button>
           <button class="btn btn-error btn-outline hover:text-white">Delete</button>
         </div>
       </div>

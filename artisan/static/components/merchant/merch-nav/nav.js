@@ -11,8 +11,21 @@ document.addEventListener('DOMContentLoaded', async function () {
   const merchant_information = await get_merchant_information();
 
   const avatarContainer = document.getElementById('navbar-pfp-container');
+  // Get the stored theme from localstorage, if one exists, and apply that theme to the page
+  const themeSwap = document.querySelector('.theme-controller');
+  const documentEl = document.documentElement;
 
-  console.log(merchant_information);
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    documentEl.setAttribute('data-theme', savedTheme);
+    themeSwap.checked = savedTheme === 'dark';
+  }
+
+  themeSwap.addEventListener('change', () => {
+    const theme = themeSwap.checked ? 'dark' : 'light';
+    documentEl.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  });
 
   if (merchant_information.image) {
     avatarContainer.innerHTML = `<img src="/media/${merchant_information.image}" alt="${merchant_information.full_name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;

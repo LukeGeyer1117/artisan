@@ -21,9 +21,9 @@
 
     <div class="flex flex-col gap-4 m-4 w-full" id="new-product-form-section">
       <div class="w-full lg:w-1/2 flex flex-col gap-2">
-        <button id="back-button-div" class="btn btn-ghost max-w-[200px]">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" style="fill: var(--text-color-primary);"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
-          <span class="text-base">Back to Inventory</span>
+        <button id="back-button-div" class="btn btn-ghost w-fit p-2 flex flex-row justify-start">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="fill-primary"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
+          <span class="text-primary">Back to Inventory</span>
         </button>
         <form id="new-product-form" class="flex flex-col w-full gap-2">
             <input class="input w-full" type="text" id="product-name" name="product-name" placeholder="Product Name" required maxlength="100">
@@ -32,7 +32,7 @@
             <input class="input w-full" type="number" id="product-quantity" name="product-quantity" min="0" placeholder="Stock" required>
             <textarea class="textarea w-full" id="product-description" name="product-description" rows="4" cols="50" placeholder="Description"></textarea>
             <div class="flex flex-row w-full gap-4">
-              <button class="btn btn-info btn-outline flex-1 hover:text-white" type="submit">Create Product</button>
+              <button class="btn btn-primary btn-outline flex-1 hover:text-white" type="submit">Create Product</button>
               <button class="btn btn-error btn-outline flex-1 hover:text-white" type="reset">Reset Form</button>
             </div>
         </form>
