@@ -4345,8 +4345,20 @@
   .h-75 {
     height: calc(var(--spacing) * 75);
   }
+  .h-80 {
+    height: calc(var(--spacing) * 80);
+  }
+  .h-96 {
+    height: calc(var(--spacing) * 96);
+  }
   .h-100 {
     height: calc(var(--spacing) * 100);
+  }
+  .h-150 {
+    height: calc(var(--spacing) * 150);
+  }
+  .h-200 {
+    height: calc(var(--spacing) * 200);
   }
   .h-\[0-9a-zA-Z\] {
     height: 0-9a-zA-Z;
@@ -4374,6 +4386,15 @@
   }
   .max-h-48 {
     max-height: calc(var(--spacing) * 48);
+  }
+  .max-h-120 {
+    max-height: calc(var(--spacing) * 120);
+  }
+  .max-h-140 {
+    max-height: calc(var(--spacing) * 140);
+  }
+  .max-h-150 {
+    max-height: calc(var(--spacing) * 150);
   }
   .max-h-\[80vh\] {
     max-height: 80vh;

@@ -1,5 +1,5 @@
 import { getCookie } from "./csrf.js";
-import { showToast } from "./common.js";
+import { showToast, daisyColor } from "./common.js";
 
 const csrftoken = getCookie('csrftoken');
 
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     renderAnalytics(orders);
-    CreateOrdersNRevenueLineChart('analytics-chart', orders, undefined, timeframe);
+    CreateOrdersNRevenueLineChart('sales-chart', 'revenue-chart', orders, undefined, timeframe);
   }
 
   async function renderAnalytics(orders) {
@@ -109,100 +109,117 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.querySelector("#custom-requests .stat-value").innerHTML = `${Number(analyzed_data.custom_requests)}`;
   }
 
-  // Do chart setup
-  function CreateOrdersNRevenueLineChart(canvas_name, orders, chart_type='line', timeframe=7) {
+  let salesChartInstance = null;
+  let revenueChartInstance = null;
 
-
-    // Create the date labels
-    const labels = Array.from({length: timeframe}, (_, i) => {
+  function CreateOrdersNRevenueLineChart(
+    sales_canvas_name,
+    revenue_canvas_name,
+    orders,
+    chart_type = 'line',
+    timeframe = 7
+  ) {
+    // Create date labels (oldest → newest)
+    const labels = Array.from({ length: timeframe }, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() - (timeframe - i -1)); // dates oldest to newest
-      const month = (date.getMonth() + 1);
-      const day = date.getDate();
-      return `${month}/${day}`;
-    })
+      date.setDate(date.getDate() - (timeframe - i - 1));
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    });
 
-    // Count order & revenue totals per day
-    const order_counts = {}
-    const revenue_counts = {}
+    // Count orders & revenue per day
+    const order_counts = {};
+    const revenue_counts = {};
+
     orders.forEach(order => {
       const date = new Date(order.created_at);
-      const key = `${date.getMonth() + 1}/${date.getDate() + 1}`;
+      const key = `${date.getMonth() + 1}/${date.getDate()}`;
+
       order_counts[key] = (order_counts[key] || 0) + 1;
-      revenue_counts[key] = (revenue_counts[key] || 0) + Number(order.total_price);
-    })
-    // Map the totals per day to the chart labels
+      revenue_counts[key] =
+        (revenue_counts[key] || 0) + Number(order.total_price);
+    });
+
     const orders_data = labels.map(label => order_counts[label] || 0);
     const revenue_data = labels.map(label => revenue_counts[label] || 0);
 
-    // Get the canvas, and clear any chart out of it
-    const ctx = document.getElementById(canvas_name);
-    if (chartInstance) {
-      chartInstance.destroy();
+    /* ======================
+      SALES / ORDERS CHART
+      ====================== */
+
+    const salesCtx = document.getElementById(sales_canvas_name);
+
+    if (salesChartInstance) {
+      salesChartInstance.destroy();
     }
 
-    // Configure the chart
-    // Details:
-    //    - 2 Y-axes, one for Orders, one for Revenue
-    //    - Line charts
-    const config = {
-      type: chart_type,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        elements: {
-          line: {
-            tension: .25,
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            type: 'linear',
-            position: 'left',
-            grid: {
-              display: false
-            },
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            },
-          },
-          y1: {
-            type: 'linear',
-            position: 'right',
-            grid: {
-              display: false
-            },
-            beginAtZero: true
-          }
-        },
-      },
+    const primaryLineColor = daisyColor('--color-primary', 0.9);
+    console.log(`PrimaryLinecolor: ${primaryLineColor}`)
 
+    salesChartInstance = new Chart(salesCtx, {
+      type: chart_type,
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
-            label: "Orders",
+            label: 'Orders',
             data: orders_data,
-            yAxisID: 'y',
-            borderColor: linecolor1 + lineTransparency
-          },
-          {
-            label: "Revenue",
-            data: revenue_data,
-            yAxisID: 'y1',
-            borderColor: linecolor2 + lineTransparency
+            borderColor: primaryLineColor,
+            tension: 0.25,
           }
         ]
       },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    /* ======================
+      REVENUE CHART
+      ====================== */
+
+    const revenueCtx = document.getElementById(revenue_canvas_name);
+
+    if (revenueChartInstance) {
+      revenueChartInstance.destroy();
     }
 
-    // Create the chart, and add it to chartInstance
-    chartInstance = new Chart(ctx, config);
+    revenueChartInstance = new Chart(revenueCtx, {
+      type: chart_type,
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Revenue',
+            data: revenue_data,
+            borderColor: primaryLineColor,
+            tension: 0.25,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            grid: { display: false },
+            ticks: {
+              callback: value => `$${value}`
+            }
+          }
+        }
+      }
+    });
   }
+
 })
