@@ -406,6 +406,4 @@ function linearToSrgb(val) {
   return 1.055 * Math.pow(val, 1 / 2.4) - 0.055;
 }
 
-
-
 export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast, daisyColor};

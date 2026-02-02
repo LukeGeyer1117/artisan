@@ -1,5 +1,5 @@
 #!/bin/bash
-seet -e # Exit on any error
+set -e # Exit on any error
 set -o pipefail
 
 # CONFIG
