@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       })
       .then(response => {
-        showToast("Theme Updated");
+        showToast("Theme Updated", "success");
       })
     }
 
