@@ -4,7 +4,6 @@
 {% block title %}Merchant Dashboard{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{% static 'merchant/styles/orders.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -108,13 +107,14 @@
   <div class="drawer-side z-40">
     <label for="order-details-drawer" class="drawer-overlay"></label>
 
-    <aside class="w-full sm:w-[420px] bg-base-100 h-full shadow-xl p-6 overflow-y-auto">
+    <aside class="w-full sm:w-[600px] bg-base-100 h-full shadow-xl p-6 overflow-y-auto">
 
       <!-- HEADER -->
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Order Details</h2>
+      <div class="flex justify-end items-center mb-4 w-full">
         <label for="order-details-drawer" class="btn btn-sm btn-circle btn-ghost">✕</label>
       </div>
+
+      <div class="divider ">Order Summary</div>
 
       <!-- DETAILS -->
       <div class="space-y-3">
@@ -140,9 +140,9 @@
         </div>
 
         <!-- STATUS -->
-        <div class="form-control w-full flex flex-col gap-2">
+        <div class="form-control w-full flex flex-row justify-between gap-2">
           <label class="label-text">Status</label>
-          <select id="order-status" class="select select-bordered w-full">
+          <select id="order-status" class="select select-bordered w-1/2">
             <option value="" selected>--</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
@@ -152,11 +152,32 @@
             <option value="canceled">Canceled</option>
           </select>
         </div>
+        
+        <div class="divider ">Shipping Details</div>
+        <div class="flex flex-row flex-wrap w-full justify-between">
+          <label class="label-text">Street Address</label>
+          <p id="order-street-address" class="font-semibold"></p>
+        </div>
 
-        <div class="divider divider-info">Products</div>
+        <div class="flex flex-row flex-wrap w-full justify-between">
+          <label class="label-text">City</label>
+          <p id="order-city" class="font-semibold"></p>
+        </div>
+
+        <div class="flex flex-row flex-wrap w-full justify-between">
+          <label class="label-text">State</label>
+          <p id="order-state" class="font-semibold"></p>
+        </div>
+
+        <div class="flex flex-row flex-wrap w-full justify-between">
+          <label class="label-text">ZIP Code</label>
+          <p id="order-zip-code" class="font-semibold"></p>
+        </div>
+
+        <div class="divider ">Products</div>
         <div id="order-products" class="space-y-2"></div>
         
-        <button id="order-status-change-button" class="btn btn-info w-full text-white">
+        <button id="order-status-change-button" class="btn btn-primary w-full text-white">
           Save
         </button>
 

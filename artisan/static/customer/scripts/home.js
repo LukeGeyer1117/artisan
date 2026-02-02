@@ -52,8 +52,8 @@ function GetAndDisplayHero() {
   })
   .then(data => {
     const hero_image_url = data.image_url;
-    const hero_section = document.getElementById('home-hero-section');
-    hero_section.style.backgroundImage = `url(${hero_image_url})`;
+    const hero_section = document.querySelector('.hero-content');
+    hero_section.querySelector('img').src = hero_image_url;
   })
 }
 
@@ -67,17 +67,11 @@ async function GetAndDisplayText() {
   const text_data = await text_response.json();
   const text_content = text_data.text_content;
 
-  const artisan_response = await fetch(`${API_BASE_URL}/artisan/${slug}/`, {
-    method: 'GET'
-  })
+  console.log(text_content);
 
-  if (!artisan_response.ok) throw new Error("Couldn't get Artisan");
-  const artisan_data = await artisan_response.json();
-  const artisan = artisan_data.artisan;
+  document.getElementById('hero-title').textContent = text_content.hero_title;
+  document.getElementById('hero-sentence').textContent = text_content.hero_sentence;
 
-  console.log(text_content, artisan_data);
-
-  document.getElementById('hero-merchant-name').innerHTML = artisan.shop_name;
 }
 
 function GetAndDisplayFeaturedProducts() {

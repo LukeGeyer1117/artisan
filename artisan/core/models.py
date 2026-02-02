@@ -281,8 +281,8 @@ class TextContent(models.Model):
     artisan = models.OneToOneField("Artisan", on_delete=models.CASCADE)
 
     # Hero Text
-    hero_sentence_draw = models.CharField(max_length=100, blank=True)
-    hero_header_draw = models.CharField(max_length=100, blank=True)
+    hero_title = models.CharField(max_length=100, blank=True)
+    hero_sentence = models.CharField(max_length=150, blank=True)
 
     # Featured Product text
     featured_header = models.CharField(max_length=50, blank=True)

@@ -14,18 +14,31 @@
 
     <main class="space-y-12 flex flex-col items-center">
 
-        <div id="home-hero-section" class="hero min-h-screen">
-        <div class="hero-overlay"></div>
-        <div class="hero-content text-neutral-content text-center">
-            <div class="max-w-md">
-            <h1 id="hero-merchant-name" class="hero-merchant-name mb-5 text-7xl font-bold"></h1>
-            <p id="hero-sentence-cta" class="mb-5">
-            </p>
-            <button class="btn btn-square">
-                <span class="loading loading-spinner"></span>
-            </button>
+        <div class="hero min-h-screen bg-base-200">
+            <div class="hero-content flex flex-row justify-between h-full w-full">
+                
+                <div class="text-center lg:text-left flex flex-col gap-10 w-full">
+                    <h1 id="hero-title" class="text-5xl font-bold leading-tight">
+                        Discover Quality That Speaks for Itself
+                    </h1>
+                    <p id="hero-sentence" class="py-6 text-lg text-base-content/80">
+                        Explore our latest collection designed to elevate your everyday life. 
+                        Premium materials, sustainable sourcing, and timeless designs tailored just for you.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="{% url 'shop' artisan.slug %}" class="btn btn-primary">Shop Now</a>
+                        <a href="{% url 'gallery' artisan.slug %}" class="btn btn-primary btn-outline">View Gallery</a>
+                    </div>
+                    
+                </div>
+
+                <img
+                class="rounded-lg shadow-2xl w-1/2 h-full object-cover"
+                alt="New Collection Feature"
+                />
+
             </div>
-        </div>
         </div>
 
         <!-- Products Section -->

@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   })
     // and if using buttons
-  const plusBtn = document.querySelector('.number-btn.plus');
-  const minBtn = document.querySelector('.number-btn.minus');
+  const plusBtn = document.querySelector('.plus');
+  const minBtn = document.querySelector('.minus');
   // Increment button
   plusBtn.addEventListener('click', function () {
     let value = parseInt(quantityInput.value) || 0;
@@ -54,15 +54,44 @@ document.addEventListener('DOMContentLoaded', async function () {
   });
 
   // Finally , listen for add to cart button to be clicked
-  document.querySelector('.add-to-cart-button').addEventListener('click', function () {
+  const addToCartButton = document.querySelector('.add-to-cart-button');
+  addToCartButton.addEventListener('click', function () {
     const quantityDesired = quantityInput.value;
+    if (quantityDesired == 0) {
+      showToast("Cannot add quantity 0 to cart.", "warning");
+      return;
+    }
+
+    addToCartButton.disabled = 'disabled';
+    addToCartButton.innerHTML = `<span class="loading loading-spinner loading-md"></span>`
     if (quantityDesired > 0) {
       addItemToCart(product, quantityDesired);
+      setTimeout(() => {
+        window.location.href = `/shop/${slug}/`;
+      }, 2000);
     } else {
       showToast("Cannot add 0 items to cart");
     }
   })
+
+  const buyNowbutton = document.querySelector('.buy-now-button');
+  buyNowbutton.addEventListener('click', function () {
+    const quantityDesired = quantityInput.value;
+    if (quantityDesired == 0) {
+      showToast("Cannot add quantity 0 to cart.", "warning");
+      return;
+    }
+
+    addItemToCart(product, quantityDesired);
+    setTimeout(() => {
+      window.location.href = `/checkout/${slug}/`;
+    }, 2000);
+
+    buyNowbutton.disabled = 'disabled';
+    buyNowbutton.innerHTML = `<span class="loading loading-spinner loading-md"></span>`
+  })
 })
+
 
 function addItemToCart(product, quantity) {
   console.log(product.id)
@@ -83,8 +112,7 @@ function addItemToCart(product, quantity) {
   .then(data => {
     console.log('Cart updated:', data);
     // Optionally update the cart UI here
-    showToast("Added to cart!");
-    window.location.href = `/shop/${slug}/`;
+    showToast("Added to cart!", "success");
   })
   .catch(error => {
     console.error('Error:', error);
@@ -108,7 +136,6 @@ function BuildHTML(product, product_images) {
   document.querySelector('.item-photos-main').src = `${product.image}`;
   const miniImg = document.createElement('img');
   miniImg.src = `${product.image}`;
-  document.querySelector('.item-photos-multi').appendChild(miniImg);
 
   miniImg.addEventListener('click', function () {
     document.querySelector('.item-photos-main').src = `/media/${product.image}`;

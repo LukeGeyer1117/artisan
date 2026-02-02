@@ -55,7 +55,7 @@ class GalleryManager {
     const validFiles = files.filter(file => file.type.startsWith('image/'));
 
     if (validFiles.length === 0) {
-      this.showMessage('Please select valid image files', 'error');
+      showToast('Please select valid image files', 'warning');
       return;
     }
 
@@ -82,13 +82,13 @@ class GalleryManager {
       if (response.ok) {
         const data = await response.json();
         this.addImageToGallery(data.url, data.id);
-        this.showMessage('Image uploaded successfully', 'success');
+        showToast('Image uploaded successfully', 'success');
       } else {
-        this.showMessage('Failed to upload image', 'error');
+        showToast('Failed to upload image', 'error');
       }
     } catch (error) {
       console.error('Upload error:', error);
-      this.showMessage('Upload failed. Please try again.', 'error');
+      showToast('Upload failed. Please try again.', 'error');
     }
   }
 
@@ -233,13 +233,13 @@ class GalleryManager {
 
           this.renderGallery();
           this.updateSaveButton();
-          this.showMessage('Image removed successfully', 'success');
+          showToast('Image removed successfully', 'success');
         } else {
-          this.showMessage('Failed to remove image', 'error');
+          showToast('Failed to remove image', 'error');
         }
       } catch (error) {
         console.error('Delete error:', error);
-        this.showMessage('Failed to remove image', 'error');
+        showToast('Failed to remove image', 'error');
       }
     }
   }
@@ -294,11 +294,11 @@ class GalleryManager {
         // Try to get the error message from the response
         const errorText = await response.text();
         console.error('Error response:', errorText);
-        this.showMessage(`Failed to save gallery order: ${response.status}`, 'error');
+        showToast(`Failed to save gallery order: ${response.status}`, 'error');
       }
     } catch (error) {
       console.error('Save error:', error);
-      this.showMessage('Save failed. Please try again.', 'error');
+      showToast('Save failed. Please try again.', 'error');
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = 'Save Gallery Order';

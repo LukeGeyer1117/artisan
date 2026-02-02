@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   const text_content = await get_text_content();
   console.log(text_content);
-  const sentence = document.getElementById('hero-sentence-draw');
-  const header = document.getElementById('hero-header-draw');
+  const sentence = document.getElementById('hero-sentence');
+  const header = document.getElementById('hero-title');
   const featured_header = document.getElementById('featured-header');
   const featured_text = document.getElementById('featured-text');
   const gallery_subtext = document.getElementById('gallery-subtext');
@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   const submit = document.getElementById('submit-text-change');
-  submit.addEventListener('click', function () {
+  submit.addEventListener('click', function (e) {
+    e.preventDefault();
     if (changed) {
+      console.log('Calling update text content');
       update_text_content(sentence, header, featured_header, featured_text, gallery_subtext, custom_order_prompt, project_description_placeholder);
     }
   })
@@ -67,12 +69,15 @@ async function update_text_content(sentence, header, featured_header, featured_t
       })
     });
 
+    console.log(response);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || 'Failed to update text content.');
     }
 
     const data = await response.json();
+    console.log(data);
     window.location.reload();
     // Optional: Add UI feedback here, like a success message
     // showSuccessMessage('Text content updated successfully!');
@@ -85,8 +90,8 @@ async function update_text_content(sentence, header, featured_header, featured_t
 }
 
 function fill_text_fields(text_content, sentence, header, featured_header, featured_text, gallery_subtext, custom_order_prompt, project_description_placeholder) {
-  sentence.value = text_content.hero_sentence_draw;
-  header.value = text_content.hero_header_draw;
+  sentence.value = text_content.hero_sentence;
+  header.value = text_content.hero_title;
   featured_header.value = text_content.featured_header;
   featured_text.value = text_content.featured_text;
   gallery_subtext.value = text_content.gallery_subtext;

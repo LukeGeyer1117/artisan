@@ -1781,8 +1781,8 @@ class TextContentMerchantView(APIView):
             data = request.data
             print(data)
 
-            text_content.hero_sentence_draw = data['sentence'][:100]
-            text_content.hero_header_draw = data['header'][:100]
+            text_content.hero_sentence = data['sentence'][:150]
+            text_content.hero_title = data['header'][:100]
             text_content.featured_header = data['featured_header'][:50]
             text_content.featured_text = data['featured_text'][:250]
             text_content.gallery_subtext = data['gallery_subtext']

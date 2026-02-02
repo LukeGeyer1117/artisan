@@ -127,7 +127,7 @@ function createOrderItemElement(product, item) {
   orderProduct.innerHTML = `
     <!-- Product image -->
     <div class='flex flex-row gap-4 items-center'>
-      <input type="checkbox" class="checkbox checkbox-info" />
+      <input type="checkbox" class="checkbox checkbox-primary" />
       <div class="avatar">
         <div class="w-8 rounded">
           <img src="${product.image}" alt="${product.name}" />
@@ -283,6 +283,8 @@ function openOrderDrawer(order_data) {
 
   showOrderDetails(order_data);
 
+  console.log(order_data);
+
   document.getElementById('order-name').innerHTML = order_data.customer_name;
   document.getElementById('order-contact').innerHTML = `${order_data.customer_email} / ${order_data.customer_phone}`;
   document.getElementById('order-date').innerHTML = new Date(order_data.created_at).toLocaleDateString("en-US", {
@@ -292,6 +294,11 @@ function openOrderDrawer(order_data) {
   });
   document.getElementById('order-status').value = order_data.status;
   document.getElementById('order-total').innerHTML = `$${order_data.total_price}`;
+
+  document.getElementById('order-street-address').innerHTML = order_data.shipping_addr;
+  document.getElementById('order-city').innerHTML = order_data.city;
+  document.getElementById('order-state').innerHTML = order_data.state;
+  document.getElementById('order-zip-code').innerHTML = order_data.zip_code;
 
   drawerToggle.checked = true;
 

@@ -3,47 +3,96 @@
 
 {% block title %}Item{% endblock %}
 
-{% block extra_head %}
-  <link rel="stylesheet" href="{% static 'customer/styles/item.css' %}">
-{% endblock %}
-
 {% block content %}
 
-    {% block nav %}
-        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %} 
-    {% endblock nav %}
-    <main data-item-id="{{ item.id }}" style="display: flex; flex-direction: column; align-items: center;">
-      <div class="cross-bar" style="display: flex; flex-direction: row; width: 80%; justify-content: flex-start; margin-bottom: 1rem;">
-        <div class="back-button" style="display: flex; flex-direction: row; align-items: center; gap: .5rem;">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8D8D8D"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
-          <h3 style="margin: 0; font-size: 12pt;">Return to Shop</h3>
-        </div>
+  {% block nav %}
+    {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %}
+  {% endblock nav %}
+
+  <main
+    data-item-id="{{ item.id }}"
+    class="flex flex-col items-center w-full p-4"
+  >
+
+    <!-- Top bar -->
+    <div class="w-full max-w-6xl mb-4">
+      <div class="back-button flex items-center gap-2 text-neutral cursor-pointer hover:text-primary transition">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6"
+          viewBox="0 -960 960 960"
+          fill="currentColor"
+        >
+          <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+        </svg>
+        <h3 class="text-sm font-medium">Return to Shop</h3>
       </div>
-      <div class="item-main-section" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 2rem; justify-content: center;">
-        <div class="item-photos-section">
-          <img class="item-photos-main" style="width: 20rem; height: fit-content; object-fit: cover;">
-          <div class="item-photos-multi" style="display: flex; flex-direction: column; height: 100%; overflow-y: scroll;"></div>
-        </div>
-        <div class="item-details-section" style="display: flex; flex-direction: column; gap: .8rem;">
-          <h2 class="product-title" style="margin: 0; width: fit-content;"></h2>
-          <h4 class="product-category" style="margin: 0;"></h4>
-          <h4 class="product-stock" style="margin: 0;"></h4>
-          <h3 class="product-price" style="margin: 0;"></h3>
-          <div style="display: flex;" class="quantity-cart-section">
-            <div class="number-input-container"><button class="number-btn minus">-</button><input type="number" class="number-input" id="numberInput" value="0" min="0" max="999"><button class="number-btn plus">+</button></div>
-            <button class="add-to-cart-button" style="border: none; padding: .5rem 4rem; width: fit-content;">Add to Cart</button>
+    </div>
+
+    <!-- Main item section -->
+    <div class="flex flex-wrap justify-center gap-8 max-w-6xl w-full">
+
+      <!-- Photos -->
+      <div class="flex flex-col gap-4">
+        <img
+          class="w-80 rounded-lg object-cover shadow-md item-photos-main"
+          alt="Product image"
+        />
+      </div>
+
+      <!-- Details -->
+      <div class="flex flex-col gap-3 max-w-md">
+
+        <h2 class="text-2xl font-bold product-title"></h2>
+
+        <h4 class="text-sm text-neutral product-category"></h4>
+
+        <h4 class="text-sm font-medium product-stock"></h4>
+
+        <h3 class="text-xl font-semibold text-primary product-price"></h3>
+
+        <!-- Quantity + Cart -->
+        <div class="flex items-center gap-4 mt-2">
+
+          <div class="join">
+            <button class="btn btn-sm join-item number-btn minus">-</button>
+            <input
+              type="number"
+              id="numberInput"
+              value="0"
+              min="0"
+              max="999"
+              class="input input-bordered input-sm join-item w-20 text-center number-input"
+            />
+            <button class="btn btn-sm join-item number-btn plus">+</button>
           </div>
-          <h4 class="product-description-header" style="margin: 0;">Description</h4>
-          <p class="product-description-body" style="margin: 0; font-size: 12pt; max-width: 500px;"></p>
+
+          <button class="btn btn-primary btn-outline add-to-cart-button">
+            Add to Cart
+          </button>
+
+          <button class="btn btn-accent btn-outline buy-now-button">Buy Now</button>
+
         </div>
+
+        <!-- Description -->
+        <h4 class="mt-4 text-lg font-semibold product-description-header">
+          Description
+        </h4>
+
+        <p class="text-sm leading-relaxed product-description-body"></p>
+
       </div>
-    </main>
-    {% block footer %}
-        {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
-    {% endblock footer %}
+    </div>
+
+  </main>
+
+  {% block footer %}
+    {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
+  {% endblock footer %}
 
 {% endblock %}
 
 {% block extra_scripts %}
-    <script type="module" src="{% static 'customer/scripts/item.js' %}"></script>
+  <script type="module" src="{% static 'customer/scripts/item.js' %}"></script>
 {% endblock %}
