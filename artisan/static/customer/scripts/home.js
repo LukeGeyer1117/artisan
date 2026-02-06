@@ -52,8 +52,8 @@ function GetAndDisplayHero() {
   })
   .then(data => {
     const hero_image_url = data.image_url;
-    const hero_section = document.querySelector('.hero-content');
-    hero_section.querySelector('img').src = hero_image_url;
+    const hero_image = document.querySelector('#hero-image');
+    hero_image.style.backgroundImage = `url("${hero_image_url}")`;
   })
 }
 
@@ -71,6 +71,9 @@ async function GetAndDisplayText() {
 
   document.getElementById('hero-title').textContent = text_content.hero_title;
   document.getElementById('hero-sentence').textContent = text_content.hero_sentence;
+
+  document.querySelector('.featured-header').textContent = text_content.featured_header;
+  document.querySelector('.featured-text').textContent = text_content.featured_text;
 
 }
 

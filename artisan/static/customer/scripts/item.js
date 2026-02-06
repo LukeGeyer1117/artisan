@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       addItemToCart(product, quantityDesired);
       setTimeout(() => {
         window.location.href = `/shop/${slug}/`;
-      }, 2000);
+      }, 500);
     } else {
       showToast("Cannot add 0 items to cart");
     }

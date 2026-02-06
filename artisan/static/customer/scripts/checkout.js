@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!response.ok) throw new Error("Couldn't get checkout total");
 
     let data = await response.json();
+    console.log(data);
 
     const total = data.total;
     const products = data.products;
@@ -197,7 +198,6 @@ async function checkout(payment_id) {
         throw new Error('Gateway form not found');
     }
 
-    // 🔥 This is the missing piece
     gatewayForm.requestSubmit();
 
     try {
@@ -308,7 +308,7 @@ async function summarize(total, products) {
 
         order_items_list.appendChild(prod);
 
-        document.getElementById('subtotal').textContent = `$${total}`;
+        document.getElementById('summary-total').textContent = `$${total}`;
 
     }
 }

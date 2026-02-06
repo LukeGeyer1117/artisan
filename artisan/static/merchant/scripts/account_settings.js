@@ -158,14 +158,14 @@ async function submit_account_changes() {
 
             const data = await response.json();
             console.log('Account update successful:', data);
-            showToast("Account Information Updated");
+            showToast("Account Information Updated", "success");
 
         } catch (error) {
             console.error('Error submitting changes:', error);
             alert('Failed to update information. Please try again.');
         }
     } else {
-        showToast('No changes to submit.');
+        showToast('No changes to submit.', "info");
     }
 }
 
@@ -214,7 +214,7 @@ async function upload_profile_image(file) {
 
         const data = await response.json();
         console.log('Image upload successful:', data);
-        showToast("Profile Image Updated");
+        showToast("Profile Image Updated", "success");
         
         // Use the returned URL to update the display immediately
         if (data.image_url) {
@@ -246,7 +246,7 @@ async function remove_profile_picture() {
         }
 
         console.log('Image removed successfully!');
-        showToast("Profile Picture Removed");
+        showToast("Profile Picture Removed", "success");
         
         // Re-fetch information to update the display to show initials
         await setup_account_settings();

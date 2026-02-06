@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="w-full h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,7 +95,7 @@
             }
     </script>
 </head>
-<body data-slug="{{ artisan.slug }}" class="lg:text-lg md:text-xl">
+<body data-slug="{{ artisan.slug }}" class="lg:text-lg md:text-xl w-full h-full flex flex-col justify-between">
     {% block content %}
     {% endblock %}
 
@@ -107,5 +107,6 @@
     {% block extra_scripts %}{% endblock %}
     <script type="module" src="{% static 'customer/scripts/common.js' %}"></script>
     <script type="module" src="{% static 'components/nav/nav.js' %}"></script>
+    <script type="module" src="{% static 'customer/scripts/footer.js' %}"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 
+import { showToast } from "./common.js";
 import { getCookie } from "./csrf.js";
 
 const csrftoken = getCookie('csrftoken');
@@ -17,53 +18,107 @@ document.addEventListener("DOMContentLoaded", async function () {
     let total = 0;
     const products = cart_data.products;
 
+    // Get the template object for cart items
+    const template = document.getElementById('cart-item-template');
+
     // Build the product divs in the cart
     products.forEach(product => {
-        const cartItem = document.createElement('div');
-        cartItem.className = 'cart-item';
-        cartItem.innerHTML = `
-            <img src='/media/${product.image}' alt='${product.name}'>
-            <div class='cart-item-details'>
-                <h3>${product.name}</h3>
-                <p>Price: $${product.price}</p>
-                <p>Quantity: <span class='prod-quantity'>${cart_data.raw_data[product.id]}</span></p>
-                <button class='edit-btn'>Edit</button>
-                <button class='remove-btn'>Remove</button>
-                <p class='prod-id' style='display:none;'>${product.id}</p>
-            </div>
-            <input type='number' max=${product.quantity} min=1 value=${cart_data.raw_data[product.id]} style='display: none;' class='change-qty'>
-            <button style='display: none;' class='confirm-change-btn'>Confirm Change</button>
-        `
+        const temp_clone = template.content.cloneNode(true);
+        const clone = temp_clone.firstElementChild;
 
-        container.appendChild(cartItem);
+        const divider = document.createElement('div');
+        divider.className = 'divider m-0';
+
+        const id = clone.querySelector('.prod-id');
+        const img = clone.querySelector('img');
+        const title = clone.querySelector('.card-title');
+        const price = clone.querySelector('.card-price');
+        const changeQTY = clone.querySelector('.change-qty');
+        const itemTotalPrice = clone.querySelector('.item-total-price');
+
+        id.innerHTML = product.id;
+        img.src = `/media/${product.image}`;
+        img.alt = product.name;
+        title.textContent = product.name;
+        price.textContent = `$${product.price}`;
+        changeQTY.max = product.quantity;
+        changeQTY.value = cart_data.raw_data[product.id];
+        itemTotalPrice.innerHTML = `$${(changeQTY.value * product.price).toFixed(2)}`;
+        clone.dataset.value = changeQTY.value * product.price;
+
+        container.appendChild(clone);
+        container.appendChild(divider);
         total += parseFloat(product.price * cart_data.raw_data[product.id]);
 
         // Add event listeners to the edit and remove buttons
         // Remove
-        const removeBtn = cartItem.querySelector('.remove-btn');
+        const removeBtn = clone.querySelector('.remove-btn');
         removeBtn.addEventListener('click', async function() {
+            removeBtn.disabled = "disabled";
+            removeBtn.innerHTML = `<span class="loading loading-spinner loading-xs"></span>`
             remove_item_from_cart(product.id);
         })
 
-        // Edit
-        const editBtn = cartItem.querySelector('.edit-btn');
-        editBtn.addEventListener('click', async function () {
-            edit_item_in_cart(cartItem, product.id);
-        })
+        const minusBtn = clone.querySelector('.minus');
+        const plusBtn = clone.querySelector('.plus');
+
+        const min = changeQTY.min !== '' ? Number(changeQTY.min) : 1;
+        const max = changeQTY.max !== '' ? Number(changeQTY.max) : Infinity;
+
+        function setQuantity(next) {
+            next = Number(next);
+
+            if (Number.isNaN(next)) return;
+
+            next = Math.min(Math.max(next, min), max);
+
+            if (Number(changeQTY.value) === next) return;
+
+            changeQTY.value = next;
+        }
+
+        let quantity_changed = false;
+
+        minusBtn.addEventListener('click', () => {
+            setQuantity(Number(changeQTY.value) - 1);
+            edit_item_in_cart(clone, product.id, product.price);
+            updateOrderTotal();
+        });
+
+        plusBtn.addEventListener('click', () => {
+            setQuantity(Number(changeQTY.value) + 1);
+            edit_item_in_cart(clone, product.id, product.price);
+            updateOrderTotal(products);
+        });
+
+        changeQTY.addEventListener('input', () => {
+            setQuantity(changeQTY.value);
+            edit_item_in_cart(clone, product.id, product.price);
+            updateOrderTotal(products);
+        });
+
     });
 
-    document.querySelector(".checkout-btn").addEventListener('click', function () {
-        const cart_items = container.querySelectorAll('.cart-item')
-        const products_and_quantities = []
+    summarize(container, totalDisplay, total);
+})
+
+function summarize(container, totalDisplay, total) {
+    totalDisplay.textContent = total.toFixed(2);
+    console.log(total);
+    document.getElementById('cart-grand-total').innerHTML = total.toFixed(2);
+
+    document.querySelector('.checkout-btn').addEventListener('click', function () {
+        const cart_items = container.querySelectorAll('.cart-item');
+        const products_and_quantities = [];
         cart_items.forEach(item => {
             const prod_id = item.querySelector('.prod-id').innerHTML;
-            const quantity = item.querySelector('.prod-quantity').innerHTML;
-            products_and_quantities.push([parseInt(prod_id), parseInt(quantity)])
+            const quantity = item.querySelector('.change-qty').value;
+            products_and_quantities.push([parseInt(prod_id), parseInt(quantity)]);
         })
+
         checkout(total, slug, products_and_quantities);
     })
-    totalDisplay.textContent = total.toFixed(2);
-})
+}
 
 
 async function get_cart() {
@@ -77,8 +132,8 @@ async function get_cart() {
     })
     .then(data => {
         if (data.products.length > 0) {
-            document.querySelector(".cart-empty").style.display = 'none';
-            document.querySelector(".cart-contents").style.display = 'block';
+            document.querySelector(".cart-empty").classList.add('hidden');
+            document.querySelector(".cart-contents").classList.remove('hidden');
         }
         return data;
     })
@@ -105,34 +160,32 @@ async function remove_item_from_cart(product_id) {
 }
 
 // function to handle cart item edits
-function edit_item_in_cart(cartItem, product_id) {
+async function edit_item_in_cart(cartItem, product_id, price) {
     const changeQTY = cartItem.querySelector('.change-qty');
-    const confirmChangeBtn = cartItem.querySelector('.confirm-change-btn');
 
-    changeQTY.style.display = 'block';
-    confirmChangeBtn.style.display = 'block';
+    await fetch(`${API_BASE_URL}/cart/`, {
+        method: 'PUT',
+        credentials: 'include', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({product_id: product_id, quantity: changeQTY.value})
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Could not change product-in-cart quantity");
+    })
+    .then(data => {
+        cartItem.querySelector('.item-total-price').innerHTML = `$${(changeQTY.value * price).toFixed(2)}`;
+        cartItem.dataset.value = changeQTY.value * price;
 
-    // Listen for customer confirmation
-    confirmChangeBtn.addEventListener('click', function () {
-        fetch(`${API_BASE_URL}/cart/`, {
-            method: 'PUT',
-            credentials: 'include', 
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({product_id: product_id, quantity: changeQTY.value})
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Could not change product-in-cart quantity");
-            return response.json();
-        })
-        .then(data => {
-            window.location.reload();
-        })
-        .catch (error => {
-            console.error(error);
-            alert("Could not update cart item!");
-        })
+        console.log(cartItem.dataset.value);
+        return;
+    })
+    .catch (error => {
+        console.error(error);
+        showToast("Could not update item quantity in cart!", "error");
+    })
+    .finally(() => {
     })
 }
 
@@ -162,3 +215,17 @@ function checkout(total, slug, products_and_quantities) {
         window.location.href = `/checkout/${slug}/`;
     })
 }
+
+function updateOrderTotal() {
+    let total = 0;
+
+    const productDivs = document.querySelectorAll('.cart-item')
+
+    productDivs.forEach(div => {
+        console.log(div);
+        total += parseFloat(div.dataset.value);
+    })
+
+    document.getElementById('cart-total').innerHTML = total.toFixed(2);
+    document.getElementById('cart-grand-total').innerHTML = total.toFixed(2);
+}   
