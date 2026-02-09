@@ -4,70 +4,158 @@
 {% block title %}Shop{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'customer/styles/shop.css' %}">
 {% endblock %}
 
 {% block content %}
 
-    <!-- NAV -->
-    {% block nav %}
-        {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %} 
-    {% endblock nav %}
-    <!-- Page content -->
-    <main>
-        <section class="shop-section">
-            <div class="shop-filters">
-                <h3>Showing 0 Products</h3>
-                <label for="product-search-input">Search:</label>
-                <input type="text" id="product-search-input" class="search-input" placeholder="Search by name">
-                <div id="category-filter">
-                    <label for="categories-select">Categories</label>
-                    <select name="categories" id="categories-select">
-                        <option value="all">All</option>
-                    </select>
+  {% block nav %}
+    {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %}
+  {% endblock nav %}
+
+  <main class="min-h-screen bg-base-100">
+    <section class="max-w-7xl mx-auto px-4 py-8">
+
+      <div class="flex flex-col lg:flex-row gap-8">
+
+        <!-- Filters -->
+        <aside class="lg:w-1/4 w-full">
+          <div class="card bg-base-200 shadow-sm">
+            <div class="card-body gap-4">
+
+              <h3 class="text-lg font-semibold displayed-products-count">
+                Showing 0 Products
+              </h3>
+
+              <!-- Search -->
+              <div class="form-control">
+                <label class="label" for="product-search-input">
+                  <span class="label-text">Search</span>
+                </label>
+                <input
+                  type="text"
+                  id="product-search-input"
+                  placeholder="Search by name"
+                  class="search-input input input-bordered w-full"
+                />
+              </div>
+
+              <!-- Category -->
+              <div class="form-control">
+                <label class="label" for="categories-select">
+                  <span class="label-text">Categories</span>
+                </label>
+                <select
+                  id="categories-select"
+                  class="select select-bordered w-full"
+                >
+                  <option value="all">All</option>
+                </select>
+              </div>
+
+              <!-- Budget -->
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Budget Range</span>
+                </label>
+                <div class="flex gap-2">
+                  <input
+                    type="number"
+                    id="budget-low"
+                    placeholder="Min"
+                    class="input input-bordered w-full"
+                  />
+                  <input
+                    type="number"
+                    id="budget-high"
+                    placeholder="Max"
+                    class="input input-bordered w-full"
+                  />
                 </div>
-                <div id="price-filter">
-                    <label for="budget-inputs">Budget Range</label>
-                    <div id="budget-inputs">
-                        <input type="number" class="budget-input" id="budget-low" placeholder="min budget">
-                        <input type="number" class="budget-input" id="budget-high" placeholder="max budget">
-                    </div>
-                </div>
+              </div>
+
             </div>
-            <div class="shop-grid">
-                No Shop Items Found
-            </div>
-            <div class="spacer-div"></div>
+          </div>
+        </aside>
+
+        <!-- Shop Grid -->
+        <section class="flex-1">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center"
+            id="shop-grid"
+          >
+            <p class="text-base-content/60">
+              No Shop Items Found
+            </p>
+          </div>
         </section>
 
+      </div>
+    </section>
 
-        <!-- Dynamic Product Modal -->
-        <div id="product-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2 id="modal-title">Product Name</h2>
-                <img id="modal-image" src="" alt="Product Image">
-                <p id="modal-description">Product description goes here...</p>
-                <p class="price" id="modal-price">$0.00</p>
+    <!-- Product Modal -->
+    <dialog id="product-modal" class="modal">
+      <div class="modal-box max-w-lg">
 
-                <!-- Quantity Input -->
-                <div class="modal-quantity-group">
-                <label for="modal-quantity">Quantity:</label>
-                <input type="number" id="modal-quantity" value="1">
-                </div>
+        <button
+          class="btn btn-sm btn-circle absolute right-2 top-2"
+          onclick="document.getElementById('product-modal').close()"
+        >
+          ✕
+        </button>
 
-                <button class="add-to-cart" id="modal-add-to-cart">Add to Cart</button>
-            </div>
+        <h2 id="modal-title" class="text-2xl font-bold mb-4">
+          Product Name
+        </h2>
+
+        <img
+          id="modal-image"
+          src=""
+          alt="Product Image"
+          class="w-full h-64 object-cover rounded-lg mb-4"
+        />
+
+        <p id="modal-description" class="text-base-content/80 mb-4">
+          Product description goes here...
+        </p>
+
+        <p id="modal-price" class="text-xl font-semibold mb-4">
+          $0.00
+        </p>
+
+        <!-- Quantity -->
+        <div class="form-control mb-6">
+          <label class="label" for="modal-quantity">
+            <span class="label-text">Quantity</span>
+          </label>
+          <input
+            type="number"
+            id="modal-quantity"
+            value="1"
+            min="1"
+            class="input input-bordered w-24"
+          />
         </div>
 
-    </main>
-    <!-- FOOTER -->
-    {% block footer %}
-        {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
-    {% endblock footer %}
+        <div class="modal-action">
+          <button
+            id="modal-add-to-cart"
+            class="btn btn-primary w-full"
+          >
+            Add to Cart
+          </button>
+        </div>
+
+      </div>
+    </dialog>
+
+  </main>
+
+  {% block footer %}
+    {% include 'client/components/customer/footer/footer.html' with slug=artisan.slug %}
+  {% endblock footer %}
 
 {% endblock %}
 
 {% block extra_scripts %}
-    <script src="{% static 'customer/scripts/shop.js' %}"></script>
+  <script src="{% static 'customer/scripts/shop.js' %}"></script>
 {% endblock %}

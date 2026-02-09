@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Do a fetch to get all the products for the merchant to make pretty product listings
   // Select all inventory items to populate the home screen
-  const shopGrid = document.querySelector('.shop-grid');
+  const shopGrid = document.querySelector('.grid');
   const slug = document.body.dataset.slug;
 
   fetch(`${API_BASE_URL}/products/${slug}/`, {
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (data.length > 0) {
       shopGrid.innerHTML = '';
     }
-    document.querySelector('.shop-filters h3').innerHTML = `Showing ${data.length} Products`
+    document.querySelector('.displayed-products-count').innerHTML = `Showing ${data.length} Products`
     filterProducts(data);
     // data.forEach(product => {
     //   const item = document.createElement('div');
@@ -138,28 +138,44 @@ function openModal(product) {
 }
 
 function renderResults(filtered_products) {
-  const shopGrid = document.querySelector('.shop-grid');
+  const shopGrid = document.querySelector('.grid');
   if (filtered_products.length === 0) {
     shopGrid.innerHTML = 'No Results Found';
   } else {
     console.log(filtered_products)
     shopGrid.innerHTML = filtered_products.map(product => (
       `
-      <div class='shop-item'>
-        <p id='product-id' style='display: none;'>${product.id}</p>
-        <img src='/media/${product.image}' alt='${product.name}'>
-        <div class='item-info'>
-          <h3 class='name'>${product.name}</h3>
-          <p class='price'>$${parseFloat(product.price).toFixed(2)}</p>
+      <div class="shop-item card bg-base-100 shadow-sm hover:shadow-md transition cursor-pointer w-72">
+
+        <figure>
+          <img
+            src="/media/${product.image}"
+            alt="${product.name}"
+            class="rounded-lg rounded-b-none h-48 w-full object-cover"
+          />
+        </figure>
+
+        <div class="card-body p-4 gap-2">
+          <p class="hidden product-id">${product.id}</p>
+
+          <h3 class="card-title text-base">
+            ${product.name}
+          </h3>
+
+          <p class="text-lg font-semibold">
+            $${parseFloat(product.price).toFixed(2)}
+          </p>
         </div>
+
       </div>
       `
+
     )).join('');
-    document.querySelector('.shop-filters h3').innerHTML = `Showing ${filtered_products.length} Products`
+    document.querySelector('.displayed-products-count').innerHTML = `Showing ${filtered_products.length} Products`
     const shop_items = document.querySelectorAll('.shop-item');
     shop_items.forEach(item => {
       item.addEventListener('click', function () {
-        window.location.href = `/item/${slug}/${item.querySelector('#product-id').innerHTML}/`
+        window.location.href = `/item/${slug}/${item.querySelector('.product-id').innerHTML}/`
       })
     })
   }
