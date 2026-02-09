@@ -1,4 +1,3 @@
-
 import { showToast } from "./common.js";
 import { getCookie } from "./csrf.js";
 
@@ -23,79 +22,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Build the product divs in the cart
     products.forEach(product => {
-        const temp_clone = template.content.cloneNode(true);
-        const clone = temp_clone.firstElementChild;
-
-        const divider = document.createElement('div');
-        divider.className = 'divider m-0';
-
-        const id = clone.querySelector('.prod-id');
-        const img = clone.querySelector('img');
-        const title = clone.querySelector('.card-title');
-        const price = clone.querySelector('.card-price');
-        const changeQTY = clone.querySelector('.change-qty');
-        const itemTotalPrice = clone.querySelector('.item-total-price');
-
-        id.innerHTML = product.id;
-        img.src = `/media/${product.image}`;
-        img.alt = product.name;
-        title.textContent = product.name;
-        price.textContent = `$${product.price}`;
-        changeQTY.max = product.quantity;
-        changeQTY.value = cart_data.raw_data[product.id];
-        itemTotalPrice.innerHTML = `$${(changeQTY.value * product.price).toFixed(2)}`;
-        clone.dataset.value = changeQTY.value * product.price;
-
+        const clone = createCartItem(product, cart_data, template);
         container.appendChild(clone);
-        container.appendChild(divider);
+
+        // container.appendChild(divider);
         total += parseFloat(product.price * cart_data.raw_data[product.id]);
 
         // Add event listeners to the edit and remove buttons
-        // Remove
-        const removeBtn = clone.querySelector('.remove-btn');
-        removeBtn.addEventListener('click', async function() {
-            removeBtn.disabled = "disabled";
-            removeBtn.innerHTML = `<span class="loading loading-spinner loading-xs"></span>`
-            remove_item_from_cart(product.id);
-        })
-
-        const minusBtn = clone.querySelector('.minus');
-        const plusBtn = clone.querySelector('.plus');
-
-        const min = changeQTY.min !== '' ? Number(changeQTY.min) : 1;
-        const max = changeQTY.max !== '' ? Number(changeQTY.max) : Infinity;
-
-        function setQuantity(next) {
-            next = Number(next);
-
-            if (Number.isNaN(next)) return;
-
-            next = Math.min(Math.max(next, min), max);
-
-            if (Number(changeQTY.value) === next) return;
-
-            changeQTY.value = next;
-        }
-
-        let quantity_changed = false;
-
-        minusBtn.addEventListener('click', () => {
-            setQuantity(Number(changeQTY.value) - 1);
-            edit_item_in_cart(clone, product.id, product.price);
-            updateOrderTotal();
-        });
-
-        plusBtn.addEventListener('click', () => {
-            setQuantity(Number(changeQTY.value) + 1);
-            edit_item_in_cart(clone, product.id, product.price);
-            updateOrderTotal(products);
-        });
-
-        changeQTY.addEventListener('input', () => {
-            setQuantity(changeQTY.value);
-            edit_item_in_cart(clone, product.id, product.price);
-            updateOrderTotal(products);
-        });
+        addCloneEventListeners(clone, product, products);
 
     });
 
@@ -177,8 +111,6 @@ async function edit_item_in_cart(cartItem, product_id, price) {
     .then(data => {
         cartItem.querySelector('.item-total-price').innerHTML = `$${(changeQTY.value * price).toFixed(2)}`;
         cartItem.dataset.value = changeQTY.value * price;
-
-        console.log(cartItem.dataset.value);
         return;
     })
     .catch (error => {
@@ -189,6 +121,7 @@ async function edit_item_in_cart(cartItem, product_id, price) {
     })
 }
 
+// Calls the checkout api
 function checkout(total, slug, products_and_quantities) {
     if (total == 0) {
         alert("Cannot process $0 checkout");
@@ -222,10 +155,86 @@ function updateOrderTotal() {
     const productDivs = document.querySelectorAll('.cart-item')
 
     productDivs.forEach(div => {
-        console.log(div);
         total += parseFloat(div.dataset.value);
     })
 
     document.getElementById('cart-total').innerHTML = total.toFixed(2);
     document.getElementById('cart-grand-total').innerHTML = total.toFixed(2);
-}   
+
+    return total;
+}
+
+function createCartItem(product, cart_data, template) {
+    const temp_clone = template.content.cloneNode(true);
+    const clone = temp_clone.firstElementChild;
+
+    const divider = document.createElement('div');
+    divider.className = 'divider m-0';
+
+    const id = clone.querySelector('.prod-id');
+    const img = clone.querySelector('img');
+    const title = clone.querySelector('.card-title');
+    const price = clone.querySelector('.card-price');
+    const changeQTY = clone.querySelector('.change-qty');
+    const itemTotalPrice = clone.querySelector('.item-total-price');
+
+    id.innerHTML = product.id;
+    img.src = `/media/${product.image}`;
+    img.alt = product.name;
+    title.textContent = product.name;
+    price.textContent = `$${product.price}`;
+    if (product.track_stock) {changeQTY.max = product.quantity;}
+    changeQTY.value = cart_data.raw_data[product.id];
+    itemTotalPrice.innerHTML = `$${(changeQTY.value * product.price).toFixed(2)}`;
+    clone.dataset.value = changeQTY.value * product.price;
+
+    return clone;
+}
+
+function addCloneEventListeners(clone, product, products) {
+    const changeQTY = clone.querySelector('.change-qty');
+    const min = changeQTY.min !== '' ? Number(changeQTY.min) : 1;
+    const max = changeQTY.max !== '' ? Number(changeQTY.max) : Infinity;
+
+    // Update the quantity in the cart item
+    function setQuantity(next) {
+        next = Number(next);
+
+        if (Number.isNaN(next)) return;
+
+        next = Math.min(Math.max(next, min), max);
+
+        if (Number(changeQTY.value) === next) return;
+
+        changeQTY.value = next;
+    }
+
+    // Listen for the clone remove button to be pressed
+    const removeBtn = clone.querySelector('.remove-btn');
+    removeBtn.addEventListener('click', async function() {
+        removeBtn.disabled = "disabled";
+        removeBtn.innerHTML = `<span class="loading loading-spinner loading-xs"></span>`
+        remove_item_from_cart(product.id);
+    })
+
+    // Listen for the +/- buttons to be pressed
+    const minusBtn = clone.querySelector('.minus');
+    minusBtn.addEventListener('click', async function () {
+        setQuantity(Number(changeQTY.value) - 1);
+        await edit_item_in_cart(clone, product.id, product.price);
+        updateOrderTotal(products);
+    });
+
+    const plusBtn = clone.querySelector('.plus');
+    plusBtn.addEventListener('click', async function () {
+        setQuantity(Number(changeQTY.value) + 1);
+        await edit_item_in_cart(clone, product.id, product.price);
+        updateOrderTotal(products);
+    });
+
+    changeQTY.addEventListener('input', async function () {
+        setQuantity(changeQTY.value);
+        await edit_item_in_cart(clone, product.id, product.price);
+        updateOrderTotal(products);
+    });
+}

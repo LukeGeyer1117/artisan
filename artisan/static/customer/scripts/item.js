@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   quantityInput.addEventListener('input', function () {
     let value = parseInt(quantityInput.value);
     let currentProduct = product;
-    if (value > currentProduct.quantity) {
+    if (value > currentProduct.quantity && currentProduct.track_stock) {
       quantityInput.value = currentProduct.quantity
     } else if (value < 0) {
       quantityInput.value = 0;
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   plusBtn.addEventListener('click', function () {
     let value = parseInt(quantityInput.value) || 0;
     let currentProduct = product;
-    if (value < currentProduct.quantity) {
+    if (value < currentProduct.quantity || !currentProduct.track_stock) {
       quantityInput.value = value + 1;
       quantityInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
@@ -122,6 +122,10 @@ function addItemToCart(product, quantity) {
 function BuildHTML(product, product_images) {
   document.querySelector('.product-title').innerHTML = product.name;
   document.querySelector('.product-category').innerHTML = "Category: " + (product.category_id || 'Product');
+  if (!product.track_stock) {
+    document.querySelector('.product-stock').classList.add('hidden');
+    document.querySelector('.product-stock').style.color = "#57ba6d";
+  }
   if (parseInt(product.quantity) > 0) {
     document.querySelector('.product-stock').innerHTML = product.quantity + " In Stock"
     document.querySelector('.product-stock').style.color = "#57ba6d";

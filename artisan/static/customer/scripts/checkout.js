@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const products = data.products;
     const payment_id = data.payment;
 
-    summarize(total, products)
+    summarize(products)
 
     document.getElementById('amount').value = total;
 
@@ -287,11 +287,16 @@ async function checkout(payment_id) {
     }
 }
 
-async function summarize(total, products) {
+async function summarize(products) {
     const order_items_list = document.getElementById('order-items-list');
+
+    let total = 0;
+
     for (const [id, quantity] of Object.entries(products)) {
 
         const product_object = await GetProduct(id);
+
+        total += product_object.price * quantity;
         
         const prod = document.createElement('div');
         prod.className = `flex items-center gap-4`;
@@ -303,12 +308,12 @@ async function summarize(total, products) {
                 <p class="text-sm opacity-60">QTY: ${quantity}</p>
             </div>
 
-            <p class="font-semibold text-lg text-right">$${product_object.price * quantity}</p>
+            <p class="font-semibold text-lg text-right">$${(product_object.price * quantity).toFixed(2)}</p>
         `
 
         order_items_list.appendChild(prod);
 
-        document.getElementById('summary-total').textContent = `$${total}`;
+        document.getElementById('summary-total').textContent = `$${total.toFixed(2)}`;
 
     }
 }

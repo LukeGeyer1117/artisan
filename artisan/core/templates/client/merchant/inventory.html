@@ -52,6 +52,7 @@
                     <th>Price</th>
                     <th>Stock</th>
                     <th>Category</th>
+                    <th>Featured</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -121,16 +122,23 @@
               </label>
             </fieldset>
 
+            <!-- CATEGORY -->
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend text-base">Category</legend>
+              <select name="category" id="product-drawer-category" class="select"></select>
+            </fieldset>
+          </div>
+
+          <div class="flex flex-row flex-nowrap gap-4">
             <!-- STOCK -->
             <fieldset class="fieldset">
               <legend class="fieldset-legend text-base">Quantity in Stock</legend>
               <input type="number" name="stock" id="product-drawer-stock" class="input" placeholder="000">
             </fieldset>
-
-            <!-- CATEGORY -->
+            <!-- Track Stock -->
             <fieldset class="fieldset">
-              <legend class="fieldset-legend text-base">Category</legend>
-              <select name="category" id="product-drawer-category" class="select"></select>
+              <legend class="fieldset-legend text-base">Track Stock</legend>
+              <input type="checkbox" checked="checked" id="product-track-stock" class="toggle toggle-primary" />
             </fieldset>
           </div>
 

@@ -310,13 +310,15 @@ class OrderView(APIView):
             products = request.session.get('cart_product_ids')
             orderItems = []
             for p in products:
+                print(p)
                 orderitem = OrderItems.objects.create(
                     order=order,
                     product=Product.objects.get(id=p),
                     quantity=int(products[p])
                 )
                 product=Product.objects.get(id=p)
-                product.quantity -= int(products[p])
+                if product.track_stock:
+                    product.quantity -= int(products[p])
                 product.save()
                 orderItems.append(orderitem)
             request.session['cart_product_ids'] = {}
@@ -799,7 +801,7 @@ class ProductMerchantView(APIView):
                     product = get_object_or_404(Product, inventory=inventory, id=product_id)
 
                     # Get all the required fields for the request
-                    fields = ['name', 'price', 'quantity', 'description', 'category', 'is_featured']
+                    fields = ['name', 'price', 'track_stock', 'quantity', 'description', 'category', 'is_featured']
                     data = {}
                     for field in fields:
                         data[field] = request.POST.get(field)
@@ -820,8 +822,6 @@ class ProductMerchantView(APIView):
                         data['price']
                     )
                     response_body = json.loads(response.text)
-
-
                     print(response_body)
                     print(type(response_body))
 
@@ -833,6 +833,8 @@ class ProductMerchantView(APIView):
                         product.name = data['name']
                     if data['price']:
                         product.price = data['price']
+                    if data['track_stock']:
+                        product.track_stock = True if data['track_stock'] == 'true' else False
                     if data['quantity']:
                         product.quantity = data['quantity']
                     if data['description']:
@@ -1169,7 +1171,8 @@ def api_checkout(request, slug=None):
                     quantity = quantity
                 )
 
-                product.quantity -= quantity
+                if product.track_stock:
+                    product.quantity -= quantity
                 product.save()
 
                 items.append(item)

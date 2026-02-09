@@ -13,7 +13,7 @@
     {% endblock %}
     <main class="bg-base h-[100vh]">
         <!-- To be shown if the cart is empty -->
-        <section class="cart-empty w-full flex flex-col items-center gap-6">
+        <section class="cart-empty w-full flex flex-col justify-center items-center gap-6 h-full">
             <h2 class="text-4xl">Your cart is currently empty</h2>
             <a href="{% url 'shop' artisan.slug %}" class="btn btn-primary btn-outline">Browse the Shop</a>
         </section>

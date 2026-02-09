@@ -140,8 +140,14 @@ function renderResults(filteredData, searchTerm = '') {
             <td class='id-td'>${highlightText(String(item.id), searchTerm)}</td>
             <td><div class='flex flex-row gap-4 items-center'><img class='h-8 w-8 rounded' src='${item.image}' alt='${item.name}'> <div>${highlightText(item.name, searchTerm)}</div></div></td>
             <td class='price-td'>${highlightText(String(formatCurrency(item.price)), searchTerm)}</td>
-            <td class='stock-td'>${highlightText(String(item.quantity), searchTerm)}</td>
+            <td class='stock-td'>${item.track_stock ? item.quantity : "N/A"}</td>
             <td class='category-td'>${item.category}</td>
+            <td>
+              <div
+                aria-label="status"
+                class="status ${item.is_featured ? 'status-primary' : 'status-error'}">
+              </div>
+            </td>
           </tr>
         `).join('');
       } else {

@@ -136,18 +136,32 @@ document.addEventListener('DOMContentLoaded', async function () {
   function showProductDetails(product) {
     currentProduct = product; // Set the current product
     const drawerToggle = document.getElementById('product-details-drawer');
-
     drawerToggle.checked = true;
 
-    // Populate modal with product data
+    // Populate modal with product data;
     document.getElementById('product-drawer-image').src = product.image;
     document.getElementById('product-drawer-name').value = product.name;
     document.getElementById('product-drawer-price').value = product.price;
-    document.getElementById('product-drawer-stock').value = parseInt(product.quantity);
+
+    const productTrackStock = document.getElementById('product-track-stock');
+    const productDrawerStock = document.getElementById('product-drawer-stock');
+    productTrackStock.checked = product.track_stock;
+    productDrawerStock.value = parseInt(product.quantity);
+
     document.getElementById('product-drawer-description').textContent = product.description;
     document.getElementById('product-drawer-category').value = product.category;
     document.getElementById('product-drawer-featured').checked = product.is_featured;
 
+    // disable stock input if stock isn't being tracke
+    if (!productTrackStock.checked) {
+      productDrawerStock.disabled = true;
+    }
+
+    productTrackStock.addEventListener('input', function () {
+      if (productTrackStock.checked) {productDrawerStock.disabled = false;} else {productDrawerStock.disabled = true;}
+    })
+
+    // Listen for a new product image to be updated.
     const productImageInput = document.getElementById('product-drawer-image-input');
 
     productImageInput.value = '';
@@ -167,6 +181,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       handleProductEdit(currentProduct);
     });
 
+    // Listen for product delete button to be pressed
     const deleteButton = document.getElementById('product-delete-button');
     deleteButton.addEventListener('click', function () {
       handleProductDelete(currentProduct);
@@ -281,6 +296,7 @@ function handleProductEdit(currentProduct) {
   formData.set('name', document.getElementById('product-drawer-name').value);
   formData.set('price', document.getElementById('product-drawer-price').value);
   formData.set('description', document.getElementById('product-drawer-description').value);
+  formData.set('track_stock', document.getElementById('product-track-stock').checked);
   formData.set('quantity', document.getElementById('product-drawer-stock').value);
   formData.set('category', document.getElementById('product-drawer-category').value);
 

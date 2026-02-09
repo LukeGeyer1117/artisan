@@ -108,6 +108,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     order_type = models.CharField(max_length=20, blank=True)
     category = models.ForeignKey('Category', null=True, blank=True, default=None, on_delete=models.SET_NULL)
+    track_stock = models.BooleanField(default=True)
     quantity = models.DecimalField(max_digits=7, decimal_places=0, default=0, blank=True)
     description = models.CharField(max_length=1000, default='', blank=True)
     image = models.ImageField(upload_to="images/", default='')
@@ -355,7 +356,7 @@ class Policies(models.Model):
     return_policy = models.TextField(max_length=2000, default='')
 
     # TTL
-    ttl = models.PositiveIntegerField(default=(1000 * 30))
+    ttl = models.PositiveIntegerField(default=(1000 * 5))
 
     def __str__(self):
         return f"{self.artisan.username}'s Policies"

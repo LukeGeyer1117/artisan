@@ -4,8 +4,6 @@
 {% block title %}Policies{% endblock %}
 
 {% block extra_head %}
-<!-- Put the stylesheet for this page here -->
-  <link rel="stylesheet" href="{% static 'customer/styles/policies.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -16,32 +14,33 @@
   {% endblock %}
 
   <main>
-    <section id="policies">
-      <div class="section-header">
-        <h1 class="section-title">Policies</h2>
+    <section class="flex flex-col w-full items-center p-4 gap-4">
+      <div class="w-full flex flex-col items-center">
+        <h1 class="text-2xl font-semibold">Policies</h2>
         <p class="section-description">Standard Operating Procedures</p>
       </div>
-      <div id="subsection-container">
-        <article class="subsection" id="terms-and-conditions">
-          <h2 class="subsection-header">Terms & Conditions</h2>
-          <pre class="subsection-body">
-            <!-- Terms & conditions here -->
-          </pre>
-        </article>
+      <div class="flex flex-col gap-4">
+        <div class="card bg-base-100 max-w-[800px]">
+          <div id="terms-and-conditions-card" class="card-body">
+            <h2 class="card-title">Terms & Conditions</h2>
+            <p class="text-wrap whitespace-pre-line"></p>
+          </div>
+        </div>
 
-        <article class="subsection" id="refund-exchange-policy">
-          <h2 class="subsection-header">Refund / Exchange Policy</h2>
-          <pre class="subsection-body">
-            <!-- Refund & exchange policy here -->
-          </pre>
-        </article>
+        <div class="card bg-base-100 max-w-[800px]">
+          <div id="refund-exchange-policy-card" class="card-body">
+            <h2 class="card-title">Refund/Exchange Policy</h2>
+            <p class="text-wrap whitespace-pre-line"></p>
+          </div>
+        </div>
 
-        <article class="subsection" id="shipping-policy">
-          <h2 class="subsection-header">Shipping / Fulfillment Policy</h2>
-          <pre class="subsection-body">
-            <!-- Shipping & fulfillment policy here -->
-          </pre>
-        </article>
+        <div class="card bg-base-100 max-w-[800px]">
+          <div id="shipping-policy-card" class="card-body">
+            <h2 class="card-title">Order Fulfillment Policy</h2>
+            <p class="text-wrap whitespace-pre-line"></p>
+          </div>
+        </div>
+
       </div>
     </section>
   </main>

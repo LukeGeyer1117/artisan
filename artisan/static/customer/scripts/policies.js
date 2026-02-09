@@ -22,10 +22,10 @@ async function get_policies(slug, csrf) {
     const { policies, deathDate } = JSON.parse(cached);
     const isExpired = (deathDate - Date.now()) < 0;
 
-    if (!isExpired) {
-      console.log(`Found policies locally`);
-      return policies;
-    }
+    // if (!isExpired) {
+    //   console.log(`Found policies locally`);
+    //   return policies;
+    // }
   }
 
   const response = await fetch(`${API_BASE_URL}/policy/${slug}/`, {
@@ -46,11 +46,12 @@ async function get_policies(slug, csrf) {
     deathDate: Date.now() + policies.ttl,
   }))
   console.log(`Stored policies locally.`);
+  console.log(data);
   return data.policies;
 }
 
 function display_policies(policies) {
-  document.querySelector('#terms-and-conditions pre').textContent = policies.terms_and_conditions;
-  document.querySelector('#refund-exchange-policy pre').textContent = policies.return_policy;
-  document.querySelector('#shipping-policy pre').textContent = policies.shipping_policy;
+  document.querySelector('#terms-and-conditions-card p').textContent = policies.terms_and_conditions;
+  document.querySelector('#refund-exchange-policy-card p').textContent = policies.return_policy;
+  document.querySelector('#shipping-policy-card p').textContent = policies.shipping_policy;
 }
