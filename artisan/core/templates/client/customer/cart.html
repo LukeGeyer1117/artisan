@@ -11,7 +11,7 @@
     {% block nav %}
         {% include 'client/components/customer/nav/nav.html' with slug=artisan.slug %}
     {% endblock %}
-    <main class="bg-base h-[100vh]">
+    <main class="bg-base">
         <!-- To be shown if the cart is empty -->
         <section class="cart-empty w-full flex flex-col justify-center items-center gap-6 h-full">
             <h2 class="text-4xl">Your cart is currently empty</h2>
@@ -19,7 +19,7 @@
         </section>
 
         <!-- To be shown if the cart is not empty -->
-        <section class="cart-contents hidden flex flex-col lg:flex-row h-full">
+        <section class="cart-contents hidden flex flex-col lg:flex-row h-[80vh]">
             <div class="w-full lg:w-2/3 p-4 pr-0">
                 <h2 class="text-3xl">Your Cart</h2>
                 <div class="divider"></div>

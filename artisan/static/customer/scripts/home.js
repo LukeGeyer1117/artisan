@@ -1,3 +1,5 @@
+import { getCategories, createProductCard, getFeaturedProducts } from "./common.js";
+
 let API_BASE_URL;
 if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;} 
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
@@ -77,90 +79,28 @@ async function GetAndDisplayText() {
 
 }
 
-function GetAndDisplayFeaturedProducts() {
-  fetch(`${API_BASE_URL}/products/${slug}/featured/`, {
-    method: 'GET',
+async function GetAndDisplayFeaturedProducts() {
+  // Asynchronous calls to get the categories and featured products for this merchant.
+  const categories = await getCategories(slug);
+
+  console.log(categories);
+  const featuredProducts = await getFeaturedProducts(slug);
+
+  // Get the div to add the shopItems to
+  const carousel = document.getElementById('product-carousel');
+  const total = featuredProducts.length;
+
+  featuredProducts.forEach(product => {
+    const category = categories.find(cat => cat.id === product.category_id);
+    const category_name = category ? category.name : "";
+    const ponyCard = createProductCard(product, category_name);
+
+    carousel.appendChild(ponyCard);
+
+    ponyCard.addEventListener('click', function() {
+      window.location.href = `/item/${slug}/${product.id}/`
+    })
   })
-  .then(response => {
-    if (!response.ok) throw new Error("Failed to fetch all products!");
-    return response.json();
-  })
-  .then(result => {
-    // Select the parent section
-    const carousel = document.getElementById('product-carousel');
-
-    const total = result.length;
-
-    result.forEach((product, index) => {
-
-      const pony = document.createElement('div');
-      pony.id = `slide${index + 1}`
-      pony.className = 
-      `
-      carousel-item 
-      w-full md:w-1/2 lg:w-1/3 max-h-[80vh] 
-      flex items-center justify-center p-2 
-      transform transition
-      `;
-
-      // Calculate the next/prev slid
-      const cur = index + 1;
-      const prev = cur === 1 ? total : cur - 1;
-      const next = cur === total ? 1 : cur + 1;
-      
-      pony.innerHTML = `
-        <div class="relative w-full h-full overflow-hidden group flex items-center justify-center">
-          <!-- Product image -->
-          <img 
-            src="/media/${product.image}" 
-            alt="${product.name}"
-            class="w-full max-h-full h-auto md:h-full object-contain md:object-cover rounded-md shadow-md"
-          />
-
-          <!-- overlay -->
-          <div class="
-            absolute inset-0 
-            bg-black/70 
-            text-white 
-            flex flex-col justify-between 
-            p-8 pt-12 pb-12
-            translate-y-full 
-            transition-transform duration-500 ease-out
-            group-hover:translate-y-0
-          ">
-            <!-- Top content: Name + Price -->
-            <div class="text-center">
-              <p class="text-4xl font-semibold">${product.name}</p>
-              <p class="text-2xl font-medium mt-1">$${product.price}</p>
-            </div>
-
-            <!-- Middle content: truncated description -->
-            <div class="mt-2 flex-1 flex items-center justify-center">
-              <p class="text-xl line-clamp-4 overflow-hidden">${product.description}</p>
-            </div>
-
-            <div class="text-center mt-2">
-              <button class="btn btn-square btn-lg w-full border-none transform translate hover:bg-amber-300">
-                Learn More
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-
-
-
-      // Click event to go to product page
-      pony.addEventListener('click', () => {
-        window.location.href = `/item/${slug}/${product.id}/`;
-      });
-
-      carousel.appendChild(pony);
-      })
-
-  })
-  .catch(error => console.error('Error fetching featured products:', error));
 }
 
 

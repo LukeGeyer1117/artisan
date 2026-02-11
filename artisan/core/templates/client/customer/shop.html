@@ -13,81 +13,77 @@
   {% endblock nav %}
 
   <main class="min-h-screen bg-base-100">
-    <section class="max-w-7xl mx-auto px-4 py-8">
+    <section>
 
-      <div class="flex flex-col lg:flex-row gap-8">
+      <div class="flex flex-col gap-8">
 
         <!-- Filters -->
-        <aside class="lg:w-1/4 w-full">
+        <aside class="w-full">
           <div class="card bg-base-200 shadow-sm">
-            <div class="card-body gap-4">
+            <div class="card-body gap-2 p-2">
 
-              <h3 class="text-lg font-semibold displayed-products-count">
-                Showing 0 Products
-              </h3>
+              <div class="flex flex-row flex-wrap justify-center items-center gap-4">
+                <!-- Search -->
+                <div class="form-control">
+                    <label class="label" for="product-search-input">
+                    <span class="label-text">Search</span>
+                    </label>
+                    <input
+                    type="text"
+                    id="product-search-input"
+                    placeholder="Search by name"
+                    class="search-input input input-bordered w-full"
+                    />
+                </div>
 
-              <!-- Search -->
-              <div class="form-control">
-                <label class="label" for="product-search-input">
-                  <span class="label-text">Search</span>
-                </label>
-                <input
-                  type="text"
-                  id="product-search-input"
-                  placeholder="Search by name"
-                  class="search-input input input-bordered w-full"
-                />
-              </div>
+                <!-- Category -->
+                <div class="form-control">
+                    <label class="label" for="categories-select">
+                    <span class="label-text">Categories</span>
+                    </label>
+                    <select
+                    id="categories-select"
+                    class="select select-bordered w-full"
+                    >
+                    <option value="all">All</option>
+                    </select>
+                </div>
 
-              <!-- Category -->
-              <div class="form-control">
-                <label class="label" for="categories-select">
-                  <span class="label-text">Categories</span>
-                </label>
-                <select
-                  id="categories-select"
-                  class="select select-bordered w-full"
-                >
-                  <option value="all">All</option>
-                </select>
-              </div>
-
-              <!-- Budget -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Budget Range</span>
-                </label>
-                <div class="flex gap-2">
-                  <input
-                    type="number"
-                    id="budget-low"
-                    placeholder="Min"
-                    class="input input-bordered w-full"
-                  />
-                  <input
-                    type="number"
-                    id="budget-high"
-                    placeholder="Max"
-                    class="input input-bordered w-full"
-                  />
+                <!-- Budget -->
+                <div class="form-control flex flex-col">
+                    <label class="label">
+                    <span class="label-text">Budget Range</span>
+                    </label>
+                    <div class="join">
+                    <input
+                        type="number"
+                        id="budget-low"
+                        placeholder="Min"
+                        class="input input-bordered join-item w-full"
+                    />
+                    <input
+                        type="number"
+                        id="budget-high"
+                        placeholder="Max"
+                        class="input input-bordered join-item w-full"
+                    />
+                    </div>
                 </div>
               </div>
-
             </div>
           </div>
         </aside>
 
-        <!-- Shop Grid -->
-        <section class="flex-1">
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center"
+        <!-- Shop Items -->
+        <section class="flex-1 my-4">
+        <div
             id="shop-grid"
-          >
-            <p class="text-base-content/60">
-              No Shop Items Found
-            </p>
-          </div>
+            class="flex flex-wrap justify-center gap-6"
+        >
+
+        </div>
         </section>
+
 
       </div>
     </section>
@@ -157,5 +153,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script src="{% static 'customer/scripts/shop.js' %}"></script>
+  <script type="module" src="{% static 'customer/scripts/shop.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,27 @@
+<div class="shop-item card bg-base-100 shadow-sm hover:shadow-md transition cursor-pointer w-72">
+  <figure class="px-4 pt-4">
+    <img
+      src="{{ product.image.url }}"
+      alt="{{ product.name }}"
+      class="rounded-lg h-48 w-full object-cover"
+    />
+  </figure>
+
+  <div class="card-body p-4 gap-2">
+    <div class="hidden prod-id">{{ product.id }}</div>
+
+    <h3 class="cart-title text-base">
+      {{ product.name }}
+    </h3>
+
+    <div class="flex flex-row w-full justify-between items-center">
+      <p class="text-lg font-semibold">
+        {{ product.price }}
+      </p>
+
+      <div class="badge">
+        {{ category_name }}
+      </div>
+    </div>
+  </div>
+</div>

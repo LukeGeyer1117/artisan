@@ -184,4 +184,62 @@ function showToast(message, type = 'info', duration = 3000) {
     }, duration);
 }
 
-export {showToast, GetProduct, GetProductImages};
+async function getCategories(slug) {
+  let categories;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/categories/${slug}/`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Could not get categories");
+    }
+
+    const data = await response.json();
+    return data.categories;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function createProductCard(product, category_name) {
+  const productCard = document.createElement('div');
+  productCard.classList = "shop-item card bg-base-100 shadow-sm hover:shadow-md transition cursor-pointer w-72 flex-shrink-0";
+  productCard.innerHTML = `
+    <figure class="px-4 pt-4">
+      <img
+        src="/media/${product.image}"
+        alt="${product.name}"
+        class="rounded-lg h-48 w-full object-cover"
+      />
+    </figure>
+    <div class="card-body p-4 gap-2">
+      <div class="hidden prod-id">${product.id}</div>
+      <h3 class="cart-title text-base">${product.name}</h3>
+      <div class="flex flex-row w-full justify-between items-center">
+        <p class="text-lg font-semibold">${product.price}</p>
+        <div class="badge">${category_name}</div>
+      </div>
+    </div>
+  `
+
+  return productCard;
+}
+
+async function getFeaturedProducts(slug) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/products/${slug}/featured/`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error("Could not get featured products.");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {}
+}
+
+export {showToast, GetProduct, GetProductImages, getCategories, createProductCard, getFeaturedProducts};

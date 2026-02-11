@@ -51,10 +51,10 @@
 
 
         <!-- Products Section -->
-        <h2 class="featured-header text-5xl font-semibold text-center"></h2>
-        <p class="featured-text text-xl font-normal italic text-center max-w-3/4 lg:max-w-1/2"></p>
+        <h2 class="featured-header text-5xl font-semibold text-center mb-2"></h2>
+        <p class="featured-text text-xl font-normal italic text-center max-w-3/4 lg:max-w-1/2 mb-4"></p>
         
-        <div id="product-carousel" class="carousel overflow-x-auto scrollbar-thin scrollbar-thumb-base-300 w-full md:w-1/2"></div>
+        <div id="product-carousel" class="flex flex-col md:flex-row items-center gap-4 p-4 overflow-scroll scrollbar-thin scrollbar-thumb-base-300 w-full md:w-3/4 mb-4"></div>
 
     </main>
 
@@ -66,5 +66,5 @@
 
 {% block extra_scripts %}
     {% include 'client/components/toast-notif/toast.html' %}
-    <script src="{% static 'customer/scripts/home.js' %}"></script>
+    <script type="module" src="{% static 'customer/scripts/home.js' %}"></script>
 {% endblock %}
