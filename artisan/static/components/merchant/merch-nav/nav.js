@@ -14,18 +14,21 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Get the stored theme from localstorage, if one exists, and apply that theme to the page
   const themeSwap = document.querySelector('.theme-controller');
   const documentEl = document.documentElement;
+  const themesList = document.getElementById('themes-dropdown-list');
+  const themes = themesList.querySelectorAll('li input');
 
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) {
     documentEl.setAttribute('data-theme', savedTheme);
-    themeSwap.checked = savedTheme === 'dark';
+    // themeSwap.checked = savedTheme === 'dark';
   }
 
-  themeSwap.addEventListener('change', () => {
-    const theme = themeSwap.checked ? 'dark' : 'light';
-    documentEl.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  });
+  themes.forEach(theme => {
+    theme.addEventListener('click', function () {
+      documentEl.setAttribute('data-theme', theme.value);
+      localStorage.setItem('theme', theme.value);
+    })
+  })
 
   // Use merchant information to fill navbar fields
 
