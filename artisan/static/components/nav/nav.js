@@ -1,3 +1,5 @@
+import { getLogoImage } from "../../customer/scripts/common.js";
+
 const slug = window.slug;
 let showingMenu = false;
 
@@ -6,16 +8,9 @@ if (window.location.hostname == 'localhost' || window.location.hostname == '127.
 else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
 
 document.addEventListener('DOMContentLoaded', async function () {
-  const response = await fetch(`${API_BASE_URL}/logo/${slug}`, {
-    method: 'GET'
-  })
-
-  if (!response.ok) throw new Error("Couldn't get logo image");
-
-  const data = await response.json();
-
-  console.log(data);
-  document.getElementById('nav-logo-image').src = data.image_url;
+  const image_url = await getLogoImage(slug);
+  console.log(image_url)
+  document.getElementById('nav-logo-image').src = image_url;
 
   // Reset menu state on window resize
   window.addEventListener('resize', function() {

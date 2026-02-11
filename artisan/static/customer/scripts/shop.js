@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 function renderResults(filtered_products, categories) {
   const shopGrid = document.querySelector('#shop-grid');
   shopGrid.innerHTML = ``;
-  console.log(categories);
 
   if (filtered_products.length === 0) {
     shopGrid.innerHTML = 'No Results Found';

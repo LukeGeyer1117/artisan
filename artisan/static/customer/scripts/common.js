@@ -242,4 +242,33 @@ async function getFeaturedProducts(slug) {
   } catch (error) {}
 }
 
-export {showToast, GetProduct, GetProductImages, getCategories, createProductCard, getFeaturedProducts};
+async function getMerchantInformation(slug) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/artisan/${slug}/`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error("Couldn't get merchant information.");
+    }
+
+    const data = await response.json();
+    return data.artisan;
+  } catch (error) {
+    console.error("Error fetching merchant information:", error);
+    throw error;
+  }
+}
+
+async function getLogoImage(slug) {
+  const response = await fetch(`${API_BASE_URL}/logo/${slug}/`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) throw new Error("Couldn't get logo image.");
+
+  const data = await response.json();
+  return data.image_url;
+}
+
+export {showToast, GetProduct, GetProductImages, getCategories, createProductCard, getFeaturedProducts, getMerchantInformation, getLogoImage};

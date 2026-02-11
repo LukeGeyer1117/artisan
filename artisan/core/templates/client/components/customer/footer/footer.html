@@ -3,17 +3,16 @@
 <footer class="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
     <aside>
         <a class="btn btn-ghost btn-xl" href="{% url 'home' slug=artisan.slug %}"><img id="footer-logo-image" class="h-16 w-auto" alt="footer logo white text"></a>
-        <p>
-            ACME Industries Ltd.
+        <p id="footer-merchant-name" class="font-semibold text-xl">
         </p>
     </aside>
     <nav>
         <h6 class="footer-title">Explore</h6>
         <a class="link link-hover" href="{% url 'home' slug=artisan.slug %}">Home</a>
-        <a class="link link-hover" href="{% url 'gallery' slug=artisan.slug %}">Gallery</a>
         <a class="link link-hover" href="{% url 'shop' slug=artisan.slug %}">Shop</a>
-        <a class="link link-hover" href="{% url 'cart' slug=artisan.slug%}">Cart</a>
+        <a class="link link-hover" href="{% url 'gallery' slug=artisan.slug %}">Gallery</a>
         <a class="link link-hover" href="{% url 'policies' slug=artisan.slug %}">Terms & Conditions</a>
+        <a class="link link-hover" href="{% url 'cart' slug=artisan.slug%}">Cart</a>
     </nav>
     <nav>
         <h6 class="footer-title">About</h6>
