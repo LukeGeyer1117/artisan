@@ -12,21 +12,17 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   const avatarContainer = document.getElementById('navbar-pfp-container');
   // Get the stored theme from localstorage, if one exists, and apply that theme to the page
-  const themeSwap = document.querySelector('.theme-controller');
   const documentEl = document.documentElement;
-  const themesList = document.getElementById('themes-dropdown-list');
-  const themes = themesList.querySelectorAll('li input');
-
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    documentEl.setAttribute('data-theme', savedTheme);
-    // themeSwap.checked = savedTheme === 'dark';
-  }
+  const themes = document.getElementById('themes-dropdown-list').querySelectorAll('li input');
 
   themes.forEach(theme => {
     theme.addEventListener('click', function () {
       documentEl.setAttribute('data-theme', theme.value);
       localStorage.setItem('theme', theme.value);
+
+      if (window.location.pathname == "/dashboard/") {
+        window.location.reload();
+      }
     })
   })
 
@@ -43,10 +39,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       avatarContainer.innerHTML = `<span id="profile-initials">${initials}</span>`;
     }) 
   }
-
-  // // Set the full name and email in the merchant account-modal
-  // document.querySelector('.account-user-name').innerHTML = merchant_information.full_name;
-  // document.querySelector('.account-user-email').innerHTML = merchant_information.email;
 
   // Handle clicking the Sign out Button
   const signOutBtn = document.getElementById('account-modal-sign-out-link-div');

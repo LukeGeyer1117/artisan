@@ -17,6 +17,15 @@
   <link rel="stylesheet" href="{% static 'components/merchant/merch-nav/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/output.css' %}">
   {% block extra_head %}{% endblock %}
+  <script>
+
+    const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        console.log(savedTheme);
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+
+  </script>
 </head>
 <body>
   <!-- Main Content -->

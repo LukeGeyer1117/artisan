@@ -48,16 +48,24 @@
             type="radio"
             name="theme-dropdown"
             class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Valentine"
-            value="valentine" />
+            aria-label="Cupcake"
+            value="cupcake" />
         </li>
         <li>
           <input
             type="radio"
             name="theme-dropdown"
             class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Aqua"
-            value="aqua" />
+            aria-label="Business"
+            value="business" />
+        </li>
+        <li>
+          <input
+            type="radio"
+            name="theme-dropdown"
+            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+            aria-label="Halloween"
+            value="halloween" />
         </li>
       </ul>
     </div>
@@ -86,24 +94,5 @@
     </div>
 
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const checkbox = document.querySelector('.theme-controller');
-      const htmlEl = document.documentElement;
-
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        htmlEl.setAttribute('data-theme', savedTheme);
-        checkbox.checked = savedTheme === 'dark';
-      }
-
-      checkbox.addEventListener('change', () => {
-        const theme = checkbox.checked ? 'dark' : 'light';
-        htmlEl.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-      });
-    });
-  </script>
 
 </div>
