@@ -26,7 +26,7 @@
     md:h-[calc(100vh-4rem)]
     md:top-16
     md:gap-y-0
-    md:w-fit
+    md:w-50
 ">
   <li class="flex-none w-1/6 md:w-full h-fit flex items-center md:items-start">
     <a class="flex flex-col md:flex-row rounded-none w-full p-4 md:pr-6 {% if '/dashboard/' in request.path %}bg-primary{% endif %}" href="/dashboard/">
@@ -64,31 +64,49 @@
       <span class="block  text-sm {% if '/settings/' in request.path %}text-primary-content{% else %}text-primary{% endif %}">Settings</span>
     </a>
   </li>
+  <li class="flex-none w-1/6 md:w-full h-fit flex items-center md:items-start">
+    <div class="chat-toggle flex flex-col md:flex-row rounded-none w-full p-4 md:pr-6" href="/settings/">
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" class="stroke-primary fill-none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      <span class="block  text-sm text-primary">AI Assistant</span>
+    </div>
+  </li>
 </ul>
 
-<div class="fab md:hidden">
+<div class="fab md:hidden z-49">
   <!-- a focusable div with tabindex is necessary to work on all browsers. role="button" is necessary for accessibility -->
   <div tabindex="0" role="button" class="btn btn-lg btn-circle btn-primary">
     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
   </div>
   <!-- buttons that show up when FAB is open -->
-  <div class="bg-neutral pl-4 rounded-3xl">
-    <span class="font-bold text-md text-neutral-content">Settings</span>
-    <button class="btn btn-lg btn-circle {% if '/settings/' in request.path %}btn-primary{% else %}btn-primary-content{% endif %}">
-      <a href="/settings/"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="{% if '/settings/' in request.path %}fill-primary-content{% else %}fill-primary{% endif %}"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg></a>
-    </button>
-  </div>
-  <div class="bg-neutral pl-4 rounded-3xl">
-    <span class="font-bold text-md text-neutral-content">Shop</span>
+  <div class="chat-toggle bg-neutral pl-4 rounded-3xl">
+    <span class="font-bold text-md text-neutral-content">AI Assistant</span>
     <button class="btn btn-lg btn-circle btn-primary-content">
-      <a href="/shop/{{artisan.slug}}/"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="fill-primary"><path d="M841-518v318q0 33-23.5 56.5T761-120H201q-33 0-56.5-23.5T121-200v-318q-23-21-35.5-54t-.5-72l42-136q8-26 28.5-43t47.5-17h556q27 0 47 16.5t29 43.5l42 136q12 39-.5 71T841-518Zm-272-42q27 0 41-18.5t11-41.5l-22-140h-78v148q0 21 14 36.5t34 15.5Zm-180 0q23 0 37.5-15.5T441-612v-148h-78l-22 140q-4 24 10.5 42t37.5 18Zm-178 0q18 0 31.5-13t16.5-33l22-154h-78l-40 134q-6 20 6.5 43t41.5 23Zm540 0q29 0 42-23t6-43l-42-134h-76l22 154q3 20 16.5 33t31.5 13ZM201-200h560v-282q-5 2-6.5 2H751q-27 0-47.5-9T663-518q-18 18-41 28t-49 10q-27 0-50.5-10T481-518q-17 18-39.5 28T393-480q-29 0-52.5-10T299-518q-21 21-41.5 29.5T211-480h-4.5q-2.5 0-5.5-2v282Zm560 0H201h560Z"/></svg></a>
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" class="stroke-primary fill-none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
     </button>
   </div>
   <div class="bg-neutral pl-4 rounded-3xl">
-    <span class="font-bold text-md text-neutral-content">Gallery</span>
-    <button class="btn btn-lg btn-circle {% if '/gallery/' in request.path %}btn-primary{% else %}btn-primary-content{% endif %}">
-      <a href="/gallery/"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="{% if '/gallery/' in request.path %}fill-primary-content{% else %}fill-primary{% endif %}"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm80-80h480L570-520 450-360l-90-120-120 160Zm-80 80v-480 480Z"/></svg></a>
-    </button>
+    <a href="/settings/">
+      <span class="font-bold text-md text-neutral-content">Settings</span>
+      <button class="btn btn-lg btn-circle {% if '/settings/' in request.path %}btn-primary{% else %}btn-primary-content{% endif %}">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="{% if '/settings/' in request.path %}fill-primary-content{% else %}fill-primary{% endif %}"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+      </button>
+    </a>
+  </div>
+  <div class="bg-neutral pl-4 rounded-3xl">
+    <a href="/shop/{{artisan.slug}}/">
+      <span class="font-bold text-md text-neutral-content">Shop</span>
+      <button class="btn btn-lg btn-circle btn-primary-content">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="fill-primary"><path d="M841-518v318q0 33-23.5 56.5T761-120H201q-33 0-56.5-23.5T121-200v-318q-23-21-35.5-54t-.5-72l42-136q8-26 28.5-43t47.5-17h556q27 0 47 16.5t29 43.5l42 136q12 39-.5 71T841-518Zm-272-42q27 0 41-18.5t11-41.5l-22-140h-78v148q0 21 14 36.5t34 15.5Zm-180 0q23 0 37.5-15.5T441-612v-148h-78l-22 140q-4 24 10.5 42t37.5 18Zm-178 0q18 0 31.5-13t16.5-33l22-154h-78l-40 134q-6 20 6.5 43t41.5 23Zm540 0q29 0 42-23t6-43l-42-134h-76l22 154q3 20 16.5 33t31.5 13ZM201-200h560v-282q-5 2-6.5 2H751q-27 0-47.5-9T663-518q-18 18-41 28t-49 10q-27 0-50.5-10T481-518q-17 18-39.5 28T393-480q-29 0-52.5-10T299-518q-21 21-41.5 29.5T211-480h-4.5q-2.5 0-5.5-2v282Zm560 0H201h560Z"/></svg>
+      </button>
+    </a>
+  </div>
+  <div class="bg-neutral pl-4 rounded-3xl">
+    <a href="/gallery/">
+      <span class="font-bold text-md text-neutral-content">Gallery</span>
+      <button class="btn btn-lg btn-circle {% if '/gallery/' in request.path %}btn-primary{% else %}btn-primary-content{% endif %}">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" class="{% if '/gallery/' in request.path %}fill-primary-content{% else %}fill-primary{% endif %}"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm80-80h480L570-520 450-360l-90-120-120 160Zm-80 80v-480 480Z"/></svg>
+      </button>
+    </a>
   </div>
   <div class="bg-neutral pl-4 rounded-3xl">
     <a href="/inventory/">
