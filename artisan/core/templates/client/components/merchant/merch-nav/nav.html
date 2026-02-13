@@ -15,7 +15,7 @@
   <!-- ACCOUNT, THEME, and MENU -->
   <div class="flex flex-row items-center gap-4">
     <div class="dropdown">
-      <div tabindex="0" role="button" class="btn m-1 text-primary">
+      <div tabindex="0" role="button" class="btn btn-primary btn-outline m-1 text-primary font-bold">
         Theme
         <svg
           width="12px"
@@ -27,6 +27,7 @@
         </svg>
       </div>
       <ul id="themes-dropdown-list" tabindex="-1" class="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl">
+        <span class="w-full text-xs">Light Themes</span>
         <li>
           <input
             type="radio"
@@ -40,16 +41,25 @@
             type="radio"
             name="theme-dropdown"
             class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Dark"
-            value="dark" />
+            aria-label="Nord"
+            value="nord" />
         </li>
         <li>
           <input
             type="radio"
             name="theme-dropdown"
             class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Cupcake"
-            value="cupcake" />
+            aria-label="Emerald"
+            value="emerald" />
+        </li>
+        <span class="w-full text-xs">Dark Themes</span>
+        <li>
+          <input
+            type="radio"
+            name="theme-dropdown"
+            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+            aria-label="Dark"
+            value="dark" />
         </li>
         <li>
           <input
