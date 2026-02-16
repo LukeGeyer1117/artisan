@@ -14,8 +14,8 @@
 
   <!-- ACCOUNT, THEME, and MENU -->
   <div class="flex flex-row items-center gap-4">
-    <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-primary btn-outline m-1 text-primary font-bold">
+    <div class="dropdown dropdown-end">
+      <button tabindex="0" class="btn btn-primary btn-wide btn-outline text-primary font-bold">
         Theme
         <svg
           width="12px"
@@ -25,59 +25,37 @@
           viewBox="0 0 2048 2048">
           <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
         </svg>
-      </div>
-      <ul id="themes-dropdown-list" tabindex="-1" class="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl max-h-50 overflow-y-auto">
-        <span class="w-full text-xs font-bold">Light Themes</span>
-        <li>
-          <input
-            type="radio"
-            name="theme-dropdown"
-            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Light"
-            value="light" />
-        </li>
-        <li>
-          <input
-            type="radio"
-            name="theme-dropdown"
-            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Nord"
-            value="nord" />
-        </li>
-        <li>
-          <input
-            type="radio"
-            name="theme-dropdown"
-            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Emerald"
-            value="emerald" />
-        </li>
-        <span class="w-full text-xs font-bold">Dark Themes</span>
-        <li>
-          <input
-            type="radio"
-            name="theme-dropdown"
-            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Dark"
-            value="dark" />
-        </li>
-        <li>
-          <input
-            type="radio"
-            name="theme-dropdown"
-            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Business"
-            value="business" />
-        </li>
-        <li>
-          <input
-            type="radio"
-            name="theme-dropdown"
-            class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
-            aria-label="Halloween"
-            value="halloween" />
-        </li>
-      </ul>
+      </button>
+      <ul id="themes-dropdown-list" tabindex="-1"
+      class="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl max-h-100 overflow-y-auto">
+
+      <span class="w-full text-xs font-bold text-primary">Light Themes</span>
+
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Light" value="light" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Bumblebee" value="bumblebee" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Emerald" value="emerald" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Corporate" value="corporate" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Garden" value="garden" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Lofi" value="lofi" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Fantasy" value="fantasy" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Cmyk" value="cmyk" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Autumn" value="autumn" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Lemonade" value="lemonade" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Winter" value="winter" /></li>
+
+      <span class="w-full text-xs font-bold mt-2 text-primary">Dark Themes</span>
+
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark" value="dark" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Halloween" value="halloween" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Forest" value="forest" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Black" value="black" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Luxury" value="luxury" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Dracula" value="dracula" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Business" value="business" /></li>
+      <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Night" value="night" /></li>
+
+    </ul>
+
     </div>
 
     <div class="dropdown dropdown-end">

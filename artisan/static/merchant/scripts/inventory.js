@@ -116,20 +116,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
   });
 
-  // Edit button handler (add once)
-  // document.getElementById('edit-button').addEventListener('click', function () {
-  //   handleEditModal(currentProduct, categories);
-  // });
-
-  // document.getElementById('product-delete-button').addEventListener('click', function() {
-  //   const confirmed = window.confirm(`Are you sure you want to permanently delete the product "${currentProduct.name}"?`);
-
-  //   if (!confirmed) return;
-
-  //   if (!currentProduct) return;
-
-  // })
-
   setupCategoryList(categories, API_BASE_URL);
 
   // Function to show product details in modal
