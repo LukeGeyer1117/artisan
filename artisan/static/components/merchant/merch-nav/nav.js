@@ -1,4 +1,4 @@
-import { get_merchant_information } from "../../../merchant/scripts/common.js";
+import { get_merchant_information, signOut } from "../../../merchant/scripts/common.js";
 import { getCookie } from "../../../merchant/scripts/csrf.js";
 
 const csrf = getCookie("csrftoken");
@@ -14,6 +14,16 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Get the stored theme from localstorage, if one exists, and apply that theme to the page
   const documentEl = document.documentElement;
   const themes = document.getElementById('themes-dropdown-list').querySelectorAll('li input');
+
+  // See if we have a stored theme matching one of the themes in the list.
+  const saved_theme = localStorage.getItem('theme');
+  if (saved_theme) {
+    themes.forEach(theme => {
+      if (saved_theme === theme.value) {
+        theme.checked = true;
+      }
+    })
+  }
 
   themes.forEach(theme => {
     theme.addEventListener('click', function () {
@@ -43,18 +53,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Handle clicking the Sign out Button
   const signOutBtn = document.getElementById('account-modal-sign-out-link-div');
   signOutBtn.addEventListener('click', (event) => {
-    fetch(`${API_BASE_URL}/session/`, {
-      method: 'DELETE', 
-      headers: {
-        'X-CSRFToken': csrf,
-      }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Failed to clear session data.');
-        return response.json();
-    })
-    .then(result => {
-        window.location.href = "/login/"
-      })
+    signOut(csrf);
   })
 })

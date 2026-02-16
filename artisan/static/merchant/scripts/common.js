@@ -412,4 +412,19 @@ function linearToSrgb(val) {
   return 1.055 * Math.pow(val, 1 / 2.4) - 0.055;
 }
 
-export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast, daisyColor};
+async function signOut(csrf) {
+  const response = await fetch(`${API_BASE_URL}/session/`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRFToken': csrf,
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error("Could not sign out.");
+  }
+
+  window.location.href = "/login/";
+}
+
+export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast, daisyColor, signOut};
