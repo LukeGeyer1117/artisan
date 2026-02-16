@@ -47,13 +47,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     RenderDivs(analyzed_data);
   }
 
-  fetch(`${API_BASE_URL}/validate/`, {
-    method: 'GET'
-  })
-  .then(response => {
-    console.log(response);
-  })
-
   // Make the api call to get all orders on this merchant
   async function getOrders(timeframe = 7) {
     try {

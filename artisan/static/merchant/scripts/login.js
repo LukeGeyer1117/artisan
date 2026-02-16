@@ -122,6 +122,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 const result = await response.json();
+                localStorage.setItem('jwt-access', result.access);
+                localStorage.setItem('jwt-refresh', result.refresh);
                 showToast('Login successful! Redirecting...', 'success');
                 
                 // Short delay before redirect for better UX

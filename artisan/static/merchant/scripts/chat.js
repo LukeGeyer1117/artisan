@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   messageButton.addEventListener('click', function () {
     if (messageInput.value) {
+      messageButton.disabled = true;
       const message = messageInput.value;
       messageInput.value = '';
       SendMessage(message, emptyChatDiv, messageDiv);

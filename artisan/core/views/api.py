@@ -42,6 +42,7 @@ from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiRequest, OpenApiResponse
 
@@ -624,7 +625,18 @@ def login_artisan(request):
         
         login(request, artisan)
 
-        return JsonResponse({'message': 'Login successful', 'artisan_id': artisan.id})
+        # Generate JWT tokens for API usage (e.g., AI chatbot)
+        refresh = RefreshToken.for_user(artisan)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        return JsonResponse({
+            'message': 'Login successful',
+            'artisan_id': artisan.id,
+            'access': access_token,
+            'refresh': refresh_token,
+        })
+
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)  
     except Exception as e:
