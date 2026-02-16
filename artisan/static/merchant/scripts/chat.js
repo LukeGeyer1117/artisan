@@ -6,11 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
   toggles.forEach(toggle => {
     toggle.addEventListener('click', () => {
       panel.classList.remove('hidden');
+      toggle.classList.add('hidden');
     });
   })
 
   closeBtn.addEventListener('click', () => {
     panel.classList.add('hidden');
-    toggle.classList.remove('hidden');
+    toggles.forEach(toggle => {
+      toggle.classList.remove('hidden');
+    })
   });
 })
