@@ -39,3 +39,5 @@ django-browser-reload
 # dotenv
 python-dotenv
 
+# For JWTs
+djangorestframework-simplejwt

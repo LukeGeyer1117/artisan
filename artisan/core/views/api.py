@@ -39,6 +39,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework import serializers
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiRequest, OpenApiResponse
 
@@ -1993,3 +1996,29 @@ def send_order_status_change(order, order_items, artisan):
         html_message=html_message
     )
 
+class ValidateUserTokenView(APIView):
+    """
+    Authenticated-only endpoint to validate JWT and return user identity info.
+    Any valid JWT will return 200.
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]
+
+    def get(self, request):
+        try:
+            user = request.user
+
+            return Response(
+                {
+                    "authenticated": True,
+                    "user_id": user.id,
+                    "email": user.email,
+                },
+                status=STATUS_200
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": f"Token validation failed: {str(e)}"},
+                status=STATUS_500
+            )

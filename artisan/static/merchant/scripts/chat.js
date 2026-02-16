@@ -33,11 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Listen for chat to be cleared
   const clearBtn = document.getElementById('reset-chat-button');
   clearBtn.addEventListener('click', function () {
-    window.confirm('Are you sure you would like to start a new chat?');
+    const confirmed = window.confirm('Are you sure you would like to start a new chat?');
 
-    localStorage.removeItem('chat_messages');
+    if (confirmed) {
+      localStorage.removeItem('chat_messages');
 
-    window.location.reload();
+      window.location.reload();
+    }
   })
 })
 

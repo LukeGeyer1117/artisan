@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 import environ
+from datetime import timedelta
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -10,6 +12,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default')
+JWT_SECRET = os.environ.get('JWT_SECRET', '')
 
 ALLOWED_HOSTS = []
 
@@ -97,6 +100,14 @@ AUTH_PASSWORD_VALIDATORS = [
   {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
   {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
+
+# Simple JWT
+SIMPLE_JWT = {
+  "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+  "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+  "SIGNING_KEY": JWT_SECRET,  # or use a dedicated env variable
+  "ALGORITHM": "HS256",
+}
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'

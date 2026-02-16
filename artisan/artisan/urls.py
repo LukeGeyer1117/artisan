@@ -23,6 +23,10 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     # Customer URLS
@@ -148,6 +152,9 @@ urlpatterns = [
     path('api/cart/', views.add_product_to_cart),
     path('api/session/', views.SessionView.as_view()),
     path('api/proxy/gateway/', views.gateway_proxy),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("api/validate/", views.ValidateUserTokenView.as_view()),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
