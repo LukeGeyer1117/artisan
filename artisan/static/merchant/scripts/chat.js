@@ -12,8 +12,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   closeBtn.addEventListener('click', () => {
     panel.classList.add('hidden');
-    toggles.forEach(toggle => {
-      toggle.classList.remove('hidden');
-    })
   });
 })
