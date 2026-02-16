@@ -19,7 +19,7 @@
       <h1 class="text-3xl m-4">Settings</h1>
 
       <div class="tabs tabs-box h-full m-2 p-2">
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Design">
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Design" data-tab="design">
         <div class="tab-content border-base-300 bg-base-100 p-6">
           <!-- Live Preview Section -->
           <section class="mb-6">
@@ -98,12 +98,12 @@
           </div>
 
           <!-- Save Button -->
-          <div class="flex justify-end">
+          <div class="flex justify-start">
             <button type="button" class="btn btn-primary btn-outline hover:text-white" id="save-theme-btn">Save Settings</button>
           </div>
         </div>
 
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Account">
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Account" data-tab="account">
         <div class="tab-content border-base-300 bg-base-100 p-6">
           <h2 class="text-xl font-semibold mb-4">Account Settings</h2>
 
@@ -185,13 +185,13 @@
           </div>
 
           <!-- Submit Button -->
-          <div class="flex justify-end mt-6">
+          <div class="flex justify-start mt-6">
             <button id="submit-account-change" class="btn btn-primary btn-outline hover:text-white">Submit Changes</button>
           </div>
 
         </div>
 
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Text Content">
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Text Content" data-tab="text">
         <div class="tab-content border-base-300 bg-base-100 p-6">
           <h2 class="text-xl font-semibold">Text Content Settings</h2>
           <p class="text-sm text-base-content/60 mb-4">
@@ -257,7 +257,7 @@
           </div>
 
           <!-- Submit -->
-          <div class="flex justify-end mt-6">
+          <div class="flex justify-start mt-6">
             <button
             class="w-fit save-button btn btn-primary btn-outline hover:text-white"
             id="submit-text-change"
@@ -267,7 +267,7 @@
           </div>
         </div>
 
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Shop">
+        <input type="radio" name="my_tabs_2" class="tab" aria-label="Shop" data-tab="shop">
         <div class="tab-content border-base-300 bg-base-100 p-6">
           <h2 class="text-xl font-semibold">Shop Settings</h2>
           <p class="text-sm text-base-content/60 mb-4">
@@ -390,7 +390,7 @@
           </div>
 
           <!-- Submit Button -->
-          <div class="flex justify-end mt-6">
+          <div class="flex justify-start mt-6">
             <button id="submit-shop-changes" class="btn btn-primary btn-outline hover:text-white">Submit Changes</button>
           </div>
         </div>
