@@ -109,17 +109,33 @@ function renderMessage(msg, messageDiv) {
 
   const senderLabel = msg.role === "user" ? "You" : "Assistant";
 
+  // Create unique ID so we can target this specific bubble
+  const bubbleId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
   messageDiv.insertAdjacentHTML('beforeend', `
     <div class="chat ${alignment}">
       <div class="chat-header">
         ${senderLabel} - ${time}
       </div>
-      <div class="chat-bubble ${bubbleStyle}">
-        ${msg.content}
+      <div id="${bubbleId}" class="chat-bubble ${bubbleStyle}">
+        ${msg.role === "assistant"
+          ? `<span class="loading loading-dots loading-sm"></span>`
+          : msg.content}
       </div>
     </div>
   `);
+
+  // If assistant, replace loading with actual content after 3 seconds
+  if (msg.role === "assistant") {
+    setTimeout(() => {
+      const bubble = document.getElementById(bubbleId);
+      if (bubble) {
+        bubble.innerHTML = msg.content;
+      }
+    }, 3000);
+  }
 }
+
 
 function loadMessages(messageDiv, emptyChatDiv) {
   const messages = JSON.parse(localStorage.getItem('chat_messages')) || [];
