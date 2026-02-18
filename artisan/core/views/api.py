@@ -1,4 +1,4 @@
-import os, json, requests
+import os, json, requests, logging
 from datetime import datetime, timedelta
 
 from django.db import transaction
@@ -2008,6 +2008,7 @@ def send_order_status_change(order, order_items, artisan):
         html_message=html_message
     )
 
+logger = logging.getLogger(__name__)
 class ValidateUserTokenView(APIView):
     """
     Authenticated-only endpoint to validate JWT and return user identity info.
@@ -2017,6 +2018,18 @@ class ValidateUserTokenView(APIView):
     parser_classes = [JSONParser]
 
     def get(self, request):
+
+        logger.warning("---- ValidateUserTokenView HIT ----")
+
+        # Log incoming auth header
+        auth_header = request.headers.get("Authorization")
+        logger.warning(f"Authorization header: {auth_header}")
+
+        # Log DRF auth state
+        logger.warning(f"request.user: {request.user}")
+        logger.warning(f"is_authenticated: {request.user.is_authenticated}")
+        logger.warning(f"request.auth: {request.auth}")
+        
         try:
             user = request.user
 
