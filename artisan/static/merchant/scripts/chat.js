@@ -77,8 +77,6 @@ async function SendUserMessage(message, emptyChatDiv, messageDiv, messageButton)
   renderMessage(newMessage, messageDiv);
 
   const reply = await aiMessage(csrftoken, messages);
-  console.log(reply);
-
   const replyMsg = {
     role: "assistant", 
     content: reply,

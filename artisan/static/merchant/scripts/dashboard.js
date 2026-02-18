@@ -1,207 +1,290 @@
 import { getCookie } from "./csrf.js";
 import { showToast, daisyColor } from "./common.js";
 
-const csrftoken = getCookie('csrftoken');
+/* =========================================================
+   CONFIG
+========================================================= */
 
-let API_BASE_URL;
-if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1') {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;}
-else {API_BASE_URL = `${window.location.protocol}//${window.location.hostname}/api`;}
+const csrftoken = getCookie("csrftoken");
 
-// Get some of the base styling properties
-const root = document.documentElement;
-const linecolor1 = getComputedStyle(root).getPropertyValue('--line-color-1');
-const linecolor2 = getComputedStyle(root).getPropertyValue('--line-color-2');
-const lineTransparency = '73';
+const API_BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? `${window.location.protocol}//${window.location.hostname}:8000/api`
+    : `${window.location.protocol}//${window.location.hostname}/api`;
 
-// track the chart instance
-let chartInstance = null;
+const MAX_ORDERS_WARNING = 3000;
 
-document.addEventListener('DOMContentLoaded', async function () {
+/* =========================================================
+   DASHBOARD CONTROLLER
+========================================================= */
 
-  // Do initial page setup - Target 1 Week.
-  PageInit(7);
+class Dashboard {
+  constructor() {
+    this.salesChart = null;
+    this.revenueChart = null;
 
-  // Listen for select to change, reload page data
-  const timeFrameSelect = document.getElementById('timeframe');
-  timeFrameSelect.addEventListener('change', (event) => {
-    const nTimeframe =  event.target.value;
-    PageInit(Number(nTimeframe));
-  })
+    this.timeFrameSelect = document.getElementById("timeframe");
 
-  // Initial Page setup, with order fetch, graph setup, etc.
-  async function PageInit(timeframe=7) {
-    const data = await getOrders(timeframe);
-    const orders = data.orders;
-
-    if (orders.length > 3000) {
-      showToast('Only showing 3000 most recent orders', "info");
-    }
-
-    renderAnalytics(orders);
-    CreateOrdersNRevenueLineChart('sales-chart', 'revenue-chart', orders, undefined, timeframe);
+    this.init();
   }
 
-  async function renderAnalytics(orders) {
-    // Analyze the data and render it to the basic divs
-    const analyzed_data = Analyze(orders);
-    RenderDivs(analyzed_data);
+  async init() {
+    this.attachEvents();
+    await this.loadPage(7);
   }
 
-  // Make the api call to get all orders on this merchant
-  async function getOrders(timeframe = 7) {
+  attachEvents() {
+    this.timeFrameSelect.addEventListener("change", (e) => {
+      this.loadPage(Number(e.target.value));
+    });
+  }
+
+  async loadPage(timeframe) {
     try {
-      const response = await fetch(`${API_BASE_URL}/orders/${timeframe}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': csrftoken
-        }
-      });
+      const { orders } = await API.getOrders(timeframe);
 
-      if (!response.ok) {
-        showToast(`Couldn't get orders. Status: ${response.status}`, "error");
-        throw new Error(`Couldn't get orders!`);
+      if (orders.length > MAX_ORDERS_WARNING) {
+        showToast("Only showing 3000 most recent orders", "info");
       }
 
-      const data = await response.json();
-      return data;
+      const analytics = Analytics.analyze(orders);
 
-    } catch (error) {
-      showToast(`Could not get orders. Abandoning attempt...`, "error");
-      throw error; // rethrow to let caller handle it
+      Renderer.renderStats(analytics);
+      this.renderCharts(orders, timeframe);
+    } catch (err) {
+      console.error(err);
     }
   }
 
-  // Analyze the results
-  function Analyze(orders) {
-    console.log(orders);
-    var sales_amount = 0;
-    var completed_orders = 0;
-    var pending_orders = 0;
-    var incomplete_orders = 0;
-    var custom_requests = 0;
+  renderCharts(orders, timeframe) {
+    const hasData = orders && orders.length > 0;
 
-    orders.forEach(order => {
-      sales_amount += Number(order.total_price);
-      if (order.status == 'completed') {completed_orders += 1;}
-      if (order.status == 'pending') {pending_orders += 1;}
-      if (order.status == 'approved' || order.status == 'in_progress') {incomplete_orders += 1;}
-    })
+    if (!hasData) {
+      this.destroyCharts();
+      this.showNoDataMessage("sales-chart");
+      this.showNoDataMessage("revenue-chart");
+      return;
+    }
 
-    console.log(`Sales: ${sales_amount}, Completed: ${completed_orders}, Pending: ${pending_orders}, Incomplete: ${incomplete_orders}`);
+    // If data exists, restore canvases in case message was shown before
+    this.restoreCanvas("sales-chart");
+    this.restoreCanvas("revenue-chart");
+
+    const { labels, ordersData, revenueData } =
+      Analytics.groupByDay(orders, timeframe);
+
+    const primaryColor = daisyColor("--color-primary", 0.9);
+
+    this.salesChart = ChartFactory.createOrReplace(
+      this.salesChart,
+      "sales-chart",
+      "bar",
+      {
+        labels,
+        label: "Orders",
+        data: ordersData,
+        backgroundColor: `${primaryColor}9e`,
+        yStepSize: 1
+      }
+    );
+
+    this.revenueChart = ChartFactory.createOrReplace(
+      this.revenueChart,
+      "revenue-chart",
+      "line",
+      {
+        labels,
+        label: "Revenue",
+        data: revenueData,
+        borderColor: primaryColor,
+        fillColor: `${primaryColor}4e`,
+        currency: true
+      }
+    );
+  }
+
+  destroyCharts() {
+    if (this.salesChart) {
+      this.salesChart.destroy();
+      this.salesChart = null;
+    }
+
+    if (this.revenueChart) {
+      this.revenueChart.destroy();
+      this.revenueChart = null;
+    }
+  }
+
+  showNoDataMessage(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const parent = canvas.parentElement;
+
+    canvas.style.display = "none";
+
+    let message = parent.querySelector(".no-data-message");
+
+    if (!message) {
+      message = document.createElement("div");
+      message.className =
+        "no-data-message flex items-center justify-center h-full text-base-content/60 text-center p-4";
+      message.textContent =
+        "No data for the requested timeframe. Please widen your search.";
+
+      parent.appendChild(message);
+    }
+  }
+
+  restoreCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const parent = canvas.parentElement;
+
+    const message = parent.querySelector(".no-data-message");
+    if (message) message.remove();
+
+    canvas.style.display = "block";
+  }
+
+
+}
+
+/* =========================================================
+   API LAYER
+========================================================= */
+
+const API = {
+  async getOrders(timeframe = 7) {
+    const response = await fetch(
+      `${API_BASE_URL}/orders/${timeframe}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: { "X-CSRFToken": csrftoken }
+      }
+    );
+
+    if (!response.ok) {
+      showToast(
+        `Couldn't get orders. Status: ${response.status}`,
+        "error"
+      );
+      throw new Error("Failed to fetch orders");
+    }
+
+    return response.json();
+  }
+};
+
+/* =========================================================
+   ANALYTICS
+========================================================= */
+
+const Analytics = {
+  analyze(orders) {
+    return orders.reduce(
+      (acc, order) => {
+        const price = Number(order.total_price) || 0;
+
+        acc.salesAmount += price;
+
+        switch (order.status) {
+          case "completed":
+            acc.completed++;
+            break;
+          case "pending":
+            acc.pending++;
+            break;
+          case "approved":
+          case "in_progress":
+            acc.incomplete++;
+            break;
+        }
+
+        return acc;
+      },
+      {
+        salesAmount: 0,
+        completed: 0,
+        pending: 0,
+        incomplete: 0,
+        customRequests: 0
+      }
+    );
+  },
+
+  groupByDay(orders, timeframe) {
+    const labels = Array.from({ length: timeframe }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (timeframe - i - 1));
+      return `${d.getMonth() + 1}/${d.getDate()}`;
+    });
+
+    const orderCounts = {};
+    const revenueCounts = {};
+
+    orders.forEach((order) => {
+      const d = new Date(order.created_at);
+      const key = `${d.getMonth() + 1}/${d.getDate()}`;
+
+      orderCounts[key] = (orderCounts[key] || 0) + 1;
+      revenueCounts[key] =
+        (revenueCounts[key] || 0) + Number(order.total_price);
+    });
 
     return {
-      'sales_amount': sales_amount, 
-      'completed_orders': completed_orders, 
-      'pending_orders': pending_orders,
-      'incomplete_orders': incomplete_orders,
-      'custom_requests': custom_requests
+      labels,
+      ordersData: labels.map((l) => orderCounts[l] || 0),
+      revenueData: labels.map((l) => revenueCounts[l] || 0)
     };
   }
+};
 
-  // add analyzed data to divs
-  function RenderDivs(analyzed_data) {
-    // Render the changes to the dashboard
-    document.querySelector("#sales-amount .stat-value").innerHTML = `$${Number(analyzed_data.sales_amount)}`;
-    document.querySelector("#sales-volume .stat-value").innerHTML = `${Number(analyzed_data.completed_orders)}`;
-    document.querySelector("#pending-orders .stat-value").innerHTML = `${Number(analyzed_data.pending_orders)}`;
-    document.querySelector("#incomplete-orders .stat-value").innerHTML = `${Number(analyzed_data.incomplete_orders)}`;
-    document.querySelector("#custom-requests .stat-value").innerHTML = `${Number(analyzed_data.custom_requests)}`;
+/* =========================================================
+   RENDERING
+========================================================= */
+
+const Renderer = {
+  renderStats(data) {
+    this.set("#sales-amount .stat-value", formatCurrency(data.salesAmount));
+    this.set("#sales-volume .stat-value", data.completed);
+    this.set("#pending-orders .stat-value", data.pending);
+    this.set("#incomplete-orders .stat-value", data.incomplete);
+    this.set("#custom-requests .stat-value", data.customRequests);
+  },
+
+  set(selector, value) {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = value;
   }
+};
 
-  let salesChartInstance = null;
-  let revenueChartInstance = null;
+/* =========================================================
+   CHART FACTORY
+========================================================= */
 
-  function CreateOrdersNRevenueLineChart(
-    sales_canvas_name,
-    revenue_canvas_name,
-    orders,
-    chart_type = 'line',
-    timeframe = 7
-  ) {
-    // Create date labels (oldest → newest)
-    const labels = Array.from({ length: timeframe }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (timeframe - i - 1));
-      return `${date.getMonth() + 1}/${date.getDate()}`;
-    });
+const ChartFactory = {
+  createOrReplace(instance, canvasId, type, config) {
+    if (instance) instance.destroy();
 
-    // Count orders & revenue per day
-    const order_counts = {};
-    const revenue_counts = {};
+    const ctx = document.getElementById(canvasId);
 
-    orders.forEach(order => {
-      const date = new Date(order.created_at);
-      const key = `${date.getMonth() + 1}/${date.getDate()}`;
-
-      order_counts[key] = (order_counts[key] || 0) + 1;
-      revenue_counts[key] =
-        (revenue_counts[key] || 0) + Number(order.total_price);
-    });
-
-    const orders_data = labels.map(label => order_counts[label] || 0);
-    const revenue_data = labels.map(label => revenue_counts[label] || 0);
-
-    /* ======================
-      SALES / ORDERS CHART
-      ====================== */
-
-    const salesCtx = document.getElementById(sales_canvas_name);
-
-    if (salesChartInstance) {
-      salesChartInstance.destroy();
-    }
-
-    const primaryLineColor = daisyColor('--color-primary', 0.9);
-    console.log(`PrimaryLinecolor: ${primaryLineColor}`)
-
-    salesChartInstance = new Chart(salesCtx, {
-      type: chart_type,
+    return new Chart(ctx, {
+      type,
       data: {
-        labels,
+        labels: config.labels,
         datasets: [
           {
-            label: 'Orders',
-            data: orders_data,
-            borderColor: primaryLineColor,
+            label: config.label,
+            data: config.data,
+            backgroundColor: config.backgroundColor,
+            borderColor: config.borderColor,
             tension: 0.25,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { grid: { display: false } },
-          y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1 },
-            grid: { display: false }
-          }
-        }
-      }
-    });
-
-    /* ======================
-      REVENUE CHART
-      ====================== */
-
-    const revenueCtx = document.getElementById(revenue_canvas_name);
-
-    if (revenueChartInstance) {
-      revenueChartInstance.destroy();
-    }
-
-    revenueChartInstance = new Chart(revenueCtx, {
-      type: chart_type,
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Revenue',
-            data: revenue_data,
-            borderColor: primaryLineColor,
-            tension: 0.25,
+            fill: config.fillColor
+              ? {
+                  target: "origin",
+                  above: config.fillColor
+                }
+              : false
           }
         ]
       },
@@ -214,12 +297,30 @@ document.addEventListener('DOMContentLoaded', async function () {
             beginAtZero: true,
             grid: { display: false },
             ticks: {
-              callback: value => `$${value}`
+              stepSize: config.yStepSize,
+              callback: config.currency
+                ? (v) => formatCurrency(v)
+                : undefined
             }
           }
         }
       }
     });
   }
+};
 
-})
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function formatCurrency(value) {
+  return `$${Number(value).toLocaleString()}`;
+}
+
+/* =========================================================
+   BOOTSTRAP
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  new Dashboard();
+});
