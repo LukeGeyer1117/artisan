@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   PageInit(7);
 
   // Listen for select to change, reload page data
-  const timeFrameSelect = document.querySelector('#analytics-card .chart-header select');
+  const timeFrameSelect = document.getElementById('timeframe');
   timeFrameSelect.addEventListener('change', (event) => {
     const nTimeframe =  event.target.value;
     PageInit(Number(nTimeframe));

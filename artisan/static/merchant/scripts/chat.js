@@ -1,3 +1,8 @@
+import { aiMessage } from "./common.js";
+import { getCookie } from "./csrf.js";
+
+const csrftoken = getCookie('csrftoken');
+
 document.addEventListener('DOMContentLoaded', function () {
   const toggles = document.querySelectorAll('.chat-toggle');
   const panel = document.getElementById('chat-panel');
@@ -27,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
       messageButton.disabled = true;
       const message = messageInput.value;
       messageInput.value = '';
-      SendMessage(message, emptyChatDiv, messageDiv);
+      SendUserMessage(message, emptyChatDiv, messageDiv, messageButton);
     }
   })
 
@@ -44,15 +49,15 @@ document.addEventListener('DOMContentLoaded', function () {
   })
 })
 
-function SendMessage(message, emptyChatDiv, messageDiv) {
+async function SendUserMessage(message, emptyChatDiv, messageDiv, messageButton) {
   emptyChatDiv.classList.add('hidden');
   messageDiv.classList.remove('hidden');
 
   const now = Date.now();
 
   const newMessage = {
-    sender: "user",
-    message: message,
+    role: "user",
+    content: message,
     timestamp: now
   };
 
@@ -71,6 +76,22 @@ function SendMessage(message, emptyChatDiv, messageDiv) {
   // Render just the new message
   renderMessage(newMessage, messageDiv);
 
+  const reply = await aiMessage(csrftoken, messages);
+  console.log(reply);
+
+  const replyMsg = {
+    role: "assistant", 
+    content: reply,
+    timestamp: now
+  }
+  messages.push(replyMsg);
+  messages.sort((a, b) => a.timestamp - b.timestamp);
+  localStorage.setItem('chat_messages', JSON.stringify(messages));
+
+  renderMessage(replyMsg, messageDiv);
+
+  messageButton.disabled = false;
+
   messageDiv.scrollTop = messageDiv.scrollHeight;
 }
 
@@ -81,12 +102,12 @@ function renderMessage(msg, messageDiv) {
     hour12: true
   });
 
-  const alignment = msg.sender === "user" ? "chat-end" : "chat-start";
-  const bubbleStyle = msg.sender === "user"
+  const alignment = msg.role === "user" ? "chat-end" : "chat-start";
+  const bubbleStyle = msg.role === "user"
     ? "chat-bubble-primary"
     : "";
 
-  const senderLabel = msg.sender === "user" ? "You" : "Assistant";
+  const senderLabel = msg.role === "user" ? "You" : "Assistant";
 
   messageDiv.insertAdjacentHTML('beforeend', `
     <div class="chat ${alignment}">
@@ -94,7 +115,7 @@ function renderMessage(msg, messageDiv) {
         ${senderLabel} - ${time}
       </div>
       <div class="chat-bubble ${bubbleStyle}">
-        ${msg.message}
+        ${msg.content}
       </div>
     </div>
   `);

@@ -48,6 +48,8 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParamete
 
 import traceback
 
+from openai import OpenAI
+
 # Serialize some status codes
 STATUS_404 = status.HTTP_404_NOT_FOUND
 STATUS_400 = status.HTTP_400_BAD_REQUEST
@@ -2029,7 +2031,7 @@ class ValidateUserTokenView(APIView):
         logger.warning(f"request.user: {request.user}")
         logger.warning(f"is_authenticated: {request.user.is_authenticated}")
         logger.warning(f"request.auth: {request.auth}")
-        
+
         try:
             user = request.user
 
@@ -2046,4 +2048,49 @@ class ValidateUserTokenView(APIView):
             return Response(
                 {"error": f"Token validation failed: {str(e)}"},
                 status=STATUS_500
+            )
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+class MessageMerchantView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]
+
+    def post(self, request):
+        try:
+            user = request.user
+
+            messages = request.data.get("messages")
+
+            if not messages:
+                return Response(
+                    {"error": "No messages provided"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Optional: Inject merchant context
+            messages.insert(0, {
+                "role": "system",
+                "content": f"You are an AI assistant helping merchant {user.email}."
+            })
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.7
+            )
+
+            assistant_message = response.choices[0].message.content
+
+            return Response(
+                {
+                    "reply": assistant_message
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            logger.exception("OpenAI message service failed")
+            return Response(
+                {'error': f"Message service failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

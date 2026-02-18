@@ -427,4 +427,33 @@ async function signOut(csrf) {
   window.location.href = "/login/";
 }
 
-export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast, daisyColor, signOut};
+async function aiMessage(csrf, messages) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/message/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf,
+      },
+      credentials: "include", // ensures cookies (session) are sent if needed
+      body: JSON.stringify({
+        messages: messages
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Request failed: ${response.status} ${errText}`);
+    }
+
+    const data = await response.json();
+    return data.reply; // returns the AI's reply
+
+  } catch (err) {
+    console.error("AI message error:", err);
+    return `Error: ${err.message}`;
+  }
+}
+
+
+export {searchAndFilter, showModal, hideModal, formatTimestamp, get_merchant_information, showToast, daisyColor, signOut, aiMessage};

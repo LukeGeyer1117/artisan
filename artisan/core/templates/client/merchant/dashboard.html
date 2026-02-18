@@ -26,12 +26,17 @@
       <!-- LEFT COLUMN -->
       <section class="flex flex-col gap-6 flex-1">
 
+        <select id="timeframe" class="select select-sm select-bordered">
+          <option value="3">3 Days</option>
+          <option value="7" selected>Past Week</option>
+          <option value="30">Past Month</option>
+        </select>
+
         <!-- STATS -->
         <div class="stats w-full h-fit shadow-sm">
           <div class="stat" id="sales-amount">
-            <div class="stat-title">Sales Amount</div>
+            <div class="stat-title">Total Sales</div>
             <div class="stat-value"></div>
-            <div class="stat-desc">in the past week</div>
           </div>
 
           <div class="stat" id="sales-volume">
@@ -41,54 +46,48 @@
           </div>
         </div>
 
-        <!-- ANALYTICS CARD -->
-        <div id="analytics-card" class="card bg-base-100 shadow-md p-4">
-          <div class="chart-header flex justify-between items-center mb-2">
-            <h3 class="text-lg font-semibold">Order Analytics</h3>
-            <select id="timeframe" class="select select-sm select-bordered">
-              <option value="3">3 Days</option>
-              <option value="7" selected>Past Week</option>
-              <option value="30">Past Month</option>
-              <option value="90">3 Months</option>
-            </select>
-          </div>
-
-          <div class="flex flex-col md:flex-row">
-            <div class="relative w-full md:w-1/2 h-100">
-              <canvas id="sales-chart"></canvas>
+        <div class="flex flex-col md:flex-row gap-4 w-full">
+          <!-- ANALYTICS CARD -->
+          <div id="analytics-card" class="card bg-base-100 shadow-md p-4 w-full md:w-[85%]">
+            <div class="chart-header flex justify-between items-center mb-2">
+              <h3 class="text-lg font-semibold">Order Analytics</h3>
             </div>
 
-            <div class="relative w-full md:w-1/2 h-100">
-              <canvas id="revenue-chart"></canvas>
+            <div class="flex flex-col md:flex-row">
+              <div class="relative w-full md:w-1/2 h-100">
+                <canvas id="sales-chart"></canvas>
+              </div>
+
+              <div class="relative w-full md:w-1/2 h-100">
+                <canvas id="revenue-chart"></canvas>
+              </div>
             </div>
+
           </div>
 
+          <div class="stats md:stats-vertical w-full md:w-[15%] shadow">
+
+            <div class="stat" id="pending-orders">
+              <div class="stat-title">Pending Orders</div>
+              <div class="stat-value"></div>
+              <div class="stat-desc">Need Approved</div>
+            </div>
+
+            <div class="stat" id="incomplete-orders">
+              <div class="stat-title">Incomplete Orders</div>
+              <div class="stat-value"></div>
+              <div class="stat-desc">Need Completed</div>
+            </div>
+
+            <div class="stat" id="custom-requests">
+              <div class="stat-title">Custom Requests</div>
+              <div class="stat-value"></div>
+              <div class="stat-desc">Approve or Decline</div>
+            </div>
+
+          </div>
         </div>
-
       </section>
-
-      <!-- RIGHT COLUMN -->
-      <aside class="stats shadow min-w-[240px]">
-
-        <div class="stat" id="pending-orders">
-          <div class="stat-title">Pending Orders</div>
-          <div class="stat-value"></div>
-          <div class="stat-desc">Need Approved</div>
-        </div>
-
-        <div class="stat" id="incomplete-orders">
-          <div class="stat-title">Incomplete Orders</div>
-          <div class="stat-value"></div>
-          <div class="stat-desc">Need Completed</div>
-        </div>
-
-        <div class="stat" id="custom-requests">
-          <div class="stat-title">Custom Requests</div>
-          <div class="stat-value"></div>
-          <div class="stat-desc">Approve or Decline</div>
-        </div>
-
-      </aside>
 
     </div>
 
