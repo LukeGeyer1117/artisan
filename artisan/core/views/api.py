@@ -2094,3 +2094,36 @@ class MessageMerchantView(APIView):
                 {'error': f"Message service failed: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+class MerchantAnalyticsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, days):
+        try:
+            artisan = request.user
+
+            start_date = timezone.now() - timedelta(days=days)
+
+            orders = Order.objects.filter(
+                artisan=artisan,
+                created_at__gte=start_date
+            ).order_by("created_at")
+
+            # Sales by Category
+            categories = Category.objects.filter(owner=artisan)
+            sales_by_category = {category.name: 0 for category in categories}
+
+            print(sales_by_category)
+
+            for order in orders:
+                orderItems = OrderItems.objects.filter(order=order)
+                for oItem in orderItems:
+                    product = Product.objects.get(id=oItem.product.id)
+                    cat_id = product.category.id
+                    cat_name = Category.objects.get(id=cat_id).name
+                    sales_by_category[cat_name] += oItem.quantity * product.price
+
+            return Response({"message": "found orders", "sales_by_category": sales_by_category}, status=STATUS_200)
+
+        except Exception as e:
+            return Response({'error': f"Order analytics failed: {str(e)}"}, status=STATUS_500)

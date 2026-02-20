@@ -145,6 +145,9 @@ urlpatterns = [
     # Payments  
     path('api/checkout/<slug:slug>/', views.api_checkout, name="checkout"),
 
+    # ANALYTICS
+    path('api/analytics/<int:days>/', views.MerchantAnalyticsView.as_view()),
+
     # MISCELLANEOUS
     path('api/csrf/', views.get_csrf_token), 
     path('api/inventory/', views.get_inventory),
